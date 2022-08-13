@@ -49,13 +49,13 @@ class UserAddress(AddressModelMixin):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
 
     def __str__(self):
-        return f"{self.user_address}"
+        return f"{self.user}"
 
 class CourtAddress(AddressModelMixin):
     court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='address')
     
     def __str__(self):
-        return f"{self.court_address}"
+        return f"{self.court}"
 
 class GameSession(BaseModel):
     CASUAL = 'Casual'
@@ -69,14 +69,14 @@ class GameSession(BaseModel):
     DOUBLES = 'Doubles'
     MATCH_CHOICES = [
         (SINGLES, 'Singles'),
-        (COMPETITIVE, 'Doubles'),
+        (DOUBLES, 'Doubles'),
     ]
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
     date = models.DateField()
     time = models.TimeField()
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
-    locatation = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
 class Guest(BaseModel):
     PENDING = 'Pending'
