@@ -1,6 +1,3 @@
-from importlib.util import module_for_loader
-from lib2to3.pytree import Base
-from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -79,3 +76,19 @@ class GameSession(BaseModel):
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     locatation = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+
+class Guest(BaseModel):
+    PENDING = 'Pending'
+    WAITLISTED = 'Wait Listed'
+    ACCEPTED = 'Accepted'
+    REJECTED = 'Rejected'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (WAITLISTED, 'Wait Listed'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
+    status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
