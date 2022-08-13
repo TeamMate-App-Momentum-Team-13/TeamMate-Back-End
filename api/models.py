@@ -19,16 +19,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-class AddressModelMixin(BaseModel):
-    address1 = models.CharField(max_length=250)
-    address2 = models.CharField(max_length=250, blank=True, null=True)
-    city = models.CharField(max_length=250)
-    state = models.CharField(max_length=250)
-    zipcode = models.CharField(max_length=5)
-
-    def __str__(self):
-        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
-
 class Court(BaseModel):
     HARD_COURT = 'Hard Court'
     GRASS_COURT = 'Grass Court'
@@ -44,3 +34,25 @@ class Court(BaseModel):
 
     def __str__(self):
         return f"{self.park_name}"
+
+class AddressModelMixin(BaseModel):
+    address1 = models.CharField(max_length=250, blank=True, null=True)
+    address2 = models.CharField(max_length=250, blank=True, null=True)
+    city = models.CharField(max_length=250)
+    state = models.CharField(max_length=250)
+    zipcode = models.CharField(max_length=5)
+
+    def __str__(self):
+        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
+
+class UserAddress(AddressModelMixin):
+    user_address = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
+
+    def __str__(self):
+        return f"{self.user_address}"
+
+class CourtAddress(AddressModelMixin):
+    court_address = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='address')
+    
+    def __str__(self):
+        return f"{self.court_address}"
