@@ -9,6 +9,7 @@ djangorestframework = "*"
 django-environ = "*"
 django-extensions = "*"
 psycopg2-binary = "*"
+djoser = "*"
 
 [dev-packages]
 
