@@ -1,3 +1,5 @@
+from importlib.util import module_for_loader
+from lib2to3.pytree import Base
 from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -56,3 +58,24 @@ class CourtAddress(AddressModelMixin):
     
     def __str__(self):
         return f"{self.court_address}"
+
+class GameSession(BaseModel):
+    CASUAL = 'Casual'
+    COMPETITIVE = 'Competitive'
+    SESSION_CHOICES = [
+        (CASUAL, 'Casual'),
+        (COMPETITIVE, 'Competitive'),
+    ]
+
+    SINGLES = 'Singles'
+    DOUBLES = 'Doubles'
+    MATCH_CHOICES = [
+        (SINGLES, 'Singles'),
+        (COMPETITIVE, 'Doubles'),
+    ]
+    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
+    date = models.DateField()
+    time = models.TimeField()
+    session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
+    match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
+    locatation = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
