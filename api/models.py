@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -27,3 +28,19 @@ class AddressModelMixin(BaseModel):
 
     def __str__(self):
         return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
+
+class Court(BaseModel):
+    HARD_COURT = 'Hard Court'
+    GRASS_COURT = 'Grass Court'
+    CLAY_COURT = 'Clay Court'
+    COURT_CHOICES = [
+        (HARD_COURT, 'Hard Court'),
+        (GRASS_COURT, 'Grass Court'),
+        (CLAY_COURT, 'Clay Court'),
+    ]
+    park_name = models.CharField(max_length=250)
+    court_count = models.PositiveSmallIntegerField(null=True, blank=True)
+    court_surface = models.CharField(max_length=250, choices=COURT_CHOICES, default=HARD_COURT)
+
+    def __str__(self):
+        return f"{self.park_name}"
