@@ -76,7 +76,7 @@ class GameSession(BaseModel):
     time = models.TimeField()
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
-    locatation = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
 class Guest(BaseModel):
     PENDING = 'Pending'
