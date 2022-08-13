@@ -83,3 +83,55 @@ Response: No Data
 - Method: GET
 - Data json:
 - Response: Game Session list json object
+    
+    ```python
+    [
+    	{
+    		"id": 1,
+    		"host": 1,
+    		"host_info": {
+    			"id": 1,
+    			"username": "admin",
+    			"first_name": "Diego",
+    			"last_name": "Bryan"
+    		},
+    		"date": "2022-08-13",
+    		"time": "18:00:00",
+    		"session_type": "Competitive",
+    		"match_type": "Singles",
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sanderford Park",
+    			"court_count": 6,
+    			"court_surface": "Hard Court"
+    		},
+    		"guest": []
+    	},
+    	{
+    		"id": 2,
+    		"host": 1,
+    		"host_info": {
+    			"id": 1,
+    			"username": "admin",
+    			"first_name": "Diego",
+    			"last_name": "Bryan"
+    		},
+    		"date": "2022-08-13",
+    		"time": "18:00:00",
+    		"session_type": "Casual",
+    		"match_type": "Doubles",
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sanderford Park",
+    			"court_count": 6,
+    			"court_surface": "Hard Court"
+    		},
+    		"guest": []
+    	}
+    ]
+    ```
+    
+
+..
