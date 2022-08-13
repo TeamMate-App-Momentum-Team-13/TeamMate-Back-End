@@ -22,4 +22,5 @@ urlpatterns = [
     path('auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('session/', api_views.NewGameSession.as_view(), name='game-session-list'),
 ]
