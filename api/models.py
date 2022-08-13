@@ -46,13 +46,13 @@ class AddressModelMixin(BaseModel):
         return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
 
 class UserAddress(AddressModelMixin):
-    user_address = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
 
     def __str__(self):
         return f"{self.user_address}"
 
 class CourtAddress(AddressModelMixin):
-    court_address = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='address')
+    court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='address')
     
     def __str__(self):
         return f"{self.court_address}"
