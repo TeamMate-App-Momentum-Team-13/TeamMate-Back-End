@@ -17,3 +17,13 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+class AddressModelMixin(BaseModel):
+    address1 = models.CharField(max_length=250)
+    address2 = models.CharField(max_length=250, blank=True, null=True)
+    city = models.CharField(max_length=250)
+    state = models.CharField(max_length=250)
+    zipcode = models.CharField(max_length=5)
+
+    def __str__(self):
+        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
