@@ -1,15 +1,8 @@
-# Endpoints
+# Base Endpoint
 
-| Type | URL | Methods | Description |
-| --- | --- | --- | --- |
-| Authentication | auth/users/ | POST | Create User |
-| Authentication | /auth/token/login/ | POST | Login |
-| Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /username | GET, POST, PATCH, DELETE |  |
-| Game Sessions | /session | GET, POST,  |  |
-| Game Sessions | /session/pk | GET, PATCH, DELETE |  |
-| Game Sessions | /session/pk/competitor | POST |  |
-| Game Sessions | /session/pk/survey | GET, POST |  |
+Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
+
+# Endpoints
 
 ## Authentication
 
@@ -17,7 +10,7 @@
 
 ### Create User
 
-> /api/auth/users/
+> /auth/users/
 > 
 - Method: POST
 - Data json:
@@ -35,7 +28,7 @@
 
 ### Login
 
-> /api/auth/token/login/
+> /auth/token/login/
 > 
 - Method: POST
 - Data json:
@@ -57,7 +50,7 @@
 
 ### Logout
 
-> /api/auth/token/logout/
+> /auth/token/logout/
 > 
 
 Method: POST
@@ -71,5 +64,3 @@ Response: No Data
 ---
 
 ## Game Sessions
-
----
