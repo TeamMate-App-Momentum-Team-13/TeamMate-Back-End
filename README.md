@@ -25,7 +25,9 @@
 ```python
 { 
 	"username": "<username>", 
-	"password": "<password>" 
+	"password": "<password>",
+	"first_name": "<firstname>",
+	"last_name": "<lastname>" 
 }
 ```
 
