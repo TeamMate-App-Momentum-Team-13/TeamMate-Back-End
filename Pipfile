@@ -10,6 +10,7 @@ django-environ = "*"
 django-extensions = "*"
 psycopg2-binary = "*"
 djoser = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
