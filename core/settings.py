@@ -137,6 +137,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Custom User Model
+AUTH_USER_MODEL = "api.User"
+
 # Configure Django App for Heroku
 django_on_heroku.settings(locals())
 del DATABASES['default']['OPTIONS']['sslmode']
