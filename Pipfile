@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-django = "4.06"
+django = "==4.0.6"
 djangorestframework = "*"
 django-environ = "*"
 django-extensions = "*"
@@ -13,7 +13,6 @@ djoser = "*"
 django-cors-headers = "*"
 django-on-heroku = "*"
 gunicorn = "*"
-
 
 [dev-packages]
 
