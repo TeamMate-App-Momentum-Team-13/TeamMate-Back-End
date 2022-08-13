@@ -4,9 +4,9 @@ from rest_framework.response import Response
 
 from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
 
+from .serializers import GameSessionSerializer
 # Create your views here.
 
-@api_view(['GET'])
 def welcome(request):
     return Response({
         'team': 'Team Swan Lake',
