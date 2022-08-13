@@ -92,3 +92,8 @@ class Guest(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
+
+class Profile(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    profile_pic = models.TextField(blank=True, null=True)
+    ntrp_rating = models.PositiveSmallIntegerField(blank=True, null=True)
