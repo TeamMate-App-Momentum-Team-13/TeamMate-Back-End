@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions
 from .permissions import IsOwnerOrReadOnly, IsOwner
 from rest_framework.response import Response
-from .serializers import GameSessionSerializer
+from .serializers import GameSessionSerializer, GuestSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -43,3 +43,17 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+
+class ListCreateGuest(ListCreateAPIView):
+    queryset = Guest.objects.all()
+    serializer_class = GuestSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    # def get_queryset(self):
+    #     queryset = Guest.objects.filter(game_session_id=self.kwargs['pk'])
+    #     return queryset
+
+    # def perform_create(self, serializer):
+    #     game_session = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
+    #     serializer.save(user=self.request.user, game_session=game_session)
+    
