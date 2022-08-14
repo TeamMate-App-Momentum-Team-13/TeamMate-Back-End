@@ -1,6 +1,6 @@
 # Base Endpoint
 
-Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
+Base endpoint: [https://teammate-app.herokuapp.com](https://teammate-app.herokuapp.com)
 
 # Endpoints
 | Type | URL | Methods | Description |
@@ -9,7 +9,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
 | User Profile | /username | GET, POST, PATCH, DELETE |  |
-| Game Sessions | /session/ | GET, POST,  | List Game Sess |
+| Game Sessions | /session | GET, POST | List/Create Game |
 | Game Sessions | /session/pk | GET, PATCH, DELETE |  |
 | Game Sessions | /session/pk/competitor | POST |  |
 | Game Sessions | /session/pk/survey | GET, POST |  |
@@ -76,9 +76,9 @@ Response: No Data
 
 ---
 
-### List Game Session
+### List/Create Game Session
 
-> /session/
+> /session
 > 
 - Method: GET
 - Data json:
@@ -132,6 +132,42 @@ Response: No Data
     	}
     ]
     ```
-    
+
+- Method: GET
+- Body:
+    ```
+    {
+        "date": "2022-08-18",
+        "time": "16:15:00",
+        "session_type": "Competitive",
+        "match_type": "Doubles",
+        "location": 1
+    }
+    ```
+- Response: 201_Created
+    ```
+	{
+        "id": 13,
+        "host": "BillyBobJoe",
+        "host_info": {
+            "id": 9,
+            "username": "BillyBobJoe",
+            "first_name": "",
+            "last_name": ""
+        },
+        "date": "2022-08-18",
+        "time": "16:15:00",
+        "session_type": "Competitive",
+        "match_type": "Doubles",
+        "location": 1,
+        "location_info": {
+            "id": 1,
+            "park_name": "State Road Park",
+            "court_count": 2,
+            "court_surface": "Hard Court"
+        },
+        "guest": []
+    }
+    ```
 
 ..
