@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from rest_framework import permissions
+from .permissions import IsOwnerOrReadOnly, IsOwner
+from rest_framework.response import Response
+from .serializers import GameSessionSerializer
+
 from rest_framework.generics import (
     CreateAPIView, 
     DestroyAPIView, 
@@ -7,11 +11,18 @@ from rest_framework.generics import (
     ListCreateAPIView, 
     RetrieveUpdateDestroyAPIView, 
 )
-from rest_framework.response import Response
 
-from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
+from .models import (
+    User, 
+    GameSession, 
+    Court, 
+    CourtAddress, 
+    UserAddress, 
+    Guest, 
+    Profile, 
+    AddressModelMixin
+)
 
-from .serializers import GameSessionSerializer
 
 
 def welcome(request):
@@ -20,11 +31,15 @@ def welcome(request):
         'description': 'Welcome to our app 👋'
     })
 
-
 class ListCreateGameSession(ListCreateAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
-    permission_class = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
+
+class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
+    queryset = GameSession.objects.all()
+    serializer_class = GameSessionSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
