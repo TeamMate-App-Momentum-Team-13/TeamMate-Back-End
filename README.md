@@ -10,7 +10,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
 | User Profile | /username | GET, POST, PATCH, DELETE |  |
-| Game Sessions | /session/ | GET, POST,  | List & Create Game Session |
+| Game Sessions | /session | GET, POST  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/pk/competitor | POST |  |
 | Game Sessions | /session/pk/survey | GET, POST |  |
@@ -77,7 +77,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ### List Game Session
 
-> /session/
+> /session
 > 
 - Method: GET
 - Data json:
@@ -135,7 +135,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ### Create Game Session
 
-> /session/
+> /session
 > 
 - Method: POST
 - Data json:
@@ -238,3 +238,74 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	"guest": []
     }
     ```
+
+# Running a local PostgreSQL database
+
+### Clone the API repository
+```bash
+git clone https://github.com/Momentum-Team-13/questionbox-team-back-end-plantspace.git
+```
+
+### Install project dependencies
+This project uses [Python 3.10](https://www.python.org/).
+
+Use [pipenv](https://pypi.org/project/pipenv/) to run a virtual enviroment with all the project dependencies.
+
+Activate a vitual enviroment:
+```bash
+pipenv shell
+```
+
+Install dependencies:
+```bash
+pipenv install
+```
+
+### Create a local PostgreSQL database
+This project uses [PostgreSQL 14.4](https://www.postgresql.org/).
+
+Install PostgreSQL:
+```bash
+brew install postgresql
+```
+
+Start PostgreSQL:
+```bash
+brew services start postgresql
+```
+
+When creating a local database, it is generally considered good practice to use the same name for username and database name.
+
+Create a user:
+```bash
+createuser -d <username>
+```
+
+Create a database:
+```bash
+createdb -U <username> <dbname>
+```
+
+### Configure Django to connect to your local database
+Install a Python PostgreSQL adapter:
+```bash
+pipenv install psycopg2-binary
+```
+
+Create a .env file in /core directory:
+```bash
+touch ./core/.env
+```
+
+Refer to .env.sample for how to configure your local copy of .env. Include a database url with the following syntax:
+```bash
+DATABASE_URL=postgres://<username>:@127.0.0.1:5432/<dbname>
+```
+
+### Run your local server
+```bash
+python manage.py runserver
+```
+
+### Database tools
+[Postico](https://eggerapps.at/postico/) and [Dbeaver](https://dbeaver.io/) are great tools to that provide a GUI to interact with your database. [Insomnia](https://insomnia.rest/products/insomnia) is a great way to query your server, whether local or remote. All three are available on Homebrew.
