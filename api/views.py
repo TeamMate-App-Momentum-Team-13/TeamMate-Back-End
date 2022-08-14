@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from rest_framework import permissions
 from rest_framework.generics import (
     CreateAPIView, 
     DestroyAPIView, 
@@ -23,6 +24,7 @@ def welcome(request):
 class ListCreateGameSession(ListCreateAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
+    permission_class = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
