@@ -10,7 +10,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
 | User Profile | /username | GET, POST, PATCH, DELETE |  |
-| Game Sessions | /session/ | GET, POST,  | List & Create Game Session |
+| Game Sessions | /session | GET, POST,  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/pk/guest | GET, POST |  |
 | Game Sessions | /session/pk/survey | GET, POST |  |
