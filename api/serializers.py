@@ -39,7 +39,10 @@ class CourtSerializer(serializers.ModelSerializer):
 
 
 class GameSessionSerializer(serializers.ModelSerializer):
-    guest = serializers.PrimaryKeyRelatedField(many=True, queryset=Guest.objects.all())
+    host = serializers.ReadOnlyField(source='user.username')
+    # host = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    # guest = serializers.PrimaryKeyRelatedField(many=True, queryset=Guest.objects.all())
+    guest = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     host_info = UserSerializer(source='host', read_only=True)
     location_info = CourtSerializer(source='location', read_only=True)
 
