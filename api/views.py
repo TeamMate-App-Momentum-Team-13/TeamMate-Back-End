@@ -34,7 +34,7 @@ def welcome(request):
 class ListCreateGameSession(ListCreateAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
-    permission_class = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
@@ -42,4 +42,4 @@ class ListCreateGameSession(ListCreateAPIView):
 class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
-    permission_class = [IsOwnerOrReadOnly]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
