@@ -60,7 +60,8 @@ class GameSessionSerializer(serializers.ModelSerializer):
 
 class GuestSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
-
+    game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
+    
     class Meta:
         model = Guest
         fields = [

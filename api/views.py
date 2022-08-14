@@ -47,13 +47,9 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
 class ListCreateGuest(ListCreateAPIView):
     queryset = Guest.objects.all()
     serializer_class = GuestSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    
-    # def get_queryset(self):
-    #     queryset = Guest.objects.filter(game_session_id=self.kwargs['pk'])
-    #     return queryset
 
-    # def perform_create(self, serializer):
-    #     game_session = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
-    #     serializer.save(user=self.request.user, game_session=game_session)
+    def perform_create(self, serializer):
+        game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
+        serializer.save(user=self.request.user, game_session=game_session_instance)
+        
     

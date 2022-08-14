@@ -238,6 +238,23 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	"guest": []
     }
     ```
+### Create Guest for  a Game Session
+
+> /session/pk/guest
+> 
+- Method: POST
+    - Note: pk is the id of the game session
+- Data json:
+- Response: 200 ok
+
+### List Guest for a Game Session
+
+> /session/pk/guest
+> 
+- Method: GET
+    - Note: pk is the id of the game session
+- Data json:
+- Response: 200 ok
 
 # Running a local PostgreSQL database
 
