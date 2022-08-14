@@ -23,4 +23,5 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('session', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
+    path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
 ]
