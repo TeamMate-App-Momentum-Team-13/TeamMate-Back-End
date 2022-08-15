@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-# Comment
 
 class User(AbstractUser):
     def __str__(self):
@@ -10,7 +8,6 @@ class User(AbstractUser):
 
     def __repr__(self):
         return f'<User username={self.username} pk={self.pk}>'
-
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(db_index=True, auto_now_add=True)
@@ -71,6 +68,7 @@ class GameSession(BaseModel):
         (SINGLES, 'Singles'),
         (DOUBLES, 'Doubles'),
     ]
+
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
     date = models.DateField()
     time = models.TimeField()
