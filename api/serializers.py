@@ -55,7 +55,7 @@ class GameSessionSerializer(serializers.ModelSerializer):
     guest = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     host_info = UserSerializer(source='host', read_only=True)
     location_info = CourtSerializer(source='location', read_only=True)
-    guest_info = GuestSerializer(many = True, source = 'guest', read_only=True)
+    guest_info = GuestSerializer(source='guest', many=True, read_only=True)
 
     class Meta:
         model = GameSession
