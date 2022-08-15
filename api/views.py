@@ -58,9 +58,9 @@ class CreateProfile(APIView):
         pass
     
     def post(self, request, **kwargs):
-        user = self.request.user.pk
-        print(user)
-        profile = Profile({"user": str(user)})
+        user = self.request.user
+        profile = Profile(user=user, ntrp_rating=5)
+        profile.save()
         serializer = ProfileSerializer(profile, context={'request': request})
         return Response(serializer.data, status=201)
     
