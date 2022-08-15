@@ -3,7 +3,6 @@
 Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
-
 | Type | URL | Methods | Description |
 | --- | --- | --- | --- |
 | Authentication | /auth/users/ | POST | Create User |
@@ -12,7 +11,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | User Profile | /username | GET, POST, PATCH, DELETE |  |
 | Game Sessions | /session | GET, POST,  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
-| Game Sessions | /session/pk/guest | GET, POST |  |
+| Game Sessions | /session/pk/guest | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/pk/survey | GET, POST |  |
 
 ## Authentication
@@ -86,39 +85,17 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     ```json
     [
     	{
-    		"id": 1,
-    		"host": 1,
+    		"id": 4,
+    		"host": "John_Doe11",
     		"host_info": {
-    			"id": 1,
-    			"username": "admin",
-    			"first_name": "Diego",
-    			"last_name": "Bryan"
+    			"id": 2,
+    			"username": "John_Doe11",
+    			"first_name": "John",
+    			"last_name": "Doe"
     		},
-    		"date": "2022-08-13",
-    		"time": "18:00:00",
+    		"date": "2022-08-18",
+    		"time": "16:15:00",
     		"session_type": "Competitive",
-    		"match_type": "Singles",
-    		"location": 1,
-    		"location_info": {
-    			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
-    		},
-    		"guest": []
-    	},
-    	{
-    		"id": 2,
-    		"host": 1,
-    		"host_info": {
-    			"id": 1,
-    			"username": "admin",
-    			"first_name": "Diego",
-    			"last_name": "Bryan"
-    		},
-    		"date": "2022-08-13",
-    		"time": "18:00:00",
-    		"session_type": "Casual",
     		"match_type": "Doubles",
     		"location": 1,
     		"location_info": {
@@ -127,7 +104,47 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     			"court_count": 6,
     			"court_surface": "Hard Court"
     		},
-    		"guest": []
+    		"guest": [
+    			6,
+    			7
+    		],
+    		"guest_info": [
+    			{
+    				"id": 6,
+    				"user": "admin",
+    				"game_session": 4,
+    				"status": "Pending"
+    			},
+    			{
+    				"id": 7,
+    				"user": "admin",
+    				"game_session": 4,
+    				"status": "Pending"
+    			}
+    		]
+    	},
+    	{
+    		"id": 5,
+    		"host": "diego",
+    		"host_info": {
+    			"id": 2,
+    			"username": "diego",
+    			"first_name": "diego",
+    			"last_name": "diego"
+    		},
+    		"date": "2022-08-18",
+    		"time": "16:15:00",
+    		"session_type": "Competitive",
+    		"match_type": "Doubles",
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sanderford Park",
+    			"court_count": 6,
+    			"court_surface": "Hard Court"
+    		},
+    		"guest": [],
+    		"guest_info": []
     	}
     ]
     ```
@@ -156,27 +173,44 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ```json
 {
-      "id": 13,
-      "host": "BillyBobJoe",
-      "host_info": {
-          "id": 9,
-          "username": "BillyBobJoe",
-          "first_name": "",
-          "last_name": ""
-      },
-      "date": "2022-08-18",
-      "time": "16:15:00",
-      "session_type": "Competitive",
-      "match_type": "Doubles",
-      "location": 1,
-      "location_info": {
-          "id": 1,
-          "park_name": "State Road Park",
-          "court_count": 2,
-          "court_surface": "Hard Court"
-      },
-      "guest": []
-  }
+		"id": 4,
+		"host": "John_Doe11",
+		"host_info": {
+			"id": 2,
+			"username": "John_Doe11",
+			"first_name": "John",
+			"last_name": "Doe"
+		},
+		"date": "2022-08-18",
+		"time": "16:15:00",
+		"session_type": "Competitive",
+		"match_type": "Doubles",
+		"location": 1,
+		"location_info": {
+			"id": 1,
+			"park_name": "Sanderford Park",
+			"court_count": 6,
+			"court_surface": "Hard Court"
+		},
+		"guest": [
+			6,
+			7
+		],
+		"guest_info": [
+			{
+				"id": 6,
+				"user": "admin",
+				"game_session": 4,
+				"status": "Pending"
+			},
+			{
+				"id": 7,
+				"user": "admin",
+				"game_session": 4,
+				"status": "Pending"
+			}
+		]
+	}
 ```
 
 ### Delete Game Session
@@ -205,7 +239,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 - Response: 200 ok
 
-### View Game Session
+### View Game Session Detail
 
 > /session/pk
 > 
@@ -216,45 +250,82 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     
     ```json
     {
-    	"id": 8,
-    	"host": "admin",
-    	"host_info": {
-    		"id": 1,
-    		"username": "admin",
-    		"first_name": "Diego",
-    		"last_name": "Bryan"
-    	},
-    	"date": "2022-08-18",
-    	"time": "16:15:00",
-    	"session_type": "Competitive",
-    	"match_type": "Singles",
-    	"location": 1,
-    	"location_info": {
-    		"id": 1,
-    		"park_name": "Sanderford Park",
-    		"court_count": 6,
-    		"court_surface": "Hard Court"
-    	},
-    	"guest": []
-    }
+    		"id": 4,
+    		"host": "John_Doe11",
+    		"host_info": {
+    			"id": 2,
+    			"username": "John_Doe11",
+    			"first_name": "John",
+    			"last_name": "Doe"
+    		},
+    		"date": "2022-08-18",
+    		"time": "16:15:00",
+    		"session_type": "Competitive",
+    		"match_type": "Doubles",
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sanderford Park",
+    			"court_count": 6,
+    			"court_surface": "Hard Court"
+    		},
+    		"guest": [
+    			6,
+    			7
+    		],
+    		"guest_info": [
+    			{
+    				"id": 6,
+    				"user": "admin",
+    				"game_session": 4,
+    				"status": "Pending"
+    			},
+    			{
+    				"id": 7,
+    				"user": "admin",
+    				"game_session": 4,
+    				"status": "Pending"
+    			}
+    		]
+    	}
     ```
-### Create Guest for  a Game Session
+    
+    ### Create Guest for  a Game Session
+    
+    > /session/pk/guest
+    > 
+    - Method: POST
+        - Note: pk is the id of the game session
+    - Data json:
+    - Response: 200 ok
+    
+    ### List Guest for a Game Session
+    
+    > /session/pk/guest
+    > 
+    - Method: GET
+        - Note: pk is the id of the game session
+    - Data json:
+    - Response: 200 ok
+        
+        ```json
+        [
+        	{
+        		"id": 6,
+        		"user": "admin1",
+        		"game_session": 4,
+        		"status": "Pending"
+        	},
+        	{
+        		"id": 7,
+        		"user": "admin2",
+        		"game_session": 4,
+        		"status": "Pending"
+        	}
+        ]
+        ```
+        
 
-> /session/pk/guest
-> 
-- Method: POST
-    - Note: pk is the id of the game session
-- Data json:
-- Response: 200 ok
-
-### List Guest for a Game Session
-
-> /session/pk/guest
-> 
-- Method: GET
-    - Note: pk is the id of the game session
-- Data json:
-- Response: 200 ok
 
 # Running a local PostgreSQL database
 

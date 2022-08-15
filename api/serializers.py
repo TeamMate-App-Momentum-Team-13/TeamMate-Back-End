@@ -37,11 +37,25 @@ class CourtSerializer(serializers.ModelSerializer):
             'court_surface',
         ]
 
+class GuestSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
+    
+    class Meta:
+        model = Guest
+        fields = [
+            'id',
+            'user',
+            'game_session',
+            'status',
+        ]
+
 class GameSessionSerializer(serializers.ModelSerializer):
     host = serializers.SlugRelatedField(slug_field="username", read_only=True)
     guest = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     host_info = UserSerializer(source='host', read_only=True)
     location_info = CourtSerializer(source='location', read_only=True)
+    guest_info = GuestSerializer(many = True, source = 'guest', read_only=True)
 
     class Meta:
         model = GameSession
@@ -56,17 +70,5 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'location',
             'location_info',
             'guest',
-        ]
-
-class GuestSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
-    game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
-    
-    class Meta:
-        model = Guest
-        fields = [
-            'id',
-            'user',
-            'game_session',
-            'status',
+            'guest_info',
         ]
