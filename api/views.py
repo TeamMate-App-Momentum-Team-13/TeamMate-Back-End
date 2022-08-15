@@ -52,4 +52,7 @@ class ListCreateGuest(ListCreateAPIView):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
         serializer.save(user=self.request.user, game_session=game_session_instance)
         
-    
+class GameSessionGuestDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Guest.objects.all()
+    serializer_class = GuestSerializer
+    lookup_url_kwarg = 'guest_pk'
