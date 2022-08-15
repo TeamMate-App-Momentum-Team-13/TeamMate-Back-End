@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions
 from .permissions import IsOwnerOrReadOnly, IsOwner
 from rest_framework.response import Response
-from .serializers import GameSessionSerializer, GuestSerializer
+from rest_framework.views import APIView
+from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -22,7 +23,6 @@ from .models import (
     Profile, 
     AddressModelMixin
 )
-
 
 
 def welcome(request):
@@ -52,4 +52,25 @@ class ListCreateGuest(ListCreateAPIView):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
         serializer.save(user=self.request.user, game_session=game_session_instance)
         
+class CreateProfile(APIView): 
+
+    def get(self, request):
+        pass
     
+    def post(self, request, **kwargs):
+        user = self.request.user.pk
+        print(user)
+        profile = Profile({"user": str(user)})
+        serializer = ProfileSerializer(profile, context={'request': request})
+        return Response(serializer.data, status=201)
+    
+    # def post(self, request, **kwargs):
+    #     user = self.request.user
+    #     profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+    #     p_user = get_object_or_404(User, pk=self.kwargs['pk'])
+    #     user.profile.add(p_user)
+    #     serializer = UserSerializer(user, context={'request': request})
+    #     return Response(serializer.data, status=201)
+
+    def patch(self, request):
+        pass
