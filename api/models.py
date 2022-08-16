@@ -93,6 +93,28 @@ class Guest(BaseModel):
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
 class Profile(BaseModel):
+    TWOFIVE = '2.5'
+    THREE = '3'
+    THREEFIVE = '3.5'
+    FOUR = '4'
+    FOURFIVE = '4.5'
+    FIVE = '5'
+    FIVEFIVE = '5.5'
+    SIX = '6'
+    SIXFIVE = '6.5'
+    SEVEN = '7'
+    RATE_CHOICES = [
+        (TWOFIVE, '2.5'),
+        (THREE, '3'),
+        (THREEFIVE, '3.5'),
+        (FOUR, '4'),
+        (FOURFIVE, '4.5'),
+        (FIVE, '5'),
+        (FIVEFIVE, '5.5'),
+        (SIX, '6'),
+        (SIXFIVE, '6.5'),
+        (SEVEN, '7'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
-    profile_pic = models.TextField(blank=True, null=True)
-    ntrp_rating = models.PositiveSmallIntegerField(blank=True, null=True)
+    ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
