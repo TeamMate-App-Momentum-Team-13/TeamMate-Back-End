@@ -3,6 +3,7 @@ from rest_framework import serializers
 from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
 
 class UserSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = User
         fields = [
@@ -55,7 +56,7 @@ class GameSessionSerializer(serializers.ModelSerializer):
     guest = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     host_info = UserSerializer(source='host', read_only=True)
     location_info = CourtSerializer(source='location', read_only=True)
-    guest_info = GuestSerializer(many = True, source = 'guest', read_only=True)
+    guest_info = GuestSerializer(source='guest', many=True, read_only=True)
 
     class Meta:
         model = GameSession
@@ -71,4 +72,16 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'location_info',
             'guest',
             'guest_info',
+        ]
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    
+    class Meta:
+        model = Profile
+        fields = [
+            'id',
+            'user',
+            'profile_pic',
+            'ntrp_rating',
         ]
