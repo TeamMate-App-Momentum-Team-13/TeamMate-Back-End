@@ -57,10 +57,13 @@ class CreateProfile(APIView):
     def get(self, request):
         pass
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         user = self.request.user
-        ntrp_rating = self.request.data["ntrp_rating"]
-        profile = Profile(user=user, ntrp_rating=ntrp_rating)
+        if self.request.data == {}:
+            profile = Profile(user=user)
+        else:
+            ntrp_rating = self.request.data["ntrp_rating"]
+            profile = Profile(user=user, ntrp_rating=ntrp_rating)
         profile.save()
         serializer = ProfileSerializer(profile, context={'request': request})
         return Response(serializer.data, status=201)
