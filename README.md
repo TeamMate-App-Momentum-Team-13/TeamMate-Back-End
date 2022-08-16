@@ -3,16 +3,18 @@
 Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
+
 | Type | URL | Methods | Description |
 | --- | --- | --- | --- |
 | Authentication | /auth/users/ | POST | Create User |
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /username | GET, POST, PATCH, DELETE |  |
+| User Profile | /username | POST | Create Profile |
 | Game Sessions | /session | GET, POST,  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/pk/guest | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/pk/survey | GET, POST |  |
+|  | /session/pk/guest/update |  |  |
 
 ## Authentication
 
@@ -69,6 +71,32 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 ## User Profiles
 
 ---
+
+> /username
+> 
+- Method: POST
+- Data JSON:
+    - profile_pic: feature not yet built
+    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
+    - A user can only have one profile
+    
+    ```json
+    {
+    	"ntrp_rating": 3.5
+    }
+    ```
+    
+- Response: Profile JSON Object, 201_Created :
+    
+    ```json
+    {
+    	"id": 27,
+    	"user": 5,
+    	"profile_pic": null,
+    	"ntrp_rating": "3.5"
+    }
+    ```
+    
 
 ## Game Sessions
 
@@ -324,6 +352,8 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
         	}
         ]
         ```
+        
+        ..
         
 
 

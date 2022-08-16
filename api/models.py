@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-# Comment
 
 class User(AbstractUser):
     def __str__(self):
@@ -10,7 +8,6 @@ class User(AbstractUser):
 
     def __repr__(self):
         return f'<User username={self.username} pk={self.pk}>'
-
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(db_index=True, auto_now_add=True)
@@ -71,6 +68,7 @@ class GameSession(BaseModel):
         (SINGLES, 'Singles'),
         (DOUBLES, 'Doubles'),
     ]
+
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
     date = models.DateField()
     time = models.TimeField()
@@ -95,6 +93,29 @@ class Guest(BaseModel):
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
 class Profile(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    TWOFIVE = '2.5'
+    THREE = '3'
+    THREEFIVE = '3.5'
+    FOUR = '4'
+    FOURFIVE = '4.5'
+    FIVE = '5'
+    FIVEFIVE = '5.5'
+    SIX = '6'
+    SIXFIVE = '6.5'
+    SEVEN = '7'
+    RATE_CHOICES = [
+        (TWOFIVE, '2.5'),
+        (THREE, '3'),
+        (THREEFIVE, '3.5'),
+        (FOUR, '4'),
+        (FOURFIVE, '4.5'),
+        (FIVE, '5'),
+        (FIVEFIVE, '5.5'),
+        (SIX, '6'),
+        (SIXFIVE, '6.5'),
+        (SEVEN, '7'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_pic = models.TextField(blank=True, null=True)
-    ntrp_rating = models.PositiveSmallIntegerField(blank=True, null=True)
+    ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
