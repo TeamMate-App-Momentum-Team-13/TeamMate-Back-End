@@ -65,6 +65,5 @@ class CreateProfile(APIView):
         serializer = ProfileSerializer(profile, context={'request': request})
         return Response(serializer.data, status=201)
 
-
     def patch(self, request):
         pass
