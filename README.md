@@ -9,7 +9,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/users/ | POST | Create User |
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /username | POST | Create Profile |
+| User Profile | /profile | POST | Create Profile |
 | Game Sessions | /session | GET, POST,  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/pk/survey | GET, POST |  |
@@ -72,7 +72,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ---
 
-> /username
+> /profile
 > 
 - Method: POST
 - Data JSON:
@@ -96,7 +96,6 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	"ntrp_rating": "3.5"
     }
     ```
-    
 
 ## Game Sessions
 
