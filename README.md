@@ -12,9 +12,9 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | User Profile | /username | POST | Create Profile |
 | Game Sessions | /session | GET, POST,  | List & Create Game Session |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
-| Game Sessions | /session/pk/guest | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/pk/survey | GET, POST |  |
-|  | /session/pk/guest/update |  |  |
+| Game Sessions | /session/pk/guest/ | GET, POST | List, Create Guest for Game session |
+| Game Sessions | /session/pk/guest/guest_pk/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
 
 ## Authentication
 
@@ -320,7 +320,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     
     ### Create Guest for  a Game Session
     
-    > /session/pk/guest
+    > /session/pk/guest/
     > 
     - Method: POST
         - Note: pk is the id of the game session
@@ -329,7 +329,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     
     ### List Guest for a Game Session
     
-    > /session/pk/guest
+    > /session/pk/guest/
     > 
     - Method: GET
         - Note: pk is the id of the game session
@@ -353,8 +353,34 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
         ]
         ```
         
-        ..
+        ### Change Guest Status for a Game Session
         
+        > /session/pk/guest/guest_pk/
+        > 
+        - Method: PATCH
+            - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
+        - Permissions: Game Session Owners or Admins can make this request
+        - Data json:
+            - Status Options: Accepted, Wait Listed, Rejected, Pending (Default)
+            
+            ```json
+            {
+            	"status":"Accepted"
+            }
+            ```
+            
+        - Response: 200 ok
+        
+        ### Delete Guest for a Game Session
+        
+        > /session/pk/guest/guest_pk/
+        > 
+        - Method: DELETE
+            - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
+        - Permissions: Guest Instance Owner or Admins can make this request
+        - Data json:
+            - Status Options: Accepted, Wait
+        - Response: 204 No Content
 
 
 # Running a local PostgreSQL database
