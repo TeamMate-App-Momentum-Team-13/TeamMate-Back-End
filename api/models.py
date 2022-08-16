@@ -116,5 +116,6 @@ class Profile(BaseModel):
         (SEVEN, '7'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    profile_pic = models.TextField(blank=True, null=True)
     ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
