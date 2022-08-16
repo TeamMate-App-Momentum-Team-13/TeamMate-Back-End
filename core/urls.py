@@ -25,5 +25,5 @@ urlpatterns = [
     path('session', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
     path('session/<int:pk>/guest', api_views.ListCreateGuest.as_view(), name='list_create_guest'),
-    path('session/<int:pk>/guest/<int:guest_pk>', api_views.GameSessionGuestDetail.as_view(), name='game-session-guest-detail')
+    path('session/<int:pk>/guest/<int:guest_pk>', api_views.GameSessionGuest.as_view() ,name='game-session-guest-detail'),
 ]
