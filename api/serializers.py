@@ -28,7 +28,7 @@ class CourtAddressSerializer(serializers.ModelSerializer):
         ]
 
 class CourtSerializer(serializers.ModelSerializer):
-
+    address = CourtAddressSerializer(read_only=True)
     class Meta:
         model = Court
         fields = [
@@ -36,6 +36,7 @@ class CourtSerializer(serializers.ModelSerializer):
             'park_name',
             'court_count',
             'court_surface',
+            'address',
         ]
 
 class GuestSerializer(serializers.ModelSerializer):
