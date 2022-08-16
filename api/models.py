@@ -95,6 +95,11 @@ class Guest(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
+    class Meta:
+        constraints = [
+			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
+		]
+
     def __str__(self):
         return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
 
