@@ -57,20 +57,14 @@ class CreateProfile(APIView):
     def get(self, request):
         pass
     
-    def post(self, request, **kwargs):
+    def post(self, request, *args, **kwargs):
         user = self.request.user
-        profile = Profile(user=user, ntrp_rating=5)
+        ntrp_rating = self.request.data["ntrp_rating"]
+        profile = Profile(user=user, ntrp_rating=ntrp_rating)
         profile.save()
         serializer = ProfileSerializer(profile, context={'request': request})
         return Response(serializer.data, status=201)
-    
-    # def post(self, request, **kwargs):
-    #     user = self.request.user
-    #     profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
-    #     p_user = get_object_or_404(User, pk=self.kwargs['pk'])
-    #     user.profile.add(p_user)
-    #     serializer = UserSerializer(user, context={'request': request})
-    #     return Response(serializer.data, status=201)
+
 
     def patch(self, request):
         pass
