@@ -31,6 +31,7 @@ class CourtAddressSerializer(serializers.ModelSerializer):
 
 class CourtSerializer(serializers.ModelSerializer):
     address = CourtAddressSerializer(read_only=True)
+    
     class Meta:
         model = Court
         fields = [
