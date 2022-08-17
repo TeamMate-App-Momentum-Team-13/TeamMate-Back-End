@@ -68,6 +68,30 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 - Data: Authentication Token (See Example Auth Token in Login Section)
 - Response: No Data
 
+## User Details
+
+---
+
+> /<str:username>
+> 
+- Method: GET
+- Response: User JSON Object, with Profile data, 200_OK
+    
+    ```json
+    {
+    		"id": 5,
+    		"username": "SillyJoe",
+    		"first_name": "Joe",
+    		"last_name": "Smith",
+    		"profile": {
+    			"id": 48,
+    			"user": "SillyJoe",
+    			"profile_pic": null,
+    			"ntrp_rating": "5"
+    		}
+    }
+    ```
+
 
 ## User Profiles
 
