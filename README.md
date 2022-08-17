@@ -9,8 +9,9 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/users/ | POST | Create User |
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /profile | POST | Create Profile |
+| User Profile | /profile | GET, POST, PATCH | List, Create, Patch Profile |
 | Game Sessions | /session | GET, POST,  | List & Create Game Session |
+| Game Sessions | /session?search | Filter Game Sessions |  |
 | Game Sessions | /session/pk | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/pk/survey | GET, POST |  |
 | Game Sessions | /session/pk/guest/ | GET, POST | List, Create Guest for Game session |
@@ -140,7 +141,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     		]
     	}
     ```
-
+    
 
 ## User Profiles
 
@@ -211,6 +212,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	"ntrp_rating": "4"
     }
     ```
+    
 
 ## Game Sessions
 
@@ -222,7 +224,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 > 
 - Method: GET
 - Data json:
-- Response: Game Session list json object
+- Response: Game Session list json object filtered by games after current date
     
     ```json
     [
@@ -291,6 +293,17 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     ]
     ```
     
+
+### Filter Game Session
+
+> /session?searchterm
+> 
+- Method: GET
+- SearchTerms: park-name , date, match-type, session-type
+    - note you can chain search terms
+    - Example /session?match-type=Singles&session-type=Casual
+- Data json:
+- Response: Filtered Game Session List
 
 ### Create Game Session
 
