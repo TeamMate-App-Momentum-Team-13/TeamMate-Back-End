@@ -1,4 +1,5 @@
 from datetime import datetime
+import pytz
 from functools import partial
 from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions, status, views, viewsets
@@ -36,20 +37,25 @@ def welcome(request):
     })
 
 class ListCreateGameSession(ListCreateAPIView):
-    queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        queryset = GameSession.objects.filter(date__gt=datetime.today())
+        queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         # establish queryset of all User objects ordered by username
-        search_term = self.request.query_params.get("park-name")
-        # establishes variable to get query params by "search" key "username"
-        # if no keys match, will return None
-        if search_term is not None:
-            queryset = GameSession.objects.filter(location__park_name__icontains=search_term)
-            # overrides queryset when search_term is present
-            # filter objects where username contains search_term
+        park_search = self.request.query_params.get("park-name")
+        if park_search is not None:
+            queryset = queryset.filter(location__park_name__icontains=park_search)
+        date_search = self.request.query_params.get("date")
+        if date_search is not None:
+            queryset = queryset.filter(date__icontains=date_search)
+        match_type_search = self.request.query_params.get("match-type")
+        if match_type_search is not None:
+            queryset = queryset.filter(match_type__icontains=match_type_search)
+        session_type_search = self.request.query_params.get("session-type")
+        if session_type_search is not None:
+            queryset = queryset.filter(session_type__icontains=session_type_search)
+        
         return queryset.order_by("date","time")
 
     def perform_create(self, serializer):
