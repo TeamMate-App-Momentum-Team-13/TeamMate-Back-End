@@ -9,7 +9,7 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserSerializer
+from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -79,12 +79,16 @@ class GuestViewSet(viewsets.ModelViewSet):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
         serializer.save(user=self.request.user, game_session=game_session_instance)
         
-class CreateProfile(APIView): 
+class ListCreateUpdateProfile(APIView):
+    permission_classes = (IsOwnerOrReadOnly,)
 
     def get(self, request):
-        pass
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
-    def post(self, request):
+    
+    def post(self, request): 
         user = self.request.user
         if self.request.data == {}:
             profile = Profile(user=user)
@@ -93,7 +97,20 @@ class CreateProfile(APIView):
             profile = Profile(user=user, ntrp_rating=ntrp_rating)
         profile.save()
         serializer = ProfileSerializer(profile, context={'request': request})
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def patch(self, request):
-        pass
+    def patch (self, request, **kwargs):
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class UserDetail(ListAPIView):
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = User.objects.filter(username=self.kwargs['username'])
+        return queryset
