@@ -3,7 +3,8 @@ from rest_framework import serializers
 from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
 
 class UserSerializer(serializers.ModelSerializer):
-    
+    # profile = ProfileSerializer(source='profile', read_only=True)
+
     class Meta:
         model = User
         fields = [
@@ -11,6 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
+            'profile',
         ]
 
 class CourtAddressSerializer(serializers.ModelSerializer):
