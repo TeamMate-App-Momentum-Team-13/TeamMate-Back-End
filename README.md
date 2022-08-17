@@ -4,6 +4,20 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 # Endpoints
 
+| Type | URL | Methods | Description |
+| --- | --- | --- | --- |
+| Authentication | /auth/users/ | POST | Create User |
+| Authentication | /auth/token/login/ | POST | Login |
+| Authentication | /auth/token/logout/ | POST | Logout |
+| User Profile | /profile/ | GET, POST, PATCH | List, Create, Patch Profile |
+| User Details | /<str:username> | GET | List User Details |
+| Game Sessions | /session/ | GET, POST,  | List & Create Game Session |
+| Game Sessions | /session/?search | Filter Game Sessions |  |
+| Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
+| Game Sessions | /session/<int:pk>/survey | GET, POST |  |
+| Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
+| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+
 ## Authentication
 
 ---
@@ -133,7 +147,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ---
 
-> /profile
+> /profile/
 > 
 - Method: GET
 - Data JSON:
@@ -356,7 +370,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ### Delete Game Session
 
-> /session/pk
+> /session/<int:pk>
 > 
 - Method: DELETE
     - Note: pk is the id of the game session
@@ -365,7 +379,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 
 ### Update Game Session
 
-> /session/pk
+> /session/<int:pk>
 > 
 - Method: PATCH
     - Note: pk is the id of the game session
@@ -378,16 +392,16 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 }
 ```
 
-- Response: 200 ok
+- Response: 200_OK
 
 ### View Game Session Detail
 
-> /session/pk
+> /session/<int:pk>
 > 
 - Method: GET
     - Note: pk is the id of the game session
 - Data json:
-- Response: 200 ok
+- Response: 200_OK
     
     ```json
     {
@@ -433,21 +447,21 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     
     ### Create Guest for  a Game Session
     
-    > /session/pk/guest/
+    > /session/<int:pk>/guest/
     > 
     - Method: POST
         - Note: pk is the id of the game session
     - Data json:
-    - Response: 200 ok
+    - Response: 200_OK
     
     ### List Guest for a Game Session
     
-    > /session/pk/guest/
+    > /session/<int:pk>/guest/
     > 
     - Method: GET
         - Note: pk is the id of the game session
     - Data json:
-    - Response: 200 ok
+    - Response: 200_OK
         
         ```json
         [
@@ -468,7 +482,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
         
         ### Change Guest Status for a Game Session
         
-        > /session/pk/guest/guest_pk/
+        > /session/<int:pk>/guest/<int:guest_pk>
         > 
         - Method: PATCH
             - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
@@ -482,11 +496,11 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
             }
             ```
             
-        - Response: 200 ok
+        - Response: 200_OK
         
         ### Delete Guest for a Game Session
         
-        > /session/pk/guest/guest_pk/
+        > /session/<int:pk>/guest/<ing:guest_pk>
         > 
         - Method: DELETE
             - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
