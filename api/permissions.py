@@ -24,7 +24,7 @@ class GuestPermission(permissions.BasePermission):
         elif view.action == 'create':
             return request.user.is_authenticated
         elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
-            return False
+            return True
         else:
             return False
                                                                                                 

@@ -41,7 +41,7 @@ class ListCreateGameSession(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
-
+    
 class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer

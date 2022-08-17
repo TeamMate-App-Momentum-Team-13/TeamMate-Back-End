@@ -43,13 +43,13 @@ class AddressModelMixin(BaseModel):
         return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
 
 class UserAddress(AddressModelMixin):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='address')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
 
     def __str__(self):
         return f"{self.user}"
 
 class CourtAddress(AddressModelMixin):
-    court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='address')
+    court = models.OneToOneField(Court, on_delete=models.CASCADE, related_name='address')
     
     def __str__(self):
         return f"{self.court}"
@@ -76,6 +76,9 @@ class GameSession(BaseModel):
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
+    def __str__(self):
+        return f"{self.host}, {self.match_type}, {self.session_type}"
+
 class Guest(BaseModel):
     PENDING = 'Pending'
     WAITLISTED = 'Wait Listed'
@@ -91,6 +94,14 @@ class Guest(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
+
+    class Meta:
+        constraints = [
+			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
+		]
+
+    def __str__(self):
+        return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
 
 class Profile(BaseModel):
     TWOFIVE = '2.5'
@@ -119,3 +130,6 @@ class Profile(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_pic = models.TextField(blank=True, null=True)
     ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
+
+    def __str__(self):
+        return f"{self.user}"
