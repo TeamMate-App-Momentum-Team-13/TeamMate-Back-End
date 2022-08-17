@@ -12,7 +12,8 @@ urlpatterns = [
     path('auth/', include('rest_framework.urls')),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
-    path('profile', api_views.CreateProfile.as_view(), name='profile'),
+    # path('<str:username>', api_views.UserDetail.as_view(), name='profile'),
+    path('profile', api_views.ListCreateUpdateProfile.as_view(), name='profile'),
     path('session', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
 ]
