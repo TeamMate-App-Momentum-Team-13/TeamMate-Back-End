@@ -7,7 +7,7 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserSerializer
+from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -89,4 +89,9 @@ class ListCreateUpdateProfile(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserDetail(ListAPIView):
-    pass
+    serializer_class = UserDetailSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = User.objects.filter(username=self.kwargs['username'])
+        return queryset
