@@ -90,8 +90,8 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserDetailSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
-    # game_session = GameSessionSerializer(many=True, read_only=True)
-    # guest = GuestSerializer(many=True, read_only=True)
+    game_session = GameSessionSerializer(many=True, read_only=True)
+    guest = GuestSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
