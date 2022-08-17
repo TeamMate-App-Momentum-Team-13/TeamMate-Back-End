@@ -87,3 +87,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             'profile_pic',
             'ntrp_rating',
         ]
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'profile',
+        ]
