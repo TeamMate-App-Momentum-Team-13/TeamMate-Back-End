@@ -68,12 +68,30 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 - Data: Authentication Token (See Example Auth Token in Login Section)
 - Response: No Data
 
+
 ## User Profiles
 
 ---
 
 > /profile
 > 
+- Method: GET
+- Data JSON:
+    - profile_pic: feature not yet built
+    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
+    - A user can only have one profile
+- Response: Profile JSON Object, 200_OK :
+    
+    ```json
+    {
+    	"id": 27,
+    	"user": 5,
+    	"profile_pic": null,
+    	"ntrp_rating": "3.5"
+    }
+    ```
+    
+
 - Method: POST
 - Data JSON:
     - profile_pic: feature not yet built
@@ -86,7 +104,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     }
     ```
     
-- Response: Profile JSON Object, 201_Created :
+- Response: Profile JSON Object, 201_CREATED :
     
     ```json
     {
@@ -94,6 +112,30 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	"user": 5,
     	"profile_pic": null,
     	"ntrp_rating": "3.5"
+    }
+    ```
+    
+
+- Method: PATCH
+- Data JSON:
+    - profile_pic: feature not yet built
+    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
+    - A user can only have one profile
+    
+    ```json
+    {
+    	"ntrp_rating": 4
+    }
+    ```
+    
+- Response: Profile JSON Object, 202_ACCEPTED:
+    
+    ```json
+    {
+    	"id": 27,
+    	"user": 5,
+    	"profile_pic": null,
+    	"ntrp_rating": "4"
     }
     ```
 
