@@ -41,8 +41,7 @@ class ListCreateGameSession(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        queryset = GameSession.objects.all()
-        # queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         # establish queryset of all User objects ordered by username
         park_search = self.request.query_params.get("park-name")
         if park_search is not None:
