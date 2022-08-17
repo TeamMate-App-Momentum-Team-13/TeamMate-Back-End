@@ -103,4 +103,5 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'profile',
             'game_session',
             'guest',
+
         ]

@@ -77,69 +77,21 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 > /<str:username>
 > 
 - Method: GET
-- Response: User JSON Object, with Profile, GameSession, and Guest data, 200_OK
+- Response: User JSON Object, with Profile data, 200_OK
     
     ```json
     {
     		"id": 5,
     		"username": "SillyJoe",
-    		"first_name": "",
-    		"last_name": "",
+    		"first_name": "Joe",
+    		"last_name": "Smith",
     		"profile": {
     			"id": 48,
     			"user": "SillyJoe",
     			"profile_pic": null,
     			"ntrp_rating": "5"
-    		},
-    		"game_session": [
-    			{
-    				"id": 14,
-    				"host": "SillyJoe",
-    				"host_info": {
-    					"id": 5,
-    					"username": "SillyJoe",
-    					"first_name": "",
-    					"last_name": ""
-    				},
-    				"date": "2022-08-24",
-    				"time": "18:00:00",
-    				"session_type": "Casual",
-    				"match_type": "Singles",
-    				"location": 1,
-    				"location_info": {
-    					"id": 1,
-    					"park_name": "State Road Park",
-    					"court_count": 2,
-    					"court_surface": "Hard Court",
-    					"address": {
-    						"id": 1,
-    						"address1": "123 State Rd",
-    						"address2": null,
-    						"city": "Durham",
-    						"state": "NC",
-    						"zipcode": "27705",
-    						"court": 1
-    					}
-    				},
-    				"guest": [],
-    				"guest_info": []
-    			}
-    		],
-    		"guest": [
-    			{
-    				"id": 1,
-    				"user": "SillyJoe",
-    				"game_session": 13,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 2,
-    				"user": "SillyJoe",
-    				"game_session": 12,
-    				"status": "Pending"
-    			}
-    		]
-    	}
+    		}
+    }
     ```
     
 
