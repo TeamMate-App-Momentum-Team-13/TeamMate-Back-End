@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import partial
 from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions, status, views, viewsets
@@ -38,6 +39,18 @@ class ListCreateGameSession(ListCreateAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(date__gt=datetime.today())
+        # establish queryset of all User objects ordered by username
+        search_term = self.request.query_params.get("park-name")
+        # establishes variable to get query params by "search" key "username"
+        # if no keys match, will return None
+        if search_term is not None:
+            queryset = GameSession.objects.filter(location__park_name__icontains=search_term)
+            # overrides queryset when search_term is present
+            # filter objects where username contains search_term
+        return queryset.order_by("date","time")
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
