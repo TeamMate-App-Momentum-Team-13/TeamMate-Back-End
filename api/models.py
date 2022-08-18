@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
+def restrict_amount(value):
+        parent = GameSession.objects.get(id=value)
+        if parent.match_type == 'Singles':
+            if parent.guest.count() >= 3:
+                raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
+        elif parent.match_type == 'Doubles':
+            if parent.guest.count() >= 6:
+                raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
 
 class User(AbstractUser):
     def __str__(self):
@@ -77,9 +86,10 @@ class GameSession(BaseModel):
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
     def __str__(self):
-        return f"{self.host}, {self.match_type}, {self.session_type}"
+        return f"{self.pk} {self.host}, {self.match_type}, {self.session_type}"
 
 class Guest(BaseModel):
+    
     PENDING = 'Pending'
     WAITLISTED = 'Wait Listed'
     ACCEPTED = 'Accepted'
@@ -92,7 +102,7 @@ class Guest(BaseModel):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_amount, ))
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
     class Meta:

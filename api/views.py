@@ -41,8 +41,10 @@ class ListCreateGameSession(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
+        # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        # establish queryset of all User objects ordered by username
+        
+        # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
         if park_search is not None:
             queryset = queryset.filter(location__park_name__icontains=park_search)
@@ -86,7 +88,6 @@ class ListCreateUpdateProfile(APIView):
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
     
     def post(self, request): 
         user = self.request.user
