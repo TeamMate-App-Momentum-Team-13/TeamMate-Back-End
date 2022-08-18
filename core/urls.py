@@ -3,6 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 from api import views as api_views
 
+
 router = routers.DefaultRouter()
 router.register(r'guest', api_views.GuestViewSet, basename="guest")
 

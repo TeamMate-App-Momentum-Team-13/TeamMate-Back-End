@@ -42,7 +42,8 @@ class ListCreateGameSession(ListCreateAPIView):
 
     def get_queryset(self):
         queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        # establish queryset of all User objects ordered by username
+
+        # Establish queryset of all User objects ordered by username
         park_search = self.request.query_params.get("park-name")
         if park_search is not None:
             queryset = queryset.filter(location__park_name__icontains=park_search)
@@ -55,7 +56,7 @@ class ListCreateGameSession(ListCreateAPIView):
         session_type_search = self.request.query_params.get("session-type")
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
-        
+
         return queryset.order_by("date","time")
 
     def perform_create(self, serializer):
@@ -86,8 +87,7 @@ class ListCreateUpdateProfile(APIView):
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    
+
     def post(self, request): 
         user = self.request.user
         if self.request.data == {}:

@@ -2,6 +2,7 @@ from pyexpat import model
 from rest_framework import serializers
 from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
 
+
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -103,5 +104,4 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'profile',
             'game_session',
             'guest',
-
         ]
