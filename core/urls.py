@@ -17,4 +17,5 @@ urlpatterns = [
     path('profile/', api_views.ListCreateUpdateProfile.as_view(), name='profile'),
     path('session/', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
+    path('court/', api_views.ListCreateCourt.as_view(), name='court'),
 ]

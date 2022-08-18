@@ -462,6 +462,66 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
         - Response: 204 No Content
 
 
+# Courts
+
+---
+
+### List Courts
+
+> /court/
+> 
+- Method: GET
+- Permissions: Authenticated or Read-Only
+- Response: 200_OK
+    
+    ```json
+    {
+    		"id": 1,
+    		"park_name": "State Road Park",
+    		"court_count": 2,
+    		"court_surface": "Hard Court",
+    		"address": {
+    			"id": 1,
+    			"court": "State Road Park",
+    			"address1": "123 State Rd",
+    			"address2": null,
+    			"city": "Durham",
+    			"state": "NC",
+    			"zipcode": "27705"
+    		}
+    	}
+    ```
+    
+### Create Court
+
+> /court/
+> 
+- Method: POST
+- Permissions: Authenticated or Read-Only
+- Request:
+    
+    ```json
+    {
+    	"park_name": "Big Oaks Park",
+    	"court_count": 6,
+    	"court_surface": "Hard Court"
+    }
+    ```
+    
+- Response: JSON Object, 201_CREATED
+    
+    ```json
+    {
+    	"id": 2,
+    	"park_name": "Big Oaks Park",
+    	"court_count": 6,
+    	"court_surface": "Hard Court",
+    	"address": null
+    }
+    ```
+
+
+
 # Running a local PostgreSQL database
 
 ### Clone the API repository

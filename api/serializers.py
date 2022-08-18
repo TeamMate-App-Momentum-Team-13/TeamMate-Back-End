@@ -15,17 +15,18 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
 class CourtAddressSerializer(serializers.ModelSerializer):
+    court = serializers.SlugRelatedField(slug_field="park_name", read_only=True)
     
     class Meta:
         model = CourtAddress
         fields = [
             'id',
+            'court',
             'address1',
             'address2',
             'city',
             'state',
             'zipcode',
-            'court',
         ]
 
 class CourtSerializer(serializers.ModelSerializer):

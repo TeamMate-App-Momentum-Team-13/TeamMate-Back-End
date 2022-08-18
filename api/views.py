@@ -9,7 +9,7 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
+from .serializers import CourtSerializer, GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -82,6 +82,15 @@ class GuestViewSet(viewsets.ModelViewSet):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
         restrict_amount(game_session_instance.id)
         serializer.save(user=self.request.user, game_session=game_session_instance)
+
+class ListCreateCourt(ListCreateAPIView):
+    queryset = Court.objects.all()
+    serializer_class = CourtSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class ListCreateCourtAddress(ListCreateAPIView):
+    pass
         
 class ListCreateUpdateProfile(APIView):
     permission_classes = (IsOwnerOrReadOnly,)
