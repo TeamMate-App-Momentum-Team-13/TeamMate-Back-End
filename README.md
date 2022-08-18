@@ -16,7 +16,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/<int:pk>/survey | GET, POST |  |
 | Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
-| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+| Game Sessions | /session/<int:pk>/guest/<int:guest_pk> | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
 | Court | /court/ | GET, POST | List &Create Court |
 | Court Address | /court/<int:pk>/address/ | GET, POST | List & Create Court Address |
 
