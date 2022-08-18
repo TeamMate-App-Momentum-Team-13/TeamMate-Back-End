@@ -58,7 +58,7 @@ class ListCreateGameSession(ListCreateAPIView):
         session_type_search = self.request.query_params.get("session-type")
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
-        
+
         return queryset.order_by("date","time")
 
     def perform_create(self, serializer):
@@ -90,7 +90,7 @@ class ListCreateUpdateProfile(APIView):
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def post(self, request): 
         user = self.request.user
         if self.request.data == {}:
