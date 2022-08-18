@@ -27,7 +27,8 @@ from .models import (
     UserAddress, 
     Guest, 
     Profile, 
-    AddressModelMixin
+    AddressModelMixin,
+    restrict_amount,
 )
 
 def welcome(request):
@@ -41,9 +42,10 @@ class ListCreateGameSession(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
+        # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
 
-        # Establish queryset of all User objects ordered by username
+        # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
         if park_search is not None:
             queryset = queryset.filter(location__park_name__icontains=park_search)
@@ -78,6 +80,7 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
+        restrict_amount(game_session_instance.id)
         serializer.save(user=self.request.user, game_session=game_session_instance)
 
 class ListCreateCourt(ListCreateAPIView):
