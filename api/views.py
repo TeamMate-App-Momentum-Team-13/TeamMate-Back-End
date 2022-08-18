@@ -9,7 +9,7 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import CourtSerializer, GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
+from .serializers import CourtSerializer, CourtAddressSerializer, GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -85,10 +85,18 @@ class ListCreateCourt(ListCreateAPIView):
     serializer_class = CourtSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-
 class ListCreateCourtAddress(ListCreateAPIView):
-    pass
-        
+    serializer_class = CourtAddressSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = CourtAddress.objects.filter(court_id=self.kwargs.get('pk'))
+        return queryset
+    
+    def perform_create(self, serializer):
+        court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        serializer.save(court=court)
+
 class ListCreateUpdateProfile(APIView):
     permission_classes = (IsOwnerOrReadOnly,)
 
