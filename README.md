@@ -17,6 +17,8 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Game Sessions | /session/<int:pk>/survey | GET, POST |  |
 | Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+| Court | /court/ | GET, POST | List &Create Court |
+| Court Address | /court/<int:pk>/address/ | GET, POST | List & Create Court Address |
 
 ## Authentication
 
@@ -77,21 +79,69 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 > /<str:username>
 > 
 - Method: GET
-- Response: User JSON Object, with Profile data, 200_OK
+- Response: User JSON Object, with Profile, GameSession, and Guest data, 200_OK
     
     ```json
     {
     		"id": 5,
     		"username": "SillyJoe",
-    		"first_name": "Joe",
-    		"last_name": "Smith",
+    		"first_name": "",
+    		"last_name": "",
     		"profile": {
     			"id": 48,
     			"user": "SillyJoe",
     			"profile_pic": null,
     			"ntrp_rating": "5"
-    		}
-    }
+    		},
+    		"game_session": [
+    			{
+    				"id": 14,
+    				"host": "SillyJoe",
+    				"host_info": {
+    					"id": 5,
+    					"username": "SillyJoe",
+    					"first_name": "",
+    					"last_name": ""
+    				},
+    				"date": "2022-08-24",
+    				"time": "18:00:00",
+    				"session_type": "Casual",
+    				"match_type": "Singles",
+    				"location": 1,
+    				"location_info": {
+    					"id": 1,
+    					"park_name": "State Road Park",
+    					"court_count": 2,
+    					"court_surface": "Hard Court",
+    					"address": {
+    						"id": 1,
+    						"address1": "123 State Rd",
+    						"address2": null,
+    						"city": "Durham",
+    						"state": "NC",
+    						"zipcode": "27705",
+    						"court": 1
+    					}
+    				},
+    				"guest": [],
+    				"guest_info": []
+    			}
+    		],
+    		"guest": [
+    			{
+    				"id": 1,
+    				"user": "SillyJoe",
+    				"game_session": 13,
+    				"status": "Pending"
+    			},
+    			{
+    				"id": 2,
+    				"user": "SillyJoe",
+    				"game_session": 12,
+    				"status": "Pending"
+    			}
+    		]
+    	}
     ```
     
 
@@ -460,65 +510,119 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
         - Data json:
             - Status Options: Accepted, Wait
         - Response: 204 No Content
-
-
-# Courts
-
----
-
-### List Courts
-
-> /court/
-> 
-- Method: GET
-- Permissions: Authenticated or Read-Only
-- Response: 200_OK
-    
-    ```json
-    {
-    		"id": 1,
-    		"park_name": "State Road Park",
-    		"court_count": 2,
-    		"court_surface": "Hard Court",
-    		"address": {
-    			"id": 1,
-    			"court": "State Road Park",
-    			"address1": "123 State Rd",
-    			"address2": null,
-    			"city": "Durham",
-    			"state": "NC",
-    			"zipcode": "27705"
-    		}
-    	}
-    ```
-    
-### Create Court
-
-> /court/
-> 
-- Method: POST
-- Permissions: Authenticated or Read-Only
-- Request:
-    
-    ```json
-    {
-    	"park_name": "Big Oaks Park",
-    	"court_count": 6,
-    	"court_surface": "Hard Court"
-    }
-    ```
-    
-- Response: JSON Object, 201_CREATED
-    
-    ```json
-    {
-    	"id": 2,
-    	"park_name": "Big Oaks Park",
-    	"court_count": 6,
-    	"court_surface": "Hard Court",
-    	"address": null
-    }
-    ```
+        
+        # Courts
+        
+        ---
+        
+        ### List Courts
+        
+        > /court/
+        > 
+        - Method: GET
+        - Permissions: Authenticated or Read-Only
+        - Response: 200_OK
+            
+            ```json
+            {
+            		"id": 1,
+            		"park_name": "State Road Park",
+            		"court_count": 2,
+            		"court_surface": "Hard Court",
+            		"address": {
+            			"id": 1,
+            			"court": "State Road Park",
+            			"address1": "123 State Rd",
+            			"address2": null,
+            			"city": "Durham",
+            			"state": "NC",
+            			"zipcode": "27705"
+            		}
+            	}
+            ```
+            
+        
+        ### Create Court
+        
+        > /court/
+        > 
+        - Method: POST
+        - Permissions: Authenticated or Read-Only
+        - Request:
+            
+            ```json
+            {
+            	"park_name": "Big Oaks Park",
+            	"court_count": 6,
+            	"court_surface": "Hard Court"
+            }
+            ```
+            
+        - Response: JSON Object, 201_CREATED
+            
+            ```json
+            {
+            	"id": 2,
+            	"park_name": "Big Oaks Park",
+            	"court_count": 6,
+            	"court_surface": "Hard Court",
+            	"address": null
+            }
+            ```
+            
+        
+        ### List Court Address
+        
+        > /court/<int:pk>/address/
+        > 
+        - Method: GET
+        - Permissions: Authenticated or Read-Only
+        - Response: 200_OK
+            
+            ```json
+            {
+            	"id": 1,
+            	"court": "State Road Park",
+            	"address1": "123 State Rd",
+            	"address2": null,
+            	"city": "Durham",
+            	"state": "NC",
+            	"zipcode": "27705"
+            }
+            ```
+            
+        
+        ### Create Court Address
+        
+        > /court/<int:pk>/address/
+        > 
+        - Method: POST
+        - Permissions: Authenticated or Read-Only
+        - Request:
+            
+            ```json
+            {
+            	"address1": "5578 Main St",
+            	"address2": null,
+            	"city": "Cary",
+            	"state": "NC",
+            	"zipcode": "90210"
+            }
+            ```
+            
+        - Response: JSON Object, 201_CREATED
+            
+            ```json
+            {
+            	"id": 2,
+            	"court": "Big Oaks Park",
+            	"address1": "5578 Main St",
+            	"address2": null,
+            	"city": "Cary",
+            	"state": "NC",
+            	"zipcode": "90210"
+            }
+            ```
 
 
 
