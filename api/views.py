@@ -134,3 +134,11 @@ class UserDetail(ListAPIView):
     def get_queryset(self):
         queryset = User.objects.filter(username=self.kwargs['username'])
         return queryset
+
+class MyComfirmedHostGameSessions(ListAPIView):
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(host=self.request.user, guest__status='Accepted')
+        return queryset
