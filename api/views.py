@@ -145,6 +145,7 @@ class MyComfirmedHostGameSessions(ListAPIView):
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         return queryset
 
+#I checked to make sure this pulled only the users' games that were accepted. It does not pull game sessions where the user is a guest and another guest is accepted so that is good.
 class MyComfirmedGuestGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
