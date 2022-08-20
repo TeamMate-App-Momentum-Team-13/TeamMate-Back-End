@@ -1,10 +1,25 @@
+import profile
 from pyexpat import model
 from rest_framework import serializers
 from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
 
 
-class UserSerializer(serializers.ModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    
+    
+    class Meta:
+        model = Profile
+        fields = [
+            'id',
+            'user',
+            'profile_pic',
+            'ntrp_rating',
+        ]
 
+class UserSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    
     class Meta:
         model = User
         fields = [
@@ -12,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
+            'profile',
         ]
 
 class CourtAddressSerializer(serializers.ModelSerializer):
@@ -78,17 +94,6 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'guest_info',
         ]
 
-class ProfileSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(slug_field="username", read_only=True)
-    
-    class Meta:
-        model = Profile
-        fields = [
-            'id',
-            'user',
-            'profile_pic',
-            'ntrp_rating',
-        ]
 
 class UserDetailSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
