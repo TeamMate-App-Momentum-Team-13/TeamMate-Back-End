@@ -160,7 +160,25 @@ class MyComfirmedGuestGameSessions(ListAPIView):
         return queryset
 
 class MyOpenHostGameSessions(ListAPIView):
-    pass
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+    
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(
+            host=self.request.user,
+            guest__status='Pending')
+        # Only show upcoming games
+        queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        return queryset
 
 class MyOpenGuestGameSessions(ListAPIView):
-    pass
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(
+            guest__user=self.request.user, 
+            guest__status='Pending')
+        # Only show upcoming games
+        queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        return queryset
