@@ -16,6 +16,7 @@ urlpatterns = [
     path('<str:username>', api_views.UserDetail.as_view(), name='user-details'),
     path('profile/', api_views.ListCreateUpdateProfile.as_view(), name='profile'),
     path('profile/confirmed-host/', api_views.MyComfirmedHostGameSessions.as_view(), name='profile-comfirmed-host'),
+    path('profile/confirmed-guest/', api_views.MyComfirmedGuestGameSessions.as_view(), name='profile-comfirmed-guest'),
     path('session/', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
     path('court/', api_views.ListCreateCourt.as_view(), name='court'),
