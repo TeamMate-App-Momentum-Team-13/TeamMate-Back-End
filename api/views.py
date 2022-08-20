@@ -134,8 +134,9 @@ class UserDetail(ListAPIView):
 
     def get_queryset(self):
         queryset = User.objects.filter(username=self.kwargs['username'])
-        return queryset
+        return queryset.order_by("date","time")
 
+# Returns confirmed games where user = host | guest
 class MyConfirmedGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
@@ -146,8 +147,9 @@ class MyConfirmedGameSessions(ListAPIView):
             Q(guest__user=self.request.user, guest__status='Accepted'))
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        return queryset
+        return queryset.order_by("date","time")
 
+# Returns confirmed games where user = host
 class MyConfirmedHostGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
@@ -158,8 +160,9 @@ class MyConfirmedHostGameSessions(ListAPIView):
             guest__status='Accepted')
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        return queryset
+        return queryset.order_by("date","time")
 
+# Returns confirmed games where user = guest
 class MyConfirmedGuestGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
@@ -170,8 +173,22 @@ class MyConfirmedGuestGameSessions(ListAPIView):
             guest__status='Accepted')
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        return queryset
+        return queryset.order_by("date","time")
 
+# Returns open games where user = host | guest
+class MyOpenGameSessions(ListAPIView):
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(
+            Q(host=self.request.user, guest__status='Pending') | 
+            Q(guest__user=self.request.user, guest__status='Pending'))
+        # Only show upcoming games
+        queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        return queryset.order_by("date","time")
+
+# Returns open games where user = host
 class MyOpenHostGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
@@ -182,8 +199,9 @@ class MyOpenHostGameSessions(ListAPIView):
             guest__status='Pending')
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        return queryset
+        return queryset.order_by("date","time")
 
+# Returns open games where user = guest
 class MyOpenGuestGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
@@ -194,4 +212,4 @@ class MyOpenGuestGameSessions(ListAPIView):
             guest__status='Pending')
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
-        return queryset
+        return queryset.order_by("date","time")
