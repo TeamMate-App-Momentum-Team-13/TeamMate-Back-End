@@ -2,6 +2,7 @@ from datetime import datetime
 import pytz
 from functools import partial
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from rest_framework import permissions, status, views, viewsets
 from rest_framework.views import APIView
 from django.views.generic import TemplateView
@@ -135,7 +136,19 @@ class UserDetail(ListAPIView):
         queryset = User.objects.filter(username=self.kwargs['username'])
         return queryset
 
-class MyComfirmedHostGameSessions(ListAPIView):
+class MyConfirmedGameSessions(ListAPIView):
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = GameSession.objects.filter(
+            Q(host=self.request.user, guest__status='Accepted') |
+            Q(guest__user=self.request.user, guest__status='Accepted'))
+        # Only show upcoming games
+        queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        return queryset
+
+class MyConfirmedHostGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
 
@@ -147,7 +160,7 @@ class MyComfirmedHostGameSessions(ListAPIView):
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         return queryset
 
-class MyComfirmedGuestGameSessions(ListAPIView):
+class MyConfirmedGuestGameSessions(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticated,]
 
