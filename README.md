@@ -11,7 +11,13 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/token/logout/ | POST | Logout |
 | User Profile | /profile/ | GET, POST, PATCH | List, Create, Patch Profile |
 | User Details | /<str:username> | GET | List User Details |
-| Game Sessions | /session/ | GET, POST,  | List & Create Game Session |
+| User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
+| User’s Game Sessions | /<str:username>/confirmed-guest/ | GET | Confirmed Games (user = guest) |
+| User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
+| User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
+| Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
 | Game Sessions | /session/?search | Filter Game Sessions |  |
 | Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
 | Game Sessions | /session/<int:pk>/survey | GET, POST |  |
@@ -144,6 +150,23 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
     	}
     ```
     
+
+### User’s Game Sessions
+
+- Method: GET
+- Data JSON:
+    - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
+
+|  | user = host | user = guest | status = pending | status = accepted |
+| --- | --- | --- | --- | --- |
+| /<str:username> | X | X | X | X |
+| /<str:username>/confirmed/ | X | X |  | X |
+| /<str:username>/confirmed-host/ | X |  |  | X |
+| /<str:username>/confirmed-guest/ |  | X |  | X |
+| /<str:username>/open/ | X | X | X |  |
+| /<str:username>/open-host/ | X |  | X |  |
+| /<str:username>/open-guest/ |  | X | X |  |
+
 
 ## User Profiles
 
