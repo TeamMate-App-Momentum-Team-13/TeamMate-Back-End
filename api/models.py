@@ -84,6 +84,7 @@ class GameSession(BaseModel):
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    confirmed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.pk} {self.host}, {self.match_type}, {self.session_type}"
