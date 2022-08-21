@@ -134,7 +134,7 @@ class UserDetail(ListAPIView):
 
     def get_queryset(self):
         queryset = User.objects.filter(username=self.kwargs['username'])
-        return queryset.order_by("date","time")
+        return queryset
 
 # Returns confirmed games where user = host | guest
 class MyConfirmedGameSessions(ListAPIView):
