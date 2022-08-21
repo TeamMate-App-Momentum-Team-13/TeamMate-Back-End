@@ -2,6 +2,21 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
+#signals imports
+
+from django.dispatch import receiver
+from django.db.models.signals import (
+    post_save
+)
+
+#This is the post_save django signal
+@receiver(post_save, sender='api.Guest')
+def notification_created_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        print(f"{instance.user.username} is pending for {instance.game_session}")
+    else: 
+        print("Guest has been updated")
+
 def restrict_amount(value):
         parent = GameSession.objects.get(id=value)
         if parent.match_type == 'Singles':
@@ -86,7 +101,7 @@ class GameSession(BaseModel):
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
     def __str__(self):
-        return f"{self.pk} {self.host}, {self.match_type}, {self.session_type}"
+        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
 
 class Guest(BaseModel):
     
