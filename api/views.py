@@ -117,6 +117,7 @@ class ListCreateUpdateProfile(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch (self, request, **kwargs):
+        self.get(request)
         profile = request.user.profile
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
