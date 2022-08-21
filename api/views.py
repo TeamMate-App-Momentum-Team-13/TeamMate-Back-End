@@ -102,31 +102,19 @@ class ListCreateCourtAddress(ListCreateAPIView):
         serializer.save(court=court)
 
 class ListCreateUpdateProfile(APIView):
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    # def get(self, request):
-    #     profile = request.user.profile
-    #     serializer = ProfileSerializer(profile)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-    
+    # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        profile = Profile.objects.get(user_id=request.user)
-        if profile is not None:
+        try:
+            profile = request.user.profile
             serializer = ProfileSerializer(profile)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request): 
-        user = self.request.user
-        if self.request.data == {}:
-            profile = Profile(user=user)
-        else:
-            ntrp_rating = self.request.data["ntrp_rating"]
-            profile = Profile(user=user, ntrp_rating=ntrp_rating)
-        profile.save()
-        serializer = ProfileSerializer(profile, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except:
+            create_profile = Profile(user=request.user)
+            create_profile.save()
+            serializer = ProfileSerializer(create_profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch (self, request, **kwargs):
         profile = request.user.profile
