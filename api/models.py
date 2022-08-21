@@ -11,7 +11,7 @@ def restrict_amount(value):
             if parent.guest.count() >= 6:
                 raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
 
-def check_game_session_confirmed_status(game_session_pk):
+def check_game_session_confirm_criteria(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
     guests = game_session.guest.all()
     accepted_guests_count = guests.filter(status = 'Accepted').count()
