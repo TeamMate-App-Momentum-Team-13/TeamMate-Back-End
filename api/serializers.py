@@ -111,3 +111,17 @@ class UserDetailSerializer(serializers.ModelSerializer):
             'game_session',
             'guest',
         ]
+
+class NotificationGameSessionSerializers(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'sender',
+            'reciever',
+            'last_name',
+            'message',
+            'game_session',
+            'read',
+        ]

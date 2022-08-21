@@ -10,7 +10,15 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import CourtSerializer, CourtAddressSerializer, GameSessionSerializer, GuestSerializer, ProfileSerializer, UserDetailSerializer
+from .serializers import (
+    CourtSerializer, 
+    CourtAddressSerializer, 
+    GameSessionSerializer, 
+    GuestSerializer, 
+    ProfileSerializer, 
+    UserDetailSerializer,
+    NotificationGameSessionSerializers,
+    )
 
 from rest_framework.generics import (
     CreateAPIView, 
@@ -29,6 +37,7 @@ from .models import (
     Guest, 
     Profile, 
     AddressModelMixin,
+    NotificationGameSession,
     restrict_amount,
 )
 
@@ -213,3 +222,8 @@ class MyOpenGuestGameSessions(ListAPIView):
         # Only show upcoming games
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         return queryset.order_by("date","time")
+
+# Returns list of notifications
+class ListNotificationGameSession(ListAPIView):
+    queryset = NotificationGameSession.objects.all()
+    serializer_class = NotificationGameSessionSerializers

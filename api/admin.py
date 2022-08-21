@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
+from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin, NotificationGameSession
 # Register your models here.
 
 admin.site.register(User)
@@ -10,3 +10,4 @@ admin.site.register(UserAddress)
 admin.site.register(Guest)
 admin.site.register(Profile)
 admin.site.register(AddressModelMixin)
+admin.site.register(NotificationGameSession)
