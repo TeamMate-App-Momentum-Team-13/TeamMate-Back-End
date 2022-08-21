@@ -14,6 +14,12 @@ from django.db.models.signals import (
 def notification_created_handler(sender, instance, created, *args, **kwargs):
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
+        NotificationGameSession.objects.create(
+            sender=instance.user,
+            reciever=instance.game_session.host,
+            message=(f"You have a new Pending Guest"),
+            game_session = instance.game_session,
+            )
     else: 
         print("Guest has been updated")
 

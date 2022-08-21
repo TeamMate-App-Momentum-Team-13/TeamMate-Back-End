@@ -1,7 +1,17 @@
 import profile
 from pyexpat import model
 from rest_framework import serializers
-from .models import User, GameSession, Court, CourtAddress, UserAddress, Guest, Profile, AddressModelMixin
+from .models import (
+    User, 
+    GameSession, 
+    Court, 
+    CourtAddress, 
+    UserAddress, 
+    Guest, 
+    Profile, 
+    AddressModelMixin, 
+    NotificationGameSession,
+)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -115,12 +125,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
 class NotificationGameSessionSerializers(serializers.ModelSerializer):
 
     class Meta:
-        model = User
+        model = NotificationGameSession
         fields = [
             'id',
             'sender',
             'reciever',
-            'last_name',
             'message',
             'game_session',
             'read',
