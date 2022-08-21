@@ -104,10 +104,18 @@ class ListCreateCourtAddress(ListCreateAPIView):
 class ListCreateUpdateProfile(APIView):
     permission_classes = (IsOwnerOrReadOnly,)
 
+    # def get(self, request):
+    #     profile = request.user.profile
+    #     serializer = ProfileSerializer(profile)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def get(self, request):
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        profile = Profile.objects.get(user_id=request.user)
+        if profile is not None:
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request): 
         user = self.request.user
