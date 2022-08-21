@@ -143,3 +143,11 @@ class Profile(BaseModel):
 
     def __str__(self):
         return f"{self.user}"
+
+#related name clased when all of them were set to "notificationgamesession"
+class NotificationGameSession(BaseModel):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
+    message = models.CharField(max_length=250)
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session')
+    read = models.BooleanField(default=False)
