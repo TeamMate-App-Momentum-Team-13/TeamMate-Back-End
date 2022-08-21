@@ -11,6 +11,21 @@ def restrict_amount(value):
             if parent.guest.count() >= 6:
                 raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
 
+def check_game_session_confirmed_status(game_session_pk):
+    game_session = GameSession.objects.get(pk=game_session_pk)
+    guests = game_session.guest.all()
+    accepted_guests_count = guests.filter(status = 'Accepted').count()
+
+    if game_session.match_type == 'Singles' and accepted_guests_count == 1:
+        set_confirmed_true(game_session)
+    elif game_session.match_type == 'Doubles' and accepted_guests_count == 3:
+        set_confirmed_true(game_session)
+
+def set_confirmed_true(game_session):
+    game_session.update({'confirmed': True})
+    game_session.save()
+
+
 class User(AbstractUser):
     def __str__(self):
         return self.username
