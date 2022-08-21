@@ -6,22 +6,55 @@ from django.core.exceptions import ValidationError
 
 from django.dispatch import receiver
 from django.db.models.signals import (
-    post_save
+    post_save,
+    post_delete,
 )
 
 #This is the post_save django signal
 @receiver(post_save, sender='api.Guest')
-def notification_created_handler(sender, instance, created, *args, **kwargs):
+def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
         NotificationGameSession.objects.create(
             sender=instance.user,
             reciever=instance.game_session.host,
-            message=(f"You have a new Pending Guest"),
+            message=(f"You have a new Pending Guest."),
             game_session = instance.game_session,
             )
     else: 
         print("Guest has been updated")
+        NotificationGameSession.objects.create(
+            sender=instance.game_session.host,
+            reciever=instance.user,
+            message=(f"Your guest request status has changed to {instance.status}"),
+            game_session = instance.game_session,
+            )
+
+@receiver(post_delete, sender='api.Guest')
+def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
+    if instance.status == "Accepted":
+        print("Accepted guest is deleted")
+        NotificationGameSession.objects.create(
+        sender=instance.user,
+        reciever=instance.game_session.host,
+        message=(f"{instance.status} has backed out of the game"),
+        game_session = instance.game_session,
+        )
+    else:
+        print("Other guest object was deleted")
+
+@receiver(post_delete, sender='api.Guest')
+def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
+    if instance.status == "Accepted":
+        print("Accepted guest is deleted")
+        NotificationGameSession.objects.create(
+        sender=instance.user,
+        reciever=instance.game_session.host,
+        message=(f"{instance.status} has backed out of the game"),
+        game_session = instance.game_session,
+        )
+    else:
+        print("Other guest object was deleted")
 
 def restrict_amount(value):
         parent = GameSession.objects.get(id=value)
