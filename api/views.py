@@ -39,7 +39,6 @@ from .models import (
     AddressModelMixin,
     NotificationGameSession,
     restrict_amount,
-    check_game_session_confirm_criteria,
 )
 
 def welcome(request):
@@ -79,12 +78,6 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        check_game_session_confirm_criteria(instance.pk)
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
 class GuestViewSet(viewsets.ModelViewSet):
     serializer_class = GuestSerializer
