@@ -29,6 +29,7 @@
 | Notification | notification/count/ | GET | List All New Notifications to count |
 | Notification | notification/all/ | GET | List All Past Notifications |
 
+=======
 ## Authentication
 
 ---
@@ -170,6 +171,7 @@
 | /<str:username>/open-host/ | X |  | X |  |
 | /<str:username>/open-guest/ |  | X | X |  |
 
+=======
 ## User Profiles
 
 ---
@@ -208,15 +210,6 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
-    
-    ```json
-    {
-    	"id": 27,
-    	"user": 5,
-    	"profile_pic": null,
-    	"ntrp_rating": "4"
-    }
-    ```
     
 
 ## Game Sessions

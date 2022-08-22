@@ -111,25 +111,22 @@ class ListCreateCourtAddress(ListCreateAPIView):
         serializer.save(court=court)
 
 class ListCreateUpdateProfile(APIView):
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
+    # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        profile = request.user.profile
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request): 
-        user = self.request.user
-        if self.request.data == {}:
-            profile = Profile(user=user)
-        else:
-            ntrp_rating = self.request.data["ntrp_rating"]
-            profile = Profile(user=user, ntrp_rating=ntrp_rating)
-        profile.save()
-        serializer = ProfileSerializer(profile, context={'request': request})
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            profile = request.user.profile
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            create_profile = Profile(user=request.user)
+            create_profile.save()
+            serializer = ProfileSerializer(create_profile)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def patch (self, request, **kwargs):
+        self.get(request)
         profile = request.user.profile
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
@@ -143,7 +140,7 @@ class UserDetail(ListAPIView):
 
     def get_queryset(self):
         queryset = User.objects.filter(username=self.kwargs['username'])
-        return queryset.order_by("date","time")
+        return queryset
 
 # Returns confirmed games where user = host | guest
 class MyConfirmedGameSessions(ListAPIView):
