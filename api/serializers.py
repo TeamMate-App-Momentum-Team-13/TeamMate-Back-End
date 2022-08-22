@@ -102,6 +102,7 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'location_info',
             'guest',
             'guest_info',
+            'confirmed'
         ]
 
 
