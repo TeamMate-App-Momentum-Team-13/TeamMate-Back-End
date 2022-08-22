@@ -17,13 +17,13 @@ def check_game_session_confirm_criteria(game_session_pk):
     accepted_guests_count = guests.filter(status = 'Accepted').count()
 
     if game_session.match_type == 'Singles' and accepted_guests_count == 1:
-        set_confirmed_true(game_session)
+        game_session.confirmed = True
     elif game_session.match_type == 'Doubles' and accepted_guests_count == 3:
-        set_confirmed_true(game_session)
+        game_session.confirmed = True
 
-def set_confirmed_true(game_session):
-    game_session.update({'confirmed': True})
-    game_session.save()
+# def set_confirmed_true(game_session):
+#     game_session.update({'confirmed': True})
+#     game_session.save()
 
 
 class User(AbstractUser):
@@ -103,6 +103,10 @@ class GameSession(BaseModel):
 
     def __str__(self):
         return f"{self.pk} {self.host}, {self.match_type}, {self.session_type}"
+    
+    @confirmed.setter
+    def confirmed(self, boolean):
+        self._confirmed = boolean
 
 class Guest(BaseModel):
     
