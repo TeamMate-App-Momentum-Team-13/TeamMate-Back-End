@@ -26,6 +26,7 @@ from rest_framework.generics import (
     ListAPIView, 
     ListCreateAPIView, 
     RetrieveUpdateDestroyAPIView, 
+    RetrieveUpdateAPIView,
 )
 
 from .models import (
@@ -134,9 +135,10 @@ class ListCreateUpdateProfile(APIView):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserDetail(ListAPIView):
+class UserDetail(RetrieveUpdateAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated,]
+    lookup_field = 'username'
 
     def get_queryset(self):
         queryset = User.objects.filter(username=self.kwargs['username'])
