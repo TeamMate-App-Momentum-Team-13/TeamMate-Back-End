@@ -2,6 +2,59 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
+#signals imports
+
+from django.dispatch import receiver
+from django.db.models.signals import (
+    post_save,
+    post_delete,
+    pre_delete,
+)
+
+#This is the post_save django signal
+@receiver(post_save, sender='api.Guest')
+def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        print(f"{instance.user.username} is pending for {instance.game_session}")
+        NotificationGameSession.objects.create(
+            sender=instance.user,
+            reciever=instance.game_session.host,
+            message=(f"You have a new Pending Guest."),
+            game_session = instance.game_session,
+        )
+    else: 
+        print("Guest has been updated")
+        NotificationGameSession.objects.create(
+            sender=instance.game_session.host,
+            reciever=instance.user,
+            message=(f"Your guest request status has changed to {instance.status}"),
+            game_session = instance.game_session,
+        )
+
+@receiver(post_delete, sender='api.Guest')
+def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
+    if instance.status == "Accepted":
+        print("Accepted guest is deleted")
+        NotificationGameSession.objects.create(
+            sender=instance.user,
+            reciever=instance.game_session.host,
+            message=(f"{instance.user} has backed out of the game"),
+            game_session = instance.game_session,
+        )
+    else:
+        print("Other guest object was deleted")
+
+@receiver(pre_delete, sender='api.GameSession')
+def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
+    print("Game Session deleted")
+    if instance.guest.count() >= 0:
+        for guest_instance in instance.guest.all():
+            NotificationGameSession.objects.create(
+                sender=instance.host,
+                reciever=guest_instance.user,
+                message=(f"{instance.host} has canceled the game"),
+            )
+
 def restrict_amount(value):
         parent = GameSession.objects.get(id=value)
         if parent.match_type == 'Singles':
@@ -86,7 +139,7 @@ class GameSession(BaseModel):
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
 
     def __str__(self):
-        return f"{self.pk} {self.host}, {self.match_type}, {self.session_type}"
+        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
 
 class Guest(BaseModel):
     
@@ -143,3 +196,11 @@ class Profile(BaseModel):
 
     def __str__(self):
         return f"{self.user}"
+
+#related name clased when all of them were set to "notificationgamesession"
+class NotificationGameSession(BaseModel):
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
+    reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
+    message = models.TextField()
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
+    read = models.BooleanField(default=False)

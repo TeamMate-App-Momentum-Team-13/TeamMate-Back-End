@@ -25,4 +25,7 @@ urlpatterns = [
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),
     path('court/', api_views.ListCreateCourt.as_view(), name='court'),
     path('court/<int:pk>/address/', api_views.ListCreateCourtAddress.as_view(), name='court-address'),
+    path('notification/check/', api_views.CheckNotificationGameSession.as_view(), name='notification-check'),
+    path('notification/count/', api_views.CountNotificationGameSession.as_view(), name='notification-count'),
+    path('notification/all/', api_views.AllNotificationGameSession.as_view(), name='notification-all'),
 ]
