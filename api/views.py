@@ -253,7 +253,7 @@ class CountNotificationGameSession(ListAPIView):
 
         return queryset
 
-# Returns list of notifications
+# Returns list of all notifications
 class AllNotificationGameSession(ListAPIView):
     serializer_class = NotificationGameSessionSerializers
     permission_classes = [permissions.IsAuthenticated,]

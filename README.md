@@ -1,6 +1,6 @@
-# Base Endpoint
+# Base URL
 
-Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
+[https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
 
@@ -9,7 +9,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Authentication | /auth/users/ | POST | Create User |
 | Authentication | /auth/token/login/ | POST | Login |
 | Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /profile/ | GET, POST, PATCH | List, Create, Patch Profile |
+| User Profile | /profile/ | GET, PATCH | List, Create (where None), Patch Profile |
 | User Details | /<str:username> | GET | List User Details |
 | User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
 | User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
@@ -25,6 +25,9 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
 | Court | /court/ | GET, POST | List &Create Court |
 | Court Address | /court/<int:pk>/address/ | GET, POST | List & Create Court Address |
+| Notification | notification/check/ | GET | View All New Notifications, Only called once |
+| Notification | notification/count/ | GET | List All New Notifications to count |
+| Notification | notification/all/ | GET | List All Past Notifications |
 
 ## Authentication
 
@@ -167,7 +170,6 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 | /<str:username>/open-host/ | X |  | X |  |
 | /<str:username>/open-guest/ |  | X | X |  |
 
-
 ## User Profiles
 
 ---
@@ -177,33 +179,10 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 - Method: GET
 - Data JSON:
     - profile_pic: feature not yet built
-    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
+    - If user profile does not exist, one will be created
+    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 (when creating)
     - A user can only have one profile
 - Response: Profile JSON Object, 200_OK :
-    
-    ```json
-    {
-    	"id": 27,
-    	"user": 5,
-    	"profile_pic": null,
-    	"ntrp_rating": "3.5"
-    }
-    ```
-    
-
-- Method: POST
-- Data JSON:
-    - profile_pic: feature not yet built
-    - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
-    - A user can only have one profile
-    
-    ```json
-    {
-    	"ntrp_rating": 3.5
-    }
-    ```
-    
-- Response: Profile JSON Object, 201_CREATED :
     
     ```json
     {
@@ -218,6 +197,7 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
 - Method: PATCH
 - Data JSON:
     - profile_pic: feature not yet built
+    - If user profile does not exist, one will be created, as it first calls the get method
     - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
     - A user can only have one profile
     
@@ -646,9 +626,88 @@ Base endpoint: [https://teammate-app.herokuapp.com/](https://teammate-app.heroku
             	"zipcode": "90210"
             }
             ```
-
-
-
+            
+        
+        # Notifications
+        
+        ---
+        
+        ### Notification Events
+        
+        The following conditions will trigger a notification to be sent to…
+        
+        - Guest when game session host has changed their status
+        - Game session host when guest has signed up
+        - Guests when game session host cancels game
+        - Game session host when accepted guest backs out
+        
+        ### Check Notifications
+        
+        > /notification/check/
+        > 
+        - Method: GET
+            - NOTE: This endpoint changes notification “read” status to true and can only be called once for unread notifications
+        - Permissions: Authenticated
+        - Response: 200_OK
+        
+        ```json
+        [
+        	{
+        		"id": 12,
+        		"sender": 4,
+        		"reciever": 2,
+        		"message": "Sam Has backed out of the game",
+        		"game_session": 11,
+        		"read": true
+        	}
+        ]
+        ```
+        
+        ### Count Notifications
+        
+        > /notification/count/
+        > 
+        - Method: GET
+            - NOTE: This endpoint should be called frequently to check count of new notifications by taking the length of the returned array
+        - Permissions: Authenticated
+        - Response: 200_OK
+        
+        ```json
+        [
+        	{
+        		"id": 12,
+        		"sender": 4,
+        		"reciever": 2,
+        		"message": "Sam Has backed out of the game",
+        		"game_session": 11,
+        		"read": false
+        	}
+        ]
+        ```
+        
+        ### List All Previous Notifications
+        
+        > /notification/all/
+        > 
+        - Method: GET
+        - Permissions: Authenticated
+        - Response: 200_OK
+        
+        ```json
+        [
+        	{
+        		"id": 12,
+        		"sender": 4,
+        		"reciever": 2,
+        		"message": "Sam Has backed out of the game",
+        		"game_session": 11,
+        		"read": true
+        	}
+        ]
+        ```
+        
+    
+    ..
 # Running a local PostgreSQL database
 
 ### Clone the API repository
