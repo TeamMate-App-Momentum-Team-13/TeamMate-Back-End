@@ -52,7 +52,7 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
             NotificationGameSession.objects.create(
                 sender=instance.host,
                 reciever=guest_instance.user,
-                message=(f"{instance.host} has backed out of the game"),
+                message=(f"{instance.host} has canceled the game"),
             )
 
 def restrict_amount(value):

@@ -223,7 +223,42 @@ class MyOpenGuestGameSessions(ListAPIView):
         queryset = queryset.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
         return queryset.order_by("date","time")
 
-# Returns list of notifications
-class ListNotificationGameSession(ListAPIView):
-    queryset = NotificationGameSession.objects.all()
+# Returns list of notifications that called once
+class CheckNotificationGameSession(ListAPIView):
     serializer_class = NotificationGameSessionSerializers
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = NotificationGameSession.objects.filter(
+            reciever=self.request.user,
+            read=False
+            )
+        #Change read status to True so get can only be called once on the notification
+        for query in queryset:
+            query.read = True
+            query.save()
+
+        return queryset
+
+# Returns list of notifications
+class CountNotificationGameSession(ListAPIView):
+    serializer_class = NotificationGameSessionSerializers
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = NotificationGameSession.objects.filter(
+            reciever=self.request.user,
+            read=False
+            )
+
+        return queryset
+
+# Returns list of notifications
+class AllNotificationGameSession(ListAPIView):
+    serializer_class = NotificationGameSessionSerializers
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        queryset = NotificationGameSession.objects.filter(reciever=self.request.user)
+
+        return queryset
