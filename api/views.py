@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework import permissions, status, views, viewsets
 from rest_framework.views import APIView
 from django.views.generic import TemplateView
+from rest_framework.parsers import JSONParser, FileUploadParser
 from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission, IsUserOwnerOrReadOnly
 from rest_framework.response import Response
@@ -114,6 +115,7 @@ class ListCreateCourtAddress(ListCreateAPIView):
 
 class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    parser_classes = [JSONParser, FileUploadParser]
 
     # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
