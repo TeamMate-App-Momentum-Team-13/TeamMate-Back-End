@@ -253,7 +253,7 @@ class SurveyResponse(BaseModel):
     WINNER = 'Winner'
     # RE: Q3 - blocking a user
     BLOCK_USER = 'Block_user'
-    #RE: Q4 - court quality
+    # RE: Q4 - court quality
     HIGH_QUALITY = 'High_quality'
     AVERAGE_QUALITY = 'Average_quality'
     POOR_QUALITY = 'Poor_quality'
