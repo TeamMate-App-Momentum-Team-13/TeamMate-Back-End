@@ -144,6 +144,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Custom User Model
 AUTH_USER_MODEL = "api.User"
 
+# Heroku
+django_on_heroku.settings(locals())
+del DATABASES['default']['OPTIONS']['sslmode']
+
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
@@ -154,6 +158,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
+# django-cors-headers
+CORS_ALLOW_ALL_ORIGINS = True
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'content-disposition',
+]
 
 # set this variable in your .env file.
 # You usually want it set to false in dev and true in prod,
@@ -181,10 +191,3 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     # You need to have django-storages in your dependencies
     # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Heroku
-django_on_heroku.settings(locals())
-del DATABASES['default']['OPTIONS']['sslmode']
-
-# django-cors-headers
-CORS_ALLOW_ALL_ORIGINS = True
