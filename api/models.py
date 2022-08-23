@@ -243,8 +243,8 @@ class NotificationGameSession(BaseModel):
 # ----- Surveys -----
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, 
-        related_name='game_session')
-    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-respondent')
+        related_name='survey_game_session')
+    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='respondent')
 
 class SurveyResponse(BaseModel):
     # RE: Q1 - no-show(s)
@@ -271,8 +271,8 @@ class SurveyResponse(BaseModel):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey')
 
     # Every instance would have one of these two FK fields populated and the other left Null
-    about_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-subject')
-    about_court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='court-survey')
+    about_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='about_user')
+    about_court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='about_court')
 
     # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
