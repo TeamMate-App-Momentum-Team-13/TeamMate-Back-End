@@ -56,14 +56,13 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
                 message=(f"{instance.host} has canceled the game"),
             )
 
-def restrict_amount(value):
-        parent = GameSession.objects.get(id=value)
-        if parent.match_type == 'Singles':
-            if parent.guest.count() >= 3:
-                raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
-        elif parent.match_type == 'Doubles':
-            if parent.guest.count() >= 6:
-                raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+
 
 def update_game_session_confirmed_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)

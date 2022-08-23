@@ -38,7 +38,7 @@ from .models import (
     Profile, 
     AddressModelMixin,
     NotificationGameSession,
-    restrict_amount,
+    restrict_guest_amount_on_game_session,
 )
 
 def welcome(request):
@@ -90,7 +90,7 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
-        restrict_amount(game_session_instance.id)
+        restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
 
 class ListCreateCourt(ListCreateAPIView):
