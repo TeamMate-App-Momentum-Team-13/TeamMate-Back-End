@@ -191,15 +191,15 @@
     	"id": 27,
     	"user": 5,
     	"profile_pic": null,
-    	"ntrp_rating": "3.5"
+    	"ntrp_rating": "3.5",
+    	"profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
     }
     ```
     
 
 - Method: PATCH
 - Data JSON:
-    - profile_pic: feature not yet built
-    - If user profile does not exist, one will be created, as it first calls the get method
+    - profile_image_file: Link on how to implement on front end [https://momentum-team-13.github.io/2022/08/01/fe-search-and-file-upload/](https://momentum-team-13.github.io/2022/08/01/fe-search-and-file-upload/)
     - ntrp_rating: 2.5 - 7, increments of .5, defaults to 2.5 if request body is empty
     - A user can only have one profile
     
@@ -210,7 +210,6 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
-    
 
 ## Game Sessions
 
