@@ -95,6 +95,8 @@ def set_confirmed_to_false(game_session):
 
 
 class User(AbstractUser):
+
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     def __str__(self):
         return self.username
 
