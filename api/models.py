@@ -56,7 +56,7 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
     if instance.guest.count() >= 0:
         for guest_instance in instance.guest.all():
             NotificationGameSession.objects.create(
-                user=instance.id,
+                sender=instance.host,
                 reciever=guest_instance.user,
                 message=(f"{instance.host} has canceled the game"),
             )
