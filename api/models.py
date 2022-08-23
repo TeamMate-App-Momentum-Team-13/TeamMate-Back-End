@@ -305,4 +305,5 @@ class Q4Response(BaseModel):
     ]
 
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='Q2')
+    court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='court')
     court_quality = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
