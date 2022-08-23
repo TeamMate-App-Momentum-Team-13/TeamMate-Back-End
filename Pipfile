@@ -15,6 +15,7 @@ django-on-heroku = "*"
 gunicorn = "*"
 django-storages = "*"
 boto3 = "*"
+pillow = "*"
 
 [dev-packages]
 
