@@ -24,6 +24,7 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
         )
     else: 
         print("Guest has been updated")
+        update_game_session_confirmed_field(instance.game_session.pk)
         NotificationGameSession.objects.create(
             sender=instance.game_session.host,
             reciever=instance.user,
@@ -61,6 +62,31 @@ def restrict_guest_amount_on_game_session(game_session_pk):
             raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
         elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
             raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+
+
+def update_game_session_confirmed_field(game_session_pk):
+    game_session = GameSession.objects.get(pk=game_session_pk)
+    guests = game_session.guest.all()
+    accepted_guests_count = guests.filter(status = 'Accepted').count()
+
+    if game_session.match_type == 'Singles':
+        if accepted_guests_count == 1:
+            set_confirmed_to_true(game_session)
+        else:
+            set_confirmed_to_false(game_session)
+    elif game_session.match_type == 'Doubles':
+        if accepted_guests_count == 3:
+            set_confirmed_to_true(game_session)
+        else:
+            set_confirmed_to_false(game_session)
+
+def set_confirmed_to_true(game_session):
+    game_session.confirmed = True
+    game_session.save()
+
+def set_confirmed_to_false(game_session):
+    game_session.confirmed = False
+    game_session.save()
 
 
 class User(AbstractUser):
@@ -136,6 +162,7 @@ class GameSession(BaseModel):
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    confirmed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
