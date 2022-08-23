@@ -32,6 +32,11 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             game_session = instance.game_session,
         )
 
+@receiver(post_save, sender='api.User')
+def user_created_profile_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
 @receiver(post_delete, sender='api.Guest')
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     if instance.status == "Accepted":
@@ -90,6 +95,8 @@ def set_confirmed_to_false(game_session):
 
 
 class User(AbstractUser):
+
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     def __str__(self):
         return self.username
 

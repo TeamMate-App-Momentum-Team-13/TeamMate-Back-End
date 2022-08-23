@@ -117,15 +117,9 @@ class ListCreateUpdateProfile(APIView):
 
     # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        try:
-            profile = request.user.profile
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            create_profile = Profile(user=request.user)
-            create_profile.save()
-            serializer = ProfileSerializer(create_profile)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch (self, request, **kwargs):
         self.get(request)
