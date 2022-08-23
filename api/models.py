@@ -238,8 +238,6 @@ class NotificationGameSession(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
     read = models.BooleanField(default=False)
 
-
-
 # ----- Surveys -----
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, 
