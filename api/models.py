@@ -32,6 +32,11 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             game_session = instance.game_session,
         )
 
+@receiver(post_save, sender='api.User')
+def user_created_profile_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
 @receiver(post_delete, sender='api.Guest')
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     if instance.status == "Accepted":
@@ -51,7 +56,7 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
     if instance.guest.count() >= 0:
         for guest_instance in instance.guest.all():
             NotificationGameSession.objects.create(
-                sender=instance.host,
+                user=instance.id,
                 reciever=guest_instance.user,
                 message=(f"{instance.host} has canceled the game"),
             )
