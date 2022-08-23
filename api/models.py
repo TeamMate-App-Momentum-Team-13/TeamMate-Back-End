@@ -32,6 +32,11 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             game_session = instance.game_session,
         )
 
+@receiver(post_save, sender='api.User')
+def user_created_profile_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
 @receiver(post_delete, sender='api.Guest')
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     if instance.status == "Accepted":
@@ -56,14 +61,13 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
                 message=(f"{instance.host} has canceled the game"),
             )
 
-def restrict_amount(value):
-        parent = GameSession.objects.get(id=value)
-        if parent.match_type == 'Singles':
-            if parent.guest.count() >= 3:
-                raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
-        elif parent.match_type == 'Doubles':
-            if parent.guest.count() >= 6:
-                raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+
 
 def update_game_session_confirmed_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
@@ -91,6 +95,8 @@ def set_confirmed_to_false(game_session):
 
 
 class User(AbstractUser):
+
+    REQUIRED_FIELDS = ['first_name', 'last_name']
     def __str__(self):
         return self.username
 
@@ -182,7 +188,7 @@ class Guest(BaseModel):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_amount, ))
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
     class Meta:

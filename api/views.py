@@ -38,7 +38,7 @@ from .models import (
     Profile, 
     AddressModelMixin,
     NotificationGameSession,
-    restrict_amount,
+    restrict_guest_amount_on_game_session,
 )
 
 def welcome(request):
@@ -53,7 +53,9 @@ class ListCreateGameSession(ListCreateAPIView):
 
     def get_queryset(self):
         # filter all games session objects to show only future games
-        queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        queryset = GameSession.objects.filter(
+            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            confirmed=False)
 
         # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
@@ -90,7 +92,7 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
-        restrict_amount(game_session_instance.id)
+        restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
 
 class ListCreateCourt(ListCreateAPIView):
@@ -115,15 +117,9 @@ class ListCreateUpdateProfile(APIView):
 
     # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        try:
-            profile = request.user.profile
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            create_profile = Profile(user=request.user)
-            create_profile.save()
-            serializer = ProfileSerializer(create_profile)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        profile = request.user.profile
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch (self, request, **kwargs):
         self.get(request)
