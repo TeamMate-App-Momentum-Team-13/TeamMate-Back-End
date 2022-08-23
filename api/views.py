@@ -53,7 +53,9 @@ class ListCreateGameSession(ListCreateAPIView):
 
     def get_queryset(self):
         # filter all games session objects to show only future games
-        queryset = GameSession.objects.filter(date__gte=datetime.now(pytz.timezone('America/New_York')))
+        queryset = GameSession.objects.filter(
+            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            confirmed=False)
 
         # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
