@@ -181,7 +181,7 @@ class Guest(BaseModel):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_amount, ))
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
     class Meta:
