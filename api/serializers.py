@@ -25,7 +25,16 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
             'profile_pic',
             'ntrp_rating',
+            'profile_image_file',
         ]
+
+    def update(self, instance, validated_data):
+      if "file" in self.initial_data:
+            file = self.initial_data.get("file")
+            instance.profile_image_file.save(file.name, file, save=True)
+            return instance
+      # this call to super is to make sure that update still works for other fields
+      return super().update(instance, validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)

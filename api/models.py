@@ -225,6 +225,7 @@ class Profile(BaseModel):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     profile_pic = models.TextField(blank=True, null=True)
+    profile_image_file = models.ImageField(upload_to='profile_images', null=True, blank=True, max_length=600)
     ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
 
     def __str__(self):
