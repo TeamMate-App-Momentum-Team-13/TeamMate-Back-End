@@ -240,21 +240,20 @@ class NotificationGameSession(BaseModel):
 
 
 
-# Base Survey Model -------------------------
+# ----- Surveys -----
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, 
         related_name='game_session')
     respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-respondent')
 
-# Version 1 ---------------------------------
 class SurveyResponse(BaseModel):
-    # RE: Q1 about no-shows
+    # RE: Q1 - no-show(s)
     NO_SHOW = 'No_show'
-    # RE: Q2 about winner(s)
+    # RE: Q2 - winner(s)
     WINNER = 'Winner'
-    # RE: Q3 about blocking a user
+    # RE: Q3 - blocking a user
     BLOCK_USER = 'Block_user'
-    #RE: Q4 about court quality
+    #RE: Q4 - court quality
     HIGH_QUALITY = 'High_quality'
     AVERAGE_QUALITY = 'Average_quality'
     POOR_QUALITY = 'Poor_quality'
@@ -268,10 +267,8 @@ class SurveyResponse(BaseModel):
         (POOR_QUALITY, 'Poor_quality'),
     ]
 
-    # Generated from URL & request.user
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, 
-        related_name='game_session')
-    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-respondent')
+    # Generated from the URL
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey')
 
     # Every instance would have one of these two FK fields populated and the other left Null
     about_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-subject')
@@ -279,31 +276,3 @@ class SurveyResponse(BaseModel):
 
     # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
-
-# Version 2 --------------------------------
-class Q1Response(BaseModel):
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='Q1')
-    no_show_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey-subject')
-
-class Q2Response(BaseModel):
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='Q2')
-    winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner')
-
-class Q3Response(BaseModel):
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='Q2')
-    blocked_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blocked_user')
-
-class Q4Response(BaseModel):
-    HIGH_QUALITY = 'High_quality'
-    AVERAGE_QUALITY = 'Average_quality'
-    POOR_QUALITY = 'Poor_quality'
-
-    RESPONSE_CHOICES = [
-        (HIGH_QUALITY, 'High_quality'),
-        (AVERAGE_QUALITY, 'Average_quality'),
-        (POOR_QUALITY, 'Poor_quality'),
-    ]
-
-    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='Q2')
-    court = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='court')
-    court_quality = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
