@@ -13,6 +13,8 @@ djoser = "*"
 django-cors-headers = "*"
 django-on-heroku = "*"
 gunicorn = "*"
+django-storages = "*"
+boto3 = "*"
 
 [dev-packages]
 
