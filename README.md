@@ -24,12 +24,11 @@
 | Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
 | Court | /court/ | GET, POST | List &Create Court |
-| Court Address | /court/<int:pk>/address/ | GET, POST | List & Create Court Address |
+| Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
 | Notification | notification/check/ | GET | View All New Notifications, Only called once |
 | Notification | notification/count/ | GET | List All New Notifications to count |
 | Notification | notification/all/ | GET | List All Past Notifications |
 
-=======
 ## Authentication
 
 ---
@@ -161,17 +160,6 @@
 - Data JSON:
     - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
 
-|  | user = host | user = guest | status = pending | status = accepted |
-| --- | --- | --- | --- | --- |
-| /<str:username> | X | X | X | X |
-| /<str:username>/confirmed/ | X | X |  | X |
-| /<str:username>/confirmed-host/ | X |  |  | X |
-| /<str:username>/confirmed-guest/ |  | X |  | X |
-| /<str:username>/open/ | X | X | X |  |
-| /<str:username>/open-host/ | X |  | X |  |
-| /<str:username>/open-guest/ |  | X | X |  |
-
-=======
 ## User Profiles
 
 ---
@@ -210,6 +198,17 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
+    
+    ```json
+    {
+    	"id": 27,
+    	"user": 5,
+    	"profile_pic": null,
+    	"ntrp_rating": "4"
+      "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
+    }
+    ```
+    
 
 ## Game Sessions
 
@@ -619,6 +618,20 @@
             }
             ```
             
+        
+        ### Update Court Address
+        
+        > /court/<int:pk>/address/
+        > 
+        - Method: PATCH
+        - Permissions: Authenticated or Read-Only
+        - Request:
+        
+        ```json
+        {
+        	"zipcode": "90210"
+        }
+        ```
         
         # Notifications
         
