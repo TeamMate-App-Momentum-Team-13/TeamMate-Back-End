@@ -105,10 +105,6 @@ class ListCreateCourtAddress(APIView):
     serializer_class = CourtAddressSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    # def get_queryset(self):
-    #     queryset = CourtAddress.objects.filter(court_id=self.kwargs.get('pk'))
-    #     return queryset
-
     def get(self, request, *args, **kwargs):
         court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
         serializer = CourtAddressSerializer(court.address)
@@ -134,10 +130,6 @@ class ListCreateCourtAddress(APIView):
         )
         serializer = CourtAddressSerializer(court_address)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    
-    # def perform_create(self, serializer):
-    #     court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
-    #     serializer.save(court=court)
 
 class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
