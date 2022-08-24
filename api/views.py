@@ -123,12 +123,17 @@ class ListCreateCourtAddress(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def post (self, request, **kwargs):
-        court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
-        serializer = CourtAddressSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        court_instance = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        court_address = CourtAddress.objects.create(
+                court=court_instance,
+                address1=request.data['address1'],
+                address2=request.data['address2'],
+                city=request.data['city'],
+                state=request.data['state'],
+                zipcode=request.data['zipcode']
+        )
+        serializer = CourtAddressSerializer(court_address)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
     
     # def perform_create(self, serializer):
     #     court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
