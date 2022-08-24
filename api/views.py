@@ -18,6 +18,8 @@ from .serializers import (
     ProfileSerializer, 
     UserDetailSerializer,
     NotificationGameSessionSerializers,
+    SurveySerializer,
+    SurveyResponseSerializer,
     )
 
 from rest_framework.generics import (
@@ -39,8 +41,11 @@ from .models import (
     Profile, 
     AddressModelMixin,
     NotificationGameSession,
+    Survey,
+    SurveyResponse,
     restrict_guest_amount_on_game_session,
 )
+
 
 def welcome(request):
     return Response({
@@ -286,3 +291,31 @@ class AllNotificationGameSession(ListAPIView):
         queryset = NotificationGameSession.objects.filter(reciever=self.request.user)
 
         return queryset
+
+# ----- Surveys -----
+class ListCreateSurvey(ListCreateAPIView):
+    queryset = Survey.objects.all()
+    serializer_class = SurveySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = Survey.objects.filter(game_session_id=self.kwargs.get('session_pk'))
+        return queryset
+
+    def perform_create(self, serializer):
+        game_session = get_object_or_404(GameSession, pk=self.kwargs.get('session_pk'))
+        respondent = self.request.user
+        serializer.save(game_session=game_session, respondent=respondent)
+
+class CreateSurveyResponse(CreateAPIView):
+    queryset = SurveyResponse.objects.all()
+    serializer_class = SurveyResponseSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    # def get_queryset(self):
+    #     queryset = SurveyResponse.objects.filter(response_id=self.kwargs.get('survey_pk'))
+    #     return queryset
+
+    def perform_create(self, serializer):
+        survey = get_object_or_404(Survey, pk=self.kwargs.get('survey_pk'))
+        serializer.save(survey=survey)
