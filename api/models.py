@@ -270,9 +270,9 @@ class SurveyResponse(BaseModel):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey')
 
     # Every instance would have one of these two FK fields populated and the other left Null
-    about_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
+    about_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,
         related_name='about_user')
-    about_court = models.ForeignKey(Court, on_delete=models.CASCADE, null=True,
+    about_court = models.ForeignKey(Court, on_delete=models.CASCADE, null=True, blank=True,
         related_name='about_court')
 
     # Every instance must have a response
