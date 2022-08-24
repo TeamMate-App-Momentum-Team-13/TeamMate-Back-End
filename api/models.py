@@ -243,7 +243,7 @@ class NotificationGameSession(BaseModel):
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, 
         related_name='survey_game_session')
-    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='respondent')
+    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='respondent')   
 
 class SurveyResponse(BaseModel):
     # RE: Q1 - no-show(s)
