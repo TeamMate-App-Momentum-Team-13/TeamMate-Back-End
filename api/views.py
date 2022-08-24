@@ -280,7 +280,7 @@ class MyGamesList(ListAPIView):
                     guest__isnull=True, 
                     confirmed=False)
             # doubles games that I host with other accepted guest but not confirmed yet and No pending guest
-            elif my_games_search == "HostUnconfirmedNotPendingDoubles":
+            elif my_games_search == "HostNotPendingUnconfirmedDoubles":
                 my_games = my_games.filter(
                     host=self.request.user,
                     match_type="Doubles", 
@@ -288,9 +288,10 @@ class MyGamesList(ListAPIView):
                 #this filters for guest_status that does not equal pending
                 my_games = my_games.filter(~Q(guest__status="Pending"))
             # Doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
-            elif my_games_search == "GuestUnconfirmedDoubles":
+            elif my_games_search == "GuestAcceptedUnconfirmedDoubles":
                 my_games = my_games.filter(
                     guest__user=self.request.user,
+                    guest__status="Accepted",
                     match_type="Doubles", 
                     confirmed=False)
 
