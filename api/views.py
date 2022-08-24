@@ -101,17 +101,38 @@ class ListCreateCourt(ListCreateAPIView):
     serializer_class = CourtSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-class ListCreateCourtAddress(ListCreateAPIView):
+class ListCreateCourtAddress(APIView):
     serializer_class = CourtAddressSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def get_queryset(self):
-        queryset = CourtAddress.objects.filter(court_id=self.kwargs.get('pk'))
-        return queryset
-    
-    def perform_create(self, serializer):
+    # def get_queryset(self):
+    #     queryset = CourtAddress.objects.filter(court_id=self.kwargs.get('pk'))
+    #     return queryset
+
+    def get(self, request, *args, **kwargs):
         court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
-        serializer.save(court=court)
+        serializer = CourtAddressSerializer(court.address)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch (self, request, **kwargs):
+        court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        serializer = CourtAddressSerializer(court.address, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post (self, request, **kwargs):
+        court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        serializer = CourtAddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    # def perform_create(self, serializer):
+    #     court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+    #     serializer.save(court=court)
 
 class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
