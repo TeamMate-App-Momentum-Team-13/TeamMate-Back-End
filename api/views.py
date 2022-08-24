@@ -298,11 +298,11 @@ class ListCreateSurvey(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_querset(self):
-        queryset = Survey.objects.filter(game_session_id=self.kwargs.get('session-pk'))
+        queryset = Survey.objects.filter(game_session_id=self.kwargs.get('session_pk'))
         return queryset
 
     def perform_create(self, serializer):
-        game_session = get_object_or_404(GameSession, pk=self.kwargs.get('session-pk'))
+        game_session = get_object_or_404(GameSession, pk=self.kwargs.get('session_pk'))
         respondent = self.request.user
         serializer.save(game_session=game_session, respondent=respondent)
 
@@ -312,9 +312,9 @@ class ListCreateSurveyResponse(ListCreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        queryset = SurveyResponse.objects.filter(response_id=self.kwargs.get('survey-pk'))
+        queryset = SurveyResponse.objects.filter(response_id=self.kwargs.get('survey_pk'))
         return queryset
     
     def perform_create(self, serializer):
-        survey = get_object_or_404(Survey, pk=self.kwargs.get('survey-pk'))
+        survey = get_object_or_404(Survey, pk=self.kwargs.get('survey_pk'))
         serializer.save(survey=survey)
