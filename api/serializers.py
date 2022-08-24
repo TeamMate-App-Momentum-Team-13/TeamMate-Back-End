@@ -11,12 +11,13 @@ from .models import (
     Profile, 
     AddressModelMixin, 
     NotificationGameSession,
+    Survey,
+    SurveyResponse,
 )
 
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
-    
     
     class Meta:
         model = Profile
@@ -114,7 +115,6 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'confirmed'
         ]
 
-
 class UserDetailSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
     game_session = GameSessionSerializer(many=True, read_only=True)
@@ -143,4 +143,27 @@ class NotificationGameSessionSerializers(serializers.ModelSerializer):
             'message',
             'game_session',
             'read',
+        ]
+
+class SurveySerializer(serializers.ModelSerializer):
+    respondent = serializers.SlugRelatedField(slug_field="username", read_only=True)
+
+    class Meta:
+        model = Survey
+        fields = [
+            'id',
+            'respondent',
+            'game_session',
+        ]
+
+class SurveyResponseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SurveyResponse
+        fields = [
+            'id',
+            'survey',
+            'about_user',
+            'about_court',
+            'response',
         ]
