@@ -20,6 +20,7 @@ urlpatterns = [
     path('<str:username>/open/', api_views.MyOpenGameSessions.as_view(), name='open-all'),
     path('<str:username>/open-host/', api_views.MyOpenHostGameSessions.as_view(), name='open-host'),
     path('<str:username>/open-guest/', api_views.MyOpenGuestGameSessions.as_view(), name='open-guest'),
+    path('<str:username>/games/', api_views.MyGamesList.as_view(), name='my-games'),
     path('profile/', api_views.ListCreateUpdateProfile.as_view(), name='profile'),
     path('session/', api_views.ListCreateGameSession.as_view(), name='game-session-list'),
     path('session/<int:pk>', api_views.RetrieveUpdateDestroyGameSession.as_view(), name='game-session-detail'),

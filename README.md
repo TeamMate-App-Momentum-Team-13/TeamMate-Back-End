@@ -17,12 +17,14 @@
 | User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
 | User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
 | User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
+| User’s Game Sessions | /<str:username>/games/?my-games= | GET | Several My Games List Returned |
 | Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
 | Game Sessions | /session/?search | Filter Game Sessions |  |
 | Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
-| Game Sessions | /session/<int:pk>/survey | GET, POST |  |
 | Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
 | Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+| Survey | /session/<int:session-pk>/survey | GET, POST | List, Create Survey |
+| Survey Responses | /session/<int:session-pk>/survey/<int:survey-pk>/response | GET, POST | List, Create Survey Response |
 | Court | /court/ | GET, POST | List &Create Court |
 | Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
 | Notification | notification/check/ | GET | View All New Notifications, Only called once |
@@ -159,6 +161,29 @@
 - Method: GET
 - Data JSON:
     - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
+
+|  | user = host | user = guest | status = pending | status = accepted |
+| --- | --- | --- | --- | --- |
+| /<str:username> | X | X | X | X |
+| /<str:username>/confirmed/ | X | X |  | X |
+| /<str:username>/confirmed-host/ | X |  |  | X |
+| /<str:username>/confirmed-guest/ |  | X |  | X |
+| /<str:username>/open/ | X | X | X |  |
+| /<str:username>/open-host/ | X |  | X |  |
+| /<str:username>/open-guest/ |  | X | X |  |
+
+### MORE User’s Game Sessions
+
+> /<str:username>/games/?my-games=
+> 
+- Method: GET
+- Search Options
+    - **AllConfirmed** : All confirmed games
+    - **HostUnconfirmed :** Unconfirmed games that I host that have a pending request, aka games I need to respond to.
+    - **GuestPending** : games that I have requested to join and those requests haven't been accepted/rejected yet, aka pending sent requests
+    - **HostNoGuest** : games that I host that have no guests (pending or accepted, etc) so that I can delete this game session and no one needs to be notified. I could also edit this game
+    - **HostNotPendingUnconfirmedDoubles :** doubles games that I host with other accepted guest but not confirmed yet and No pending guest
+    - **GuestAcceptedUnconfirmedDoubles** : doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
 
 ## User Profiles
 
