@@ -145,17 +145,6 @@ class NotificationGameSessionSerializers(serializers.ModelSerializer):
             'read',
         ]
 
-class SurveySerializer(serializers.ModelSerializer):
-    respondent = serializers.SlugRelatedField(slug_field="username", read_only=True)
-
-    class Meta:
-        model = Survey
-        fields = [
-            'id',
-            'respondent',
-            'game_session',
-        ]
-
 class SurveyResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -165,5 +154,18 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
             'survey',
             'about_user',
             'about_court',
+            'response',
+        ]
+
+class SurveySerializer(serializers.ModelSerializer):
+    respondent = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    response = SurveyResponseSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Survey
+        fields = [
+            'id',
+            'respondent',
+            'game_session',
             'response',
         ]
