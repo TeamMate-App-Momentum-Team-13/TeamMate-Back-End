@@ -18,6 +18,8 @@ from .serializers import (
     ProfileSerializer, 
     UserDetailSerializer,
     NotificationGameSessionSerializers,
+    SurveySerializer,
+    SurveyResponseSerializer,
     )
 
 from rest_framework.generics import (
@@ -39,6 +41,8 @@ from .models import (
     Profile, 
     AddressModelMixin,
     NotificationGameSession,
+    Survey,
+    SurveyResponse,
     restrict_guest_amount_on_game_session,
 )
 
@@ -268,3 +272,14 @@ class AllNotificationGameSession(ListAPIView):
         queryset = NotificationGameSession.objects.filter(reciever=self.request.user)
 
         return queryset
+
+# ----- Surveys -----
+class ListCreateSurvey(ListCreateAPIView):
+    queryset = Survey.objects.all()
+    serializer_class = SurveySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+class ListCreateSurveyResponse(ListCreateAPIView):
+    queryset = SurveyResponse.objects.all()
+    serializer_class = SurveyResponseSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
