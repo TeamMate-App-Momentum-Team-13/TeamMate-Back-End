@@ -105,17 +105,35 @@ class ListCreateCourt(ListCreateAPIView):
     serializer_class = CourtSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-class ListCreateCourtAddress(ListCreateAPIView):
+class ListCreateCourtAddress(APIView):
     serializer_class = CourtAddressSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
-    def get_queryset(self):
-        queryset = CourtAddress.objects.filter(court_id=self.kwargs.get('pk'))
-        return queryset
-    
-    def perform_create(self, serializer):
+    def get(self, request, *args, **kwargs):
         court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
-        serializer.save(court=court)
+        serializer = CourtAddressSerializer(court.address)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def patch (self, request, **kwargs):
+        court = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        serializer = CourtAddressSerializer(court.address, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def post (self, request, **kwargs):
+        court_instance = get_object_or_404(Court, pk=self.kwargs.get('pk'))
+        court_address = CourtAddress.objects.create(
+                court=court_instance,
+                address1=request.data['address1'],
+                address2=request.data['address2'],
+                city=request.data['city'],
+                state=request.data['state'],
+                zipcode=request.data['zipcode']
+        )
+        serializer = CourtAddressSerializer(court_address)
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
 class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
