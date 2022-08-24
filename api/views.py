@@ -2,6 +2,7 @@ from datetime import datetime
 import pytz
 from functools import partial
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from rest_framework import permissions, status, views, viewsets
 from rest_framework.views import APIView
 from django.views.generic import TemplateView
@@ -251,6 +252,55 @@ class MyOpenGuestGameSessions(ListAPIView):
             guest__user=self.request.user,
             guest__status='Accepted')
         return open_games_as_guest.order_by("date","time")
+
+class MyGamesList(ListAPIView):
+    serializer_class = GameSessionSerializer
+    permission_classes = [permissions.IsAuthenticated,]
+
+    def get_queryset(self):
+        my_games = GameSession.objects.filter(
+            date__gte=datetime.now(pytz.timezone('America/New_York')))
+    
+        my_games_search = self.request.query_params.get("my-games")
+        if my_games_search is not None:
+            #User's Confirmed Games as Guest and Host
+            if my_games_search == "AllConfirmed":
+                my_games = my_games.filter(confirmed=True)
+                my_host_confirmed_games =  my_games.filter(host=self.request.user)
+                my_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
+                my_games = my_host_confirmed_games.union(my_guest_confirmed_games, all=False)
+            # unconfirmed games that I host that have a pending request
+            elif my_games_search == "HostUnconfirmed":
+                my_games = my_games.filter(host=self.request.user, confirmed=False)
+            #games that I have requested to join and those requests haven't been accepted/rejected yet, aka pending sent requests
+            elif my_games_search == "GuestPending":
+                my_games = my_games.filter(
+                    guest__user=self.request.user, 
+                    guest__status='Pending', 
+                    confirmed=False)
+            # games that I host that have no guests (pending or accepted, etc) so that I can delete this game session and no one needs to be notified. I could also edit this game       
+            elif my_games_search == "HostNoGuest":
+                my_games = my_games.filter(
+                    host=self.request.user, 
+                    guest__isnull=True, 
+                    confirmed=False)
+            # doubles games that I host with other accepted guest but not confirmed yet and No pending guest
+            elif my_games_search == "HostNotPendingUnconfirmedDoubles":
+                my_games = my_games.filter(
+                    host=self.request.user,
+                    match_type="Doubles", 
+                    confirmed=False)
+                #this filters for guest_status that does not equal pending
+                my_games = my_games.filter(~Q(guest__status="Pending"))
+            # Doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
+            elif my_games_search == "GuestAcceptedUnconfirmedDoubles":
+                my_games = my_games.filter(
+                    guest__user=self.request.user,
+                    guest__status="Accepted",
+                    match_type="Doubles", 
+                    confirmed=False)
+
+        return my_games.order_by("date","time")
 
 # Returns list of notifications that called once
 class CheckNotificationGameSession(ListAPIView):
