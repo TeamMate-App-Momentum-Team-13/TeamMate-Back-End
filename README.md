@@ -3,7 +3,32 @@
 [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
-
+| Type | URL | Methods | Description |
+| --- | --- | --- | --- |
+| Authentication | /auth/users/ | POST | Create User |
+| Authentication | /auth/token/login/ | POST | Login |
+| Authentication | /auth/token/logout/ | POST | Logout |
+| User Profile | /profile/ | GET, PATCH | List, Create (where None), Patch Profile |
+| User Details | /<str:username> | GET | List User Details |
+| User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
+| User’s Game Sessions | /<str:username>/confirmed-guest/ | GET | Confirmed Games (user = guest) |
+| User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
+| User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
+| User’s Game Sessions | /<str:username>/games/?my-games= | GET | Several My Games List Returned |
+| Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
+| Game Sessions | /session/?search | Filter Game Sessions |  |
+| Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
+| Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
+| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+| Survey | /session/<int:session_pk>/survey | GET, POST | List & Create Survey |
+| Survey Responses | /session/<int:session_pk>/survey/<int:survey_pk>/response | POST | Create Survey Response |
+| Court | /court/ | GET, POST | List & Create Court |
+| Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
+| Notification | notification/check/ | GET | View All New Notifications, Only called once |
+| Notification | notification/count/ | GET | List All New Notifications to count |
+| Notification | notification/all/ | GET | List All Past Notifications |
 ## Authentication
 
 ---
