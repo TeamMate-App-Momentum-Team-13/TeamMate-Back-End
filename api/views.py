@@ -62,7 +62,7 @@ class ListCreateGameSession(ListCreateAPIView):
         # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(
             date__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=False).exclude(host=self.request.user)
+            confirmed=False)
 
         # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
@@ -78,7 +78,7 @@ class ListCreateGameSession(ListCreateAPIView):
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
 
-        return queryset.order_by("date","time")
+        return queryset.order_by("date","time").exclude(host=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
