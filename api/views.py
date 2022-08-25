@@ -299,7 +299,14 @@ class MyGamesList(ListAPIView):
                     guest__status="Accepted",
                     match_type="Doubles", 
                     confirmed=False)
-
+            # list of my previous games
+            elif my_games_search == "MyPreviousGames":
+                my_games = GameSession.objects.filter(date__lte=datetime.now(pytz.timezone('America/New_York')))
+                my_games = my_games.filter(confirmed=True, guest__isnull=False,)
+                previous_host_confirmed_games =  my_games.filter(host=self.request.user)
+                previous_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
+                my_games = previous_host_confirmed_games.union(previous_guest_confirmed_games, all=False)
+                return my_games.order_by("-date","time")
         return my_games.order_by("date","time")
 
 # Returns list of notifications that called once
