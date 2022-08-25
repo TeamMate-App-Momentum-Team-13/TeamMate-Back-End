@@ -19,16 +19,23 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
         NotificationGameSession.objects.create(
             sender=instance.user,
             reciever=instance.game_session.host,
-            message=(f"You have a new Pending Guest."),
+            message=(f"Good news, {instance.user.first_name} would like you join your game on {instance.game_session.date} at {instance.game_session.time}. Please go to MyGames to respond."),
             game_session = instance.game_session,
         )
     else: 
         print("Guest has been updated")
         update_game_session_confirmed_field(instance.game_session.pk)
+        if instance.status == "Accepted":
+            response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {instance.game_session.date} at {instance.game_session.time}. You can see all of your confirmed games on the MyGames page."
+        elif instance.status == "Rejected":
+            response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {instance.game_session.date} anymore, but you can sign up for a different game on the Open Games page."
+        else:
+            response = f"Your guest request status has changed to {instance.status}"
+
         NotificationGameSession.objects.create(
             sender=instance.game_session.host,
             reciever=instance.user,
-            message=(f"Your guest request status has changed to {instance.status}"),
+            message=response,
             game_session = instance.game_session,
         )
 
@@ -44,7 +51,7 @@ def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
         NotificationGameSession.objects.create(
             sender=instance.user,
             reciever=instance.game_session.host,
-            message=(f"{instance.user} has backed out of the game"),
+            message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
             game_session = instance.game_session,
         )
     else:
@@ -58,7 +65,7 @@ def notification_for_deleted_game_session_handler(sender, instance, *args, **kwa
             NotificationGameSession.objects.create(
                 sender=instance.host,
                 reciever=guest_instance.user,
-                message=(f"{instance.host} has canceled the game"),
+                message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
             )
 
 def restrict_guest_amount_on_game_session(game_session_pk):
