@@ -265,13 +265,13 @@ class MyGamesList(ListAPIView):
         if my_games_search is not None:
             #User's Confirmed Games as Guest and Host
             if my_games_search == "AllConfirmed":
-                my_games = my_games.filter(confirmed=True)
+                my_games = my_games.filter(confirmed=True, guest__isnull=False,)
                 my_host_confirmed_games =  my_games.filter(host=self.request.user)
                 my_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
                 my_games = my_host_confirmed_games.union(my_guest_confirmed_games, all=False)
             # unconfirmed games that I host that have a pending request
             elif my_games_search == "HostUnconfirmed":
-                my_games = my_games.filter(host=self.request.user, confirmed=False)
+                my_games = my_games.filter(host=self.request.user, confirmed=False, guest__status='Pending')
             #games that I have requested to join and those requests haven't been accepted/rejected yet, aka pending sent requests
             elif my_games_search == "GuestPending":
                 my_games = my_games.filter(
