@@ -1,8 +1,4 @@
-# def RankCalculation(user_score, oponent_score, win_loss)
-def RankCalculation():
-    user_score = int(input("what is your score"))
-    oponent_score = int(input("what is your oponents score"))
-    win_loss = input("win or loss")
+def RankCalculation(user_score, oponent_score, win_loss):
 
     if win_loss == "win":
         if abs(user_score - oponent_score) <= 25:
@@ -74,4 +70,5 @@ def ScoreToRankConverter(user_score):
     elif user_score <= 450:
         rank = "FiveGold"
     
+    print(rank)
     return rank
