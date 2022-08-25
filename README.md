@@ -4,33 +4,6 @@
 
 # Endpoints
 
-| Type | URL | Methods | Description |
-| --- | --- | --- | --- |
-| Authentication | /auth/users/ | POST | Create User |
-| Authentication | /auth/token/login/ | POST | Login |
-| Authentication | /auth/token/logout/ | POST | Logout |
-| User Profile | /profile/ | GET, PATCH | List, Create (where None), Patch Profile |
-| User Details | /<str:username> | GET | List User Details |
-| User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
-| User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
-| User’s Game Sessions | /<str:username>/confirmed-guest/ | GET | Confirmed Games (user = guest) |
-| User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
-| User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
-| User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
-| User’s Game Sessions | /<str:username>/games/?my-games= | GET | Several My Games List Returned |
-| Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
-| Game Sessions | /session/?search | Filter Game Sessions |  |
-| Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
-| Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
-| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
-| Survey | /session/<int:session-pk>/survey | GET, POST | List, Create Survey |
-| Survey Responses | /session/<int:session-pk>/survey/<int:survey-pk>/response | GET, POST | List, Create Survey Response |
-| Court | /court/ | GET, POST | List &Create Court |
-| Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
-| Notification | notification/check/ | GET | View All New Notifications, Only called once |
-| Notification | notification/count/ | GET | List All New Notifications to count |
-| Notification | notification/all/ | GET | List All Past Notifications |
-
 ## Authentication
 
 ---
@@ -161,16 +134,6 @@
 - Method: GET
 - Data JSON:
     - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
-
-|  | user = host | user = guest | status = pending | status = accepted |
-| --- | --- | --- | --- | --- |
-| /<str:username> | X | X | X | X |
-| /<str:username>/confirmed/ | X | X |  | X |
-| /<str:username>/confirmed-host/ | X |  |  | X |
-| /<str:username>/confirmed-guest/ |  | X |  | X |
-| /<str:username>/open/ | X | X | X |  |
-| /<str:username>/open-host/ | X |  | X |  |
-| /<str:username>/open-guest/ |  | X | X |  |
 
 ### MORE User’s Game Sessions
 
@@ -530,6 +493,75 @@
             - Status Options: Accepted, Wait
         - Response: 204 No Content
         
+        # Surveys
+        
+        ---
+        
+        ### Create Surveys
+        
+        > /session/<int:session_pk>/survey
+        > 
+        - Method: POST
+        - Permissions: Authenticated or Read-Only
+        - Data:
+            - The game session PK is passed via the URL
+            - The “respondent” is the user making the request
+            - Thus, the body can remain empty
+        - Request:
+            
+            ```json
+            {
+            }
+            ```
+            
+        - Response: JSON Object, 201_CREATED
+            
+            ```json
+            {
+            	"id": 7,
+            	"respondent": "ChaseTheLegend",
+            	"game_session": 8
+            }
+            ```
+            
+        
+        ### Create SurveyResponses
+        
+        > /session/<int:session_pk>/survey/<int:survey_pk>/response
+        > 
+        - Method: POST
+        - Permissions: Authenticated or Read-Only
+        - Data:
+            - The game session PK is passed via the URL
+            - The survey PK is passed via the URL
+            - The request body must include:
+                - PK for a “about_user” or “about_court”
+                - “response” string
+                    - “about_user”: “No Show” | “Winner” | “Block User”
+                    - “about_court”: “High Quality” | “Average Quality” | “Poor Quality”
+        - Request:
+            
+            ```json
+            {
+            	"about_user": 8,
+            	"response": "Block User"
+            }
+            ```
+            
+        - Response: JSON Object, 201_CREATED
+            
+            ```json
+            {
+            	"id": 29,
+            	"survey": 7,
+            	"about_user": 8,
+            	"about_user_username": "Chad_the_GOAT",
+            	"about_court": null,
+            	"response": "Block User"
+            }
+            ```
+            
+        
         # Courts
         
         ---
@@ -722,43 +754,8 @@
         - Method: GET
         - Permissions: Authenticated
         - Response: 200_OK
-        
-        ```json
-        [
-        	{
-        		"id": 12,
-        		"sender": 4,
-        		"reciever": 2,
-        		"message": "Sam Has backed out of the game",
-        		"game_session": 11,
-        		"read": true
-        	}
-        ]
-        ```
-        
-    
-    ..
-# Running a local PostgreSQL database
 
-### Clone the API repository
-```bash
-git clone https://github.com/Momentum-Team-13/questionbox-team-back-end-plantspace.git
-```
 
-### Install project dependencies
-This project uses [Python 3.10](https://www.python.org/).
-
-Use [pipenv](https://pypi.org/project/pipenv/) to run a virtual enviroment with all the project dependencies.
-
-Activate a vitual enviroment:
-```bash
-pipenv shell
-```
-
-Install dependencies:
-```bash
-pipenv install
-```
 
 ### Create a local PostgreSQL database
 This project uses [PostgreSQL 14.4](https://www.postgresql.org/).

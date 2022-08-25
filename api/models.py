@@ -238,3 +238,42 @@ class NotificationGameSession(BaseModel):
     message = models.TextField()
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
     read = models.BooleanField(default=False)
+
+# ----- Surveys -----
+class Survey(BaseModel):
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE,
+        related_name='survey')
+    respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey')
+
+class SurveyResponse(BaseModel):
+    # RE: Q1 - no-show(s)
+    NO_SHOW = 'No Show'
+    # RE: Q2 - winner(s)
+    WINNER = 'Winner'
+    # RE: Q3 - blocking a user
+    BLOCK_USER = 'Block User'
+    # RE: Q4 - court quality
+    HIGH_QUALITY = 'High Quality'
+    AVERAGE_QUALITY = 'Average Quality'
+    POOR_QUALITY = 'Poor Quality'
+
+    RESPONSE_CHOICES = [
+        (NO_SHOW, 'No Show'),
+        (WINNER, 'Winner'),
+        (BLOCK_USER, 'Block User'),
+        (HIGH_QUALITY, 'High Quality'),
+        (AVERAGE_QUALITY, 'Average Quality'),
+        (POOR_QUALITY, 'Poor Quality'),
+    ]
+
+    # Generated from the URL
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey_response')
+
+    # Every instance would have one of these two FK fields populated and the other left Null
+    about_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='about_user')
+    about_court = models.ForeignKey(Court, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='about_court')
+
+    # Every instance must have a response
+    response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
