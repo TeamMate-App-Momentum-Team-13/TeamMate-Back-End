@@ -134,6 +134,15 @@
 - Method: GET
 - Data JSON:
     - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
+|  | user = host | user = guest | status = pending | status = accepted |
+| --- | --- | --- | --- | --- |
+| /<str:username> | X | X | X | X |
+| /<str:username>/confirmed/ | X | X |  | X |
+| /<str:username>/confirmed-host/ | X |  |  | X |
+| /<str:username>/confirmed-guest/ |  | X |  | X |
+| /<str:username>/open/ | X | X | X |  |
+| /<str:username>/open-host/ | X |  | X |  |
+| /<str:username>/open-guest/ |  | X | X |  |
 
 ### MORE User’s Game Sessions
 
@@ -147,6 +156,7 @@
     - **HostNoGuest** : games that I host that have no guests (pending or accepted, etc) so that I can delete this game session and no one needs to be notified. I could also edit this game
     - **HostNotPendingUnconfirmedDoubles :** doubles games that I host with other accepted guest but not confirmed yet and No pending guest
     - **GuestAcceptedUnconfirmedDoubles** : doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
+    - **MyPreviousGames** : List all users previous games as Host or Guest
 
 ## User Profiles
 
