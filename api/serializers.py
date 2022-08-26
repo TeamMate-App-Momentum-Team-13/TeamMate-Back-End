@@ -81,12 +81,14 @@ class CourtSerializer(serializers.ModelSerializer):
 class GuestSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
     game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
-    
+    user_info = UserSerializer(source='user', read_only=True)
+
     class Meta:
         model = Guest
         fields = [
             'id',
             'user',
+            'user_info',
             'game_session',
             'status',
         ]
