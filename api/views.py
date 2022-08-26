@@ -78,7 +78,8 @@ class ListCreateGameSession(ListCreateAPIView):
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
 
-        return queryset.order_by("date","time").exclude(host=self.request.user)
+        return queryset.order_by("date","time").exclude(
+            host=self.request.user).exclude(guest__user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
