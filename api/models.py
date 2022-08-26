@@ -57,16 +57,17 @@ def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     else:
         print("Other guest object was deleted")
 
-@receiver(pre_delete, sender='api.GameSession')
-def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
-    print("Game Session deleted")
-    if instance.guest.count() >= 0:
-        for guest_instance in instance.guest.all():
-            NotificationGameSession.objects.create(
-                sender=instance.host,
-                reciever=guest_instance.user,
-                message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
-            )
+# @receiver(pre_delete, sender='api.GameSession')
+# def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
+#     print("Game Session deleted")
+    # if instance.guest.count() > 0:
+    #     for guest_instance in instance.guest.all():
+    #         NotificationGameSession.objects.create(
+    #             sender=instance.host,
+    #             reciever=guest_instance.user,
+    #             message=(f"Oh no, Host canceled game")
+    #             # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
+    #         )
 
 def restrict_guest_amount_on_game_session(game_session_pk):
         game_session = GameSession.objects.get(id=game_session_pk)
