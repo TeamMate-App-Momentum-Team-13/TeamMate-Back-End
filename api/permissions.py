@@ -1,3 +1,4 @@
+import re
 from rest_framework import permissions
 
 
@@ -44,6 +45,9 @@ class GuestPermission(permissions.BasePermission):
         elif view.action in ['update', 'partial_update']:
             return obj.game_session.host == request.user or request.user.is_staff
         elif view.action == 'destroy':
-            return obj.user == request.user or request.user.is_staff
+            if obj.user == request.user:
+                return obj.user == request.user or request.user.is_staff
+            elif obj.game_session.host == request.user:
+                return obj.game_session.host == request.user or request.user.is_staff
         else:
             return False
