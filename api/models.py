@@ -46,7 +46,7 @@ def user_created_profile_handler(sender, instance, created, *args, **kwargs):
 
 @receiver(post_delete, sender='api.Guest')
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
-    if instance.status == "Accepted":
+    if instance.status == "Accepted" or instance.status == "Pending":
         print("Accepted guest is deleted")
         NotificationGameSession.objects.create(
             sender=instance.user,
