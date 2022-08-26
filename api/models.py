@@ -44,30 +44,43 @@ def user_created_profile_handler(sender, instance, created, *args, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+@receiver(post_save, sender='api.GameSession')
+def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        Guest.objects.create(
+            user = instance.host,
+            game_session = instance,
+            status = 'Host'
+        )
+
 @receiver(post_delete, sender='api.Guest')
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     if instance.status == "Accepted" or instance.status == "Pending":
         print("Accepted guest is deleted")
-        NotificationGameSession.objects.create(
-            sender=instance.user,
-            reciever=instance.game_session.host,
-            message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
-            game_session = instance.game_session,
-        )
+        breakpoint()
+        try: 
+            NotificationGameSession.objects.create(
+                sender=instance.user,
+                reciever=instance.game_session.host,
+                message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
+                game_session = instance.game_session,
+            )
+        except:
+            pass
     else:
         print("Other guest object was deleted")
 
-# @receiver(pre_delete, sender='api.GameSession')
-# def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
-#     print("Game Session deleted")
-    # if instance.guest.count() > 0:
-    #     for guest_instance in instance.guest.all():
-    #         NotificationGameSession.objects.create(
-    #             sender=instance.host,
-    #             reciever=guest_instance.user,
-    #             message=(f"Oh no, Host canceled game")
-    #             # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
-    #         )
+@receiver(pre_delete, sender='api.GameSession')
+def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
+    print("Game Session deleted")
+    if instance.guest.count() > 0:
+        for guest_instance in instance.guest.all():
+            NotificationGameSession.objects.create(
+                sender=instance.host,
+                reciever=guest_instance.user,
+                message=(f"Oh no, Host canceled game")
+                # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
+            )
 
 def restrict_guest_amount_on_game_session(game_session_pk):
         game_session = GameSession.objects.get(id=game_session_pk)
@@ -188,11 +201,13 @@ class Guest(BaseModel):
     WAITLISTED = 'Wait Listed'
     ACCEPTED = 'Accepted'
     REJECTED = 'Rejected'
+    HOST = 'Host'
     STATUS_CHOICES = [
         (PENDING, 'Pending'),
         (WAITLISTED, 'Wait Listed'),
         (ACCEPTED, 'Accepted'),
         (REJECTED, 'Rejected'),
+        (HOST, 'Host'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')

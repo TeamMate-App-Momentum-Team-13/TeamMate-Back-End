@@ -18,11 +18,12 @@ from .models import (
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    profile_id = serializers.ReadOnlyField(source='id')
     
     class Meta:
         model = Profile
         fields = [
-            'id',
+            'profile_id',
             'user',
             'profile_pic',
             'ntrp_rating',
@@ -39,11 +40,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
-    
+    user_id = serializers.ReadOnlyField(source='id')
     class Meta:
         model = User
         fields = [
-            'id',
+            'user_id',
             'username',
             'first_name',
             'last_name',
@@ -82,15 +83,16 @@ class GuestSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field="username", read_only=True)
     game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
     user_info = UserSerializer(source='user', read_only=True)
+    guest_id = serializers.ReadOnlyField(source='id')
 
     class Meta:
         model = Guest
         fields = [
-            'id',
+            'guest_id',
+            'status',
+            'game_session',
             'user',
             'user_info',
-            'game_session',
-            'status',
         ]
 
 class GameSessionSerializer(serializers.ModelSerializer):
@@ -99,22 +101,23 @@ class GameSessionSerializer(serializers.ModelSerializer):
     host_info = UserSerializer(source='host', read_only=True)
     location_info = CourtSerializer(source='location', read_only=True)
     guest_info = GuestSerializer(source='guest', many=True, read_only=True)
+    game_session_id = serializers.ReadOnlyField(source='id')
 
     class Meta:
         model = GameSession
         fields = [
-            'id',
+            'game_session_id',
+            'confirmed',
             'host',
             'host_info',
             'date',
             'time',
             'session_type',
             'match_type',
-            'location',
-            'location_info',
             'guest',
             'guest_info',
-            'confirmed'
+            'location',
+            'location_info',
         ]
 
 class UserDetailSerializer(serializers.ModelSerializer):
