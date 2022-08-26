@@ -86,7 +86,7 @@ class ListCreateGameSession(ListCreateAPIView):
 class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     queryset = GameSession.objects.all()
     serializer_class = GameSessionSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
 class GuestViewSet(viewsets.ModelViewSet):
     serializer_class = GuestSerializer
