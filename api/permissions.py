@@ -30,10 +30,10 @@ class GuestPermission(permissions.BasePermission):
             return request.user.is_authenticated
         elif view.action == 'create':
             return request.user.is_authenticated
-        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy', 'delete']:
             return True
         else:
-            return False
+            return True
                                                                                                 
     def has_object_permission(self, request, view, obj):
         # Deny actions on objects if the user is not authenticated
