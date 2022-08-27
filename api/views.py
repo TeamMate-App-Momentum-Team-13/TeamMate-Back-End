@@ -104,7 +104,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user, game_session=game_session_instance)
 
     def delete(self, request, *args, **kwargs):
-        instance = Guest.objects.get(user=self.request.user, game_session=self.kwargs.get('pk'))
+        instance = get_object_or_404(Guest, user=self.request.user, game_session=self.kwargs.get('pk'))
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
