@@ -103,6 +103,11 @@ class GuestViewSet(viewsets.ModelViewSet):
         restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = Guest.objects.get(user=self.request.user, game_session=kwargs['gamesession'])
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class ListCreateCourt(ListCreateAPIView):
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
