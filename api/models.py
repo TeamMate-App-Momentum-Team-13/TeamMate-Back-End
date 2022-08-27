@@ -16,12 +16,13 @@ from django.db.models.signals import (
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
-        NotificationGameSession.objects.create(
-            sender=instance.user,
-            reciever=instance.game_session.host,
-            message=(f"Good news, {instance.user.first_name} would like you join your game on {instance.game_session.date} at {instance.game_session.time}. Please go to MyGames to respond."),
-            game_session = instance.game_session,
-        )
+        if instance.user != instance.game_session.host:
+            NotificationGameSession.objects.create(
+                sender=instance.user,
+                reciever=instance.game_session.host,
+                message=(f"Good news, {instance.user.first_name} would like you join your game on {instance.game_session.date} at {instance.game_session.time}. Please go to MyGames to respond."),
+                game_session = instance.game_session,
+            )
     else: 
         print("Guest has been updated")
         update_game_session_confirmed_field(instance.game_session.pk)
