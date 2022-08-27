@@ -189,9 +189,10 @@ class GameSession(BaseModel):
     ]
 
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
-    # datetime fields require a default value for some reason. Even if its false
+    # datetime fields require a default value for some reason. Even if its false.
+    # You can only patch datetime fields if they have auto_now_add = False
     datetime = models.DateTimeField(auto_now_add=False)
-    endtime = models.DateTimeField(auto_now_add=True)
+    endtime = models.DateTimeField(auto_now_add=False)
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
