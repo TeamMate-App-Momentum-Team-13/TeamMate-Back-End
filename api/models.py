@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-import datetime
-
+from datetime import timedelta 
 #signals imports
 
 from django.dispatch import receiver
@@ -56,6 +55,11 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             game_session = instance,
             status = 'Host'
         )
+        instance.endtime = instance.datetime + timedelta(hours=1)
+        instance.save()
+    else:
+        instance.endtime = instance.datetime + timedelta(hours=1)
+        instance.save()
 
 # @receiver(post_delete, sender='api.Guest')
 # def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
