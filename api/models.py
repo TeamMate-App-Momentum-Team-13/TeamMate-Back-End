@@ -15,8 +15,8 @@ from django.db.models.signals import (
 #This is the post_save django signal
 @receiver(post_save, sender='api.Guest')
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
-    clean_date = (instance.game_session.date).strftime("%a, %b, %d")
-    clean_time = (instance.game_session.time).strftime("%I:%M %p")
+    clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
+    clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
         if instance.user != instance.game_session.host:
@@ -189,8 +189,9 @@ class GameSession(BaseModel):
     ]
 
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
-    date = models.DateField()
-    time = models.TimeField()
+    # datetime fields require a default value for some reason. Even if its false
+    datetime = models.DateTimeField(auto_now_add=False)
+    endtime = models.DateTimeField(auto_now_add=True)
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
