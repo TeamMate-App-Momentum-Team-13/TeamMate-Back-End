@@ -58,6 +58,7 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
         instance.endtime = instance.datetime + timedelta(hours=1)
         instance.save()
     else:
+        #this is need incase date time is patched 
         instance.endtime = instance.datetime + timedelta(hours=1)
         instance.save()
 
