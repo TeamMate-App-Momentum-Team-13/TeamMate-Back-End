@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+import datetime
 
 #signals imports
 
@@ -14,22 +15,24 @@ from django.db.models.signals import (
 #This is the post_save django signal
 @receiver(post_save, sender='api.Guest')
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+    clean_date = (instance.game_session.date).strftime("%a, %b, %d")
+    clean_time = (instance.game_session.time).strftime("%I:%M %p")
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
         if instance.user != instance.game_session.host:
             NotificationGameSession.objects.create(
                 sender=instance.user,
                 reciever=instance.game_session.host,
-                message=(f"Good news, {instance.user.first_name} would like you join your game on {instance.game_session.date} at {instance.game_session.time}. Please go to MyGames to respond."),
+                message=(f"Good news, {instance.user.first_name} would like you join your game on {clean_date} at {clean_time}. Please go to MyGames to respond."),
                 game_session = instance.game_session,
             )
     else: 
         print("Guest has been updated")
         update_game_session_confirmed_field(instance.game_session.pk)
         if instance.status == "Accepted":
-            response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {instance.game_session.date} at {instance.game_session.time}. You can see all of your confirmed games on the MyGames page."
+            response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the MyGames page."
         elif instance.status == "Rejected":
-            response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {instance.game_session.date} anymore, but you can sign up for a different game on the Open Games page."
+            response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {clean_date} anymore, but you can sign up for a different game on the Open Games page."
         else:
             response = f"Your guest request status has changed to {instance.status}"
 
