@@ -20,8 +20,8 @@
 | Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
 | Game Sessions | /session/?search | Filter Game Sessions |  |
 | Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
-| Game Sessions | /session/<int:pk>/guest/ | GET, POST | List, Create Guest for Game session |
-| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH, DELETE | Change Guest Status, Delete Guest |
+| Game Sessions | /session/<int:pk>/guest/ | GET, POST, DELETE | List, Create Guest for Game session |
+| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH | Change Guest Status, Delete Guest |
 | Survey | /session/<int:session_pk>/survey | GET, POST | List & Create Survey |
 | Survey Responses | /session/<int:session_pk>/survey/<int:survey_pk>/response | POST | Create Survey Response |
 | Court | /court/ | GET, POST | List & Create Court |
@@ -29,6 +29,7 @@
 | Notification | notification/check/ | GET | View All New Notifications, Only called once |
 | Notification | notification/count/ | GET | List All New Notifications to count |
 | Notification | notification/all/ | GET | List All Past Notifications |
+
 ## Authentication
 
 ---
@@ -519,7 +520,7 @@
         
         ### Delete Guest for a Game Session
         
-        > /session/<int:pk>/guest/<ing:guest_pk>
+        > /session/<int:pk>/guest/
         > 
         - Method: DELETE
             - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
