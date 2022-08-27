@@ -95,8 +95,8 @@
     {
     		"id": 5,
     		"username": "SillyJoe",
-    		"first_name": "",
-    		"last_name": "",
+    		"first_name": "Silly",
+    		"last_name": "Joe",
     		"profile": {
     			"id": 48,
     			"user": "SillyJoe",
@@ -104,54 +104,69 @@
     			"ntrp_rating": "5"
     		},
     		"game_session": [
+    	{
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
+    		"host_info": {
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
+    		},
+    		"guest": [
+    			6
+    		],
+    		"guest_info": [
     			{
-    				"id": 14,
-    				"host": "SillyJoe",
-    				"host_info": {
-    					"id": 5,
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
     					"username": "SillyJoe",
     					"first_name": "",
-    					"last_name": ""
-    				},
-    				"date": "2022-08-24",
-    				"time": "18:00:00",
-    				"session_type": "Casual",
-    				"match_type": "Singles",
-    				"location": 1,
-    				"location_info": {
-    					"id": 1,
-    					"park_name": "State Road Park",
-    					"court_count": 2,
-    					"court_surface": "Hard Court",
-    					"address": {
-    						"id": 1,
-    						"address1": "123 State Rd",
-    						"address2": null,
-    						"city": "Durham",
-    						"state": "NC",
-    						"zipcode": "27705",
-    						"court": 1
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
     					}
-    				},
-    				"guest": [],
-    				"guest_info": []
+    				}
     			}
     		],
-    		"guest": [
-    			{
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
     				"id": 1,
-    				"user": "SillyJoe",
-    				"game_session": 13,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 2,
-    				"user": "SillyJoe",
-    				"game_session": 12,
-    				"status": "Pending"
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
     			}
-    		]
-    	}
+    		}
+    	}...
+    ]
     ```
     
 
@@ -249,67 +264,67 @@
     ```json
     [
     	{
-    		"id": 4,
-    		"host": "John_Doe11",
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
     		"host_info": {
-    			"id": 2,
-    			"username": "John_Doe11",
-    			"first_name": "John",
-    			"last_name": "Doe"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
-    		"location": 1,
-    		"location_info": {
-    			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
     		},
     		"guest": [
-    			6,
-    			7
+    			6
     		],
     		"guest_info": [
     			{
-    				"id": 6,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 7,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
+    					"username": "SillyJoe",
+    					"first_name": "",
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
+    					}
+    				}
     			}
-    		]
-    	},
-    	{
-    		"id": 5,
-    		"host": "diego",
-    		"host_info": {
-    			"id": 2,
-    			"username": "diego",
-    			"first_name": "diego",
-    			"last_name": "diego"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
+    		],
     		"location": 1,
     		"location_info": {
     			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
-    		},
-    		"guest": [],
-    		"guest_info": []
-    	}
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
+    				"id": 1,
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
+    			}
+    		}
+    	}...
     ]
     ```
     
@@ -336,8 +351,7 @@
     
     ```json
     {
-        "date": "2022-08-18",
-        "time": "16:15:00",
+        "datetime": "2022-08-03T23:31:59Z",
         "session_type": "Competitive",
         "match_type": "Doubles",
         "location": 1
@@ -347,45 +361,70 @@
 - Response: Game Session list json object
 
 ```json
-{
-		"id": 4,
-		"host": "John_Doe11",
+[
+	{
+		"game_session_id": 6,
+		"confirmed": true,
+		"datetime": "2022-08-03T23:31:59Z",
+		"endtime": "2022-08-04T00:31:59Z",
+		"session_type": "Casual",
+		"match_type": "Singles",
+		"host": "SillyJoe",
 		"host_info": {
-			"id": 2,
-			"username": "John_Doe11",
-			"first_name": "John",
-			"last_name": "Doe"
-		},
-		"date": "2022-08-18",
-		"time": "16:15:00",
-		"session_type": "Competitive",
-		"match_type": "Doubles",
-		"location": 1,
-		"location_info": {
-			"id": 1,
-			"park_name": "Sanderford Park",
-			"court_count": 6,
-			"court_surface": "Hard Court"
+			"user_id": 2,
+			"username": "SillyJoe",
+			"first_name": "",
+			"last_name": "",
+			"profile": {
+				"profile_id": 2,
+				"user": "SillyJoe",
+				"profile_pic": null,
+				"ntrp_rating": "2.5",
+				"profile_image_file": null
+			}
 		},
 		"guest": [
-			6,
-			7
+			6
 		],
 		"guest_info": [
 			{
-				"id": 6,
-				"user": "admin",
-				"game_session": 4,
-				"status": "Pending"
-			},
-			{
-				"id": 7,
-				"user": "admin",
-				"game_session": 4,
-				"status": "Pending"
+				"guest_id": 6,
+				"status": "Host",
+				"game_session": 6,
+				"user": "SillyJoe",
+				"user_info": {
+					"user_id": 2,
+					"username": "SillyJoe",
+					"first_name": "",
+					"last_name": "",
+					"profile": {
+						"profile_id": 2,
+						"user": "SillyJoe",
+						"profile_pic": null,
+						"ntrp_rating": "2.5",
+						"profile_image_file": null
+					}
+				}
 			}
-		]
-	}
+		],
+		"location": 1,
+		"location_info": {
+			"id": 1,
+			"park_name": "Sandeford Park",
+			"court_count": 2,
+			"court_surface": "Hard Court",
+			"address": {
+				"id": 1,
+				"court": "Sandeford Park",
+				"address1": "Sanderford Rd",
+				"address2": null,
+				"city": "Raleigh",
+				"state": "North Carolina",
+				"zipcode": "27610"
+			}
+		}
+	}...
+]
 ```
 
 ### Delete Game Session
@@ -408,7 +447,7 @@
 
 ```json
 {
-    "time": "16:15:00",
+    "datetime": "2022-08-03T23:31:59Z",
 }
 ```
 
@@ -424,45 +463,70 @@
 - Response: 200_OK
     
     ```json
-    {
-    		"id": 4,
-    		"host": "John_Doe11",
+    [
+    	{
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
     		"host_info": {
-    			"id": 2,
-    			"username": "John_Doe11",
-    			"first_name": "John",
-    			"last_name": "Doe"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
-    		"location": 1,
-    		"location_info": {
-    			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
     		},
     		"guest": [
-    			6,
-    			7
+    			6
     		],
     		"guest_info": [
     			{
-    				"id": 6,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 7,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
+    					"username": "SillyJoe",
+    					"first_name": "",
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
+    					}
+    				}
     			}
-    		]
-    	}
+    		],
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
+    				"id": 1,
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
+    			}
+    		}
+    	}...
+    ]
     ```
     
     ### Create Guest for  a Game Session
@@ -486,16 +550,22 @@
         ```json
         [
         	{
-        		"id": 6,
-        		"user": "admin1",
-        		"game_session": 4,
-        		"status": "Pending"
-        	},
-        	{
-        		"id": 7,
-        		"user": "admin2",
-        		"game_session": 4,
-        		"status": "Pending"
+        		"guest_id": 6,
+        		"status": "Host",
+        		"game_session": 6,
+        		"user": "SillyJoe",
+        		"user_info": {
+        			"user_id": 2,
+        			"username": "SillyJoe",
+        			"first_name": "",
+        			"last_name": "",
+        			"profile": {
+        				"profile_id": 2,
+        				"user": "SillyJoe",
+        				"profile_pic": null,
+        				"ntrp_rating": "2.5",
+        				"profile_image_file": null
+        			}
         	}
         ]
         ```
@@ -790,8 +860,22 @@
         - Method: GET
         - Permissions: Authenticated
         - Response: 200_OK
-
-
+        
+        ```json
+        [
+        	{
+        		"id": 12,
+        		"sender": 4,
+        		"reciever": 2,
+        		"message": "Sam Has backed out of the game",
+        		"game_session": 11,
+        		"read": true
+        	}
+        ]
+        ```
+        
+    
+    ..
 
 ### Create a local PostgreSQL database
 This project uses [PostgreSQL 14.4](https://www.postgresql.org/).
