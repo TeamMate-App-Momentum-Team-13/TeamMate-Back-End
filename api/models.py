@@ -58,9 +58,10 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
         instance.endtime = instance.datetime + timedelta(hours=1)
         instance.save()
     else:
+        if (instance.datetime + timedelta(hours=1)) != instance.endtime:
         #this is need incase date time is patched 
-        instance.endtime = instance.datetime + timedelta(hours=1)
-        instance.save()
+            instance.endtime = instance.datetime + timedelta(hours=1)
+            instance.save()
 
 # @receiver(post_delete, sender='api.Guest')
 # def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
