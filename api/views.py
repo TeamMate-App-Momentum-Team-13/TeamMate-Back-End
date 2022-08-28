@@ -45,6 +45,7 @@ from .models import (
     Survey,
     SurveyResponse,
     restrict_guest_amount_on_game_session,
+    update_game_session_confirmed_field,
 )
 
 
@@ -102,6 +103,23 @@ class GuestViewSet(viewsets.ModelViewSet):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
         restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        # Two lines added to override
+        game_session_pk = instance.game_session.pk
+        update_game_session_confirmed_field(game_session_pk)
+
+        if getattr(instance, '_prefetched_objects_cache', None):
+            instance._prefetched_objects_cache = {}
+
+        return Response(serializer.data)
+
 
     def delete(self, request, *args, **kwargs):
         instance = get_object_or_404(Guest, user=self.request.user, game_session=self.kwargs.get('pk'))
