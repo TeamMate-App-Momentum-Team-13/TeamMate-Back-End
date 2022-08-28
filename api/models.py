@@ -16,6 +16,7 @@ from django.db.models.signals import (
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
     clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
     clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
+    update_game_session_full_field(instance.game_session.pk)
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
         if instance.user != instance.game_session.host:
@@ -28,6 +29,7 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
     else: 
         print("Guest has been updated")
         update_game_session_confirmed_field(instance.game_session.pk)
+        update_game_session_full_field(instance.game_session.pk)
         if instance.status == "Accepted":
             response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the My Games page."
         elif instance.status == "Rejected":
@@ -92,12 +94,36 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 #                 # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
 #             )
 
-def restrict_guest_amount_on_game_session(game_session_pk):
-        game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+# def restrict_guest_amount_on_game_session(game_session_pk):
+#         game_session = GameSession.objects.get(id=game_session_pk)
+#         if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
+#             raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
+#         elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
+#             raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+
+def update_game_session_full_field(game_session_pk):
+    game_session = GameSession.objects.get(pk=game_session_pk)
+    guests = game_session.guest.all()
+    guests_count = guests.count()
+
+    if game_session.match_type == 'Singles':
+        if guests_count == 4:
+            set_full_to_true(game_session)
+        else:
+            set_full_to_false(game_session)
+    elif game_session.match_type == 'Doubles':
+        if guests_count == 7:
+            set_full_to_true(game_session)
+        else:
+            set_full_to_false(game_session)
+
+def set_full_to_true(game_session):
+    game_session.full = True
+    game_session.save()
+
+def set_full_to_false(game_session):
+    game_session.full = False
+    game_session.save()
 
 
 def update_game_session_confirmed_field(game_session_pk):

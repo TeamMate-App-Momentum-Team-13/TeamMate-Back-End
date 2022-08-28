@@ -44,8 +44,9 @@ from .models import (
     NotificationGameSession,
     Survey,
     SurveyResponse,
-    restrict_guest_amount_on_game_session,
+    # restrict_guest_amount_on_game_session,
     update_game_session_confirmed_field,
+    update_game_session_full_field,
 )
 
 
@@ -63,7 +64,7 @@ class ListCreateGameSession(ListCreateAPIView):
         # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(
             datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=False)
+            confirmed=False, full=False)
 
         # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("park-name")
@@ -101,7 +102,7 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
-        restrict_guest_amount_on_game_session(game_session_instance.pk)
+        # restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
     
     def update(self, request, *args, **kwargs):
@@ -114,6 +115,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         # Two lines added to override
         game_session_pk = instance.game_session.pk
         update_game_session_confirmed_field(game_session_pk)
+        update_game_session_full_field(game_session_pk)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
@@ -126,6 +128,7 @@ class GuestViewSet(viewsets.ModelViewSet):
         game_session_pk = instance.game_session.pk
         self.perform_destroy(instance)
         update_game_session_confirmed_field(game_session_pk)
+        update_game_session_full_field(game_session_pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ListCreateCourt(ListCreateAPIView):
