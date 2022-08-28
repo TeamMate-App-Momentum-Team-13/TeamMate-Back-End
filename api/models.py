@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta 
-#signals imports
 
+#signals  imports
 from django.dispatch import receiver
 from django.db.models.signals import (
     post_save,
@@ -203,6 +203,7 @@ class GameSession(BaseModel):
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
     confirmed = models.BooleanField(default=False)
+    full = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
