@@ -44,7 +44,7 @@ from .models import (
     NotificationGameSession,
     Survey,
     SurveyResponse,
-    # restrict_guest_amount_on_game_session,
+    restrict_guest_amount_on_game_session,
     update_game_session_confirmed_field,
     update_game_session_full_field,
 )
@@ -102,7 +102,7 @@ class GuestViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         game_session_instance = get_object_or_404(GameSession, pk=self.kwargs.get('pk'))
-        # restrict_guest_amount_on_game_session(game_session_instance.pk)
+        restrict_guest_amount_on_game_session(game_session_instance.pk)
         serializer.save(user=self.request.user, game_session=game_session_instance)
     
     def update(self, request, *args, **kwargs):

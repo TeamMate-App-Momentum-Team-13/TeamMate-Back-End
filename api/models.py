@@ -94,12 +94,12 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 #                 # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
 #             )
 
-# def restrict_guest_amount_on_game_session(game_session_pk):
-#         game_session = GameSession.objects.get(id=game_session_pk)
-#         if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
-#             raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
-#         elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
-#             raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
 
 def update_game_session_full_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
