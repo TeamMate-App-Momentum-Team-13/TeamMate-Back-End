@@ -288,8 +288,11 @@ class MyGamesList(ListAPIView):
             elif my_games_search == "HostNoGuest":
                 my_games = my_games.filter(
                     host=self.request.user, 
-                    guest__isnull=True, 
                     confirmed=False)
+                my_games = my_games.filter(~Q(guest__status="Pending"))
+                my_games = my_games.filter(~Q(guest__status="Accepted"))
+                my_games = my_games.filter(~Q(guest__status="Rejected"))
+                my_games = my_games.filter(~Q(guest__status="Wait Listed"))
             # doubles games that I host with other accepted guest but not confirmed yet and No pending guest
             elif my_games_search == "HostNotPendingUnconfirmedDoubles":
                 my_games = my_games.filter(
