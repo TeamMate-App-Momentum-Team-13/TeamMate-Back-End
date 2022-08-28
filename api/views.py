@@ -61,7 +61,7 @@ class ListCreateGameSession(ListCreateAPIView):
     def get_queryset(self):
         # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=False)
 
         # Allows users to add search params to query for specific results
@@ -78,7 +78,7 @@ class ListCreateGameSession(ListCreateAPIView):
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
 
-        return queryset.order_by("date","time").exclude(
+        return queryset.order_by("datetime").exclude(
             host=self.request.user).exclude(guest__user=self.request.user)
 
     def perform_create(self, serializer):
@@ -178,7 +178,7 @@ class MyConfirmedGameSessions(ListAPIView):
 
     def get_queryset(self):
         upcoming_confirmed_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=True)
         confirmed_games_as_host = upcoming_confirmed_games.filter(
             host=self.request.user)
@@ -186,7 +186,7 @@ class MyConfirmedGameSessions(ListAPIView):
             guest__user=self.request.user,
             guest__status='Accepted') 
         all_confirmed_games = confirmed_games_as_host.union(confirmed_games_as_guest, all=False)
-        return all_confirmed_games.order_by("date","time")
+        return all_confirmed_games.order_by("datetime")
 
 # Returns confirmed upcoming games where user = host
 class MyConfirmedHostGameSessions(ListAPIView):
@@ -195,11 +195,11 @@ class MyConfirmedHostGameSessions(ListAPIView):
 
     def get_queryset(self):
         upcoming_confirmed_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=True)
         confirmed_games_as_host = upcoming_confirmed_games.filter(
             host=self.request.user)
-        return confirmed_games_as_host.order_by("date","time")
+        return confirmed_games_as_host.order_by("datetime")
 
 # Returns confirmed upcoming games where user = guest
 class MyConfirmedGuestGameSessions(ListAPIView):
@@ -208,12 +208,12 @@ class MyConfirmedGuestGameSessions(ListAPIView):
 
     def get_queryset(self):
         upcoming_confirmed_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=True)
         confirmed_games_as_guest = upcoming_confirmed_games.filter(
             guest__user=self.request.user,
             guest__status='Accepted') 
-        return confirmed_games_as_guest.order_by("date","time")
+        return confirmed_games_as_guest.order_by("datetime")
 
 # Returns open upcoming games where user = host or guest
 class MyOpenGameSessions(ListAPIView):
@@ -222,7 +222,7 @@ class MyOpenGameSessions(ListAPIView):
 
     def get_queryset(self):
         upcoming_open_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=False)
         open_games_as_host = upcoming_open_games.filter(
             host=self.request.user)
@@ -230,7 +230,7 @@ class MyOpenGameSessions(ListAPIView):
             guest__user=self.request.user,
             guest__status='Accepted')
         all_open_games = open_games_as_host.union(open_games_as_guest, all=False)
-        return all_open_games.order_by("date","time")
+        return all_open_games.order_by("datetime")
 
 # Returns open upcoming games where user = host
 class MyOpenHostGameSessions(ListAPIView):
@@ -239,11 +239,11 @@ class MyOpenHostGameSessions(ListAPIView):
     
     def get_queryset(self):
         upcoming_open_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=False)
         open_games_as_host = upcoming_open_games.filter(
             host=self.request.user)
-        return open_games_as_host.order_by("date","time")
+        return open_games_as_host.order_by("datetime")
 
 # Returns open upcoming games where user = guest
 class MyOpenGuestGameSessions(ListAPIView):
@@ -252,12 +252,12 @@ class MyOpenGuestGameSessions(ListAPIView):
 
     def get_queryset(self):
         upcoming_open_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')),
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
             confirmed=False)
         open_games_as_guest = upcoming_open_games.filter(
             guest__user=self.request.user,
             guest__status='Accepted')
-        return open_games_as_guest.order_by("date","time")
+        return open_games_as_guest.order_by("datetime")
 
 class MyGamesList(ListAPIView):
     serializer_class = GameSessionSerializer
@@ -265,7 +265,7 @@ class MyGamesList(ListAPIView):
 
     def get_queryset(self):
         my_games = GameSession.objects.filter(
-            date__gte=datetime.now(pytz.timezone('America/New_York')))
+            datetime__gte=datetime.now(pytz.timezone('America/New_York')))
     
         my_games_search = self.request.query_params.get("my-games")
         if my_games_search is not None:
@@ -277,7 +277,7 @@ class MyGamesList(ListAPIView):
                 my_games = my_host_confirmed_games.union(my_guest_confirmed_games, all=False)
             # unconfirmed games that I host that have a pending request
             elif my_games_search == "HostUnconfirmed":
-                my_games = my_games.filter(host=self.request.user, confirmed=False, guest__status='Pending')
+                my_games = my_games.filter(host=self.request.user, confirmed=False, guest__status='Pending').distinct()
             #games that I have requested to join and those requests haven't been accepted/rejected yet, aka pending sent requests
             elif my_games_search == "GuestPending":
                 my_games = my_games.filter(
@@ -307,13 +307,15 @@ class MyGamesList(ListAPIView):
                     confirmed=False)
             # list of my previous games
             elif my_games_search == "MyPreviousGames":
-                my_games = GameSession.objects.filter(date__lte=datetime.now(pytz.timezone('America/New_York')))
+                my_games = GameSession.objects.filter(datetime__lte=datetime.now(pytz.timezone('America/New_York')))
                 my_games = my_games.filter(confirmed=True, guest__isnull=False,)
                 previous_host_confirmed_games =  my_games.filter(host=self.request.user)
                 previous_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
                 my_games = previous_host_confirmed_games.union(previous_guest_confirmed_games, all=False)
-                return my_games.order_by("-date","time")
-        return my_games.order_by("date","time")
+                for game in my_games:
+                    game.guest.set(game.guest.filter(status="Host"))
+                return my_games.order_by("-datetime")
+        return my_games.order_by("datetime")
 
 # Returns list of notifications that called once
 class CheckNotificationGameSession(ListAPIView):
