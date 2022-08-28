@@ -124,6 +124,8 @@ class GuestViewSet(viewsets.ModelViewSet):
     def delete(self, request, *args, **kwargs):
         instance = get_object_or_404(Guest, user=self.request.user, game_session=self.kwargs.get('pk'))
         self.perform_destroy(instance)
+        game_session_pk = instance.game_session.pk
+        update_game_session_confirmed_field(game_session_pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ListCreateCourt(ListCreateAPIView):
