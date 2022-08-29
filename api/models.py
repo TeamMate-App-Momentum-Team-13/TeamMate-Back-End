@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta 
-#signals imports
 
+#signals  imports
 from django.dispatch import receiver
 from django.db.models.signals import (
     post_save,
@@ -16,6 +16,7 @@ from django.db.models.signals import (
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
     clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
     clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
+    update_game_session_full_field(instance.game_session.pk)
     if created:
         print(f"{instance.user.username} is pending for {instance.game_session}")
         if instance.user != instance.game_session.host:
@@ -28,6 +29,7 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
     else: 
         print("Guest has been updated")
         update_game_session_confirmed_field(instance.game_session.pk)
+        update_game_session_full_field(instance.game_session.pk)
         if instance.status == "Accepted":
             response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the My Games page."
         elif instance.status == "Rejected":
@@ -63,22 +65,24 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             instance.endtime = instance.datetime + timedelta(hours=1)
             instance.save()
 
-# @receiver(post_delete, sender='api.Guest')
-# def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
-#     if instance.status == "Accepted" or instance.status == "Pending":
-#         print("Accepted guest is deleted")
-#         breakpoint()
-#         try: 
-#             NotificationGameSession.objects.create(
-#                 sender=instance.user,
-#                 reciever=instance.game_session.host,
-#                 message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
-#                 game_session = instance.game_session,
-#             )
-#         except:
-#             pass
-#     else:
-#         print("Other guest object was deleted")
+@receiver(post_delete, sender='api.Guest')
+def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
+    update_game_session_confirmed_field(instance.game_session.pk)
+    update_game_session_full_field(instance.game_session.pk)
+    # if instance.status == "Accepted" or instance.status == "Pending":
+    #     print("Accepted guest is deleted")
+    #     breakpoint()
+    #     try: 
+    #         NotificationGameSession.objects.create(
+    #             sender=instance.user,
+    #             reciever=instance.game_session.host,
+    #             message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
+    #             game_session = instance.game_session,
+    #         )
+    #     except:
+    #         pass
+    # else:
+    #     print("Other guest object was deleted")
 
 # @receiver(pre_delete, sender='api.GameSession')
 # def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
@@ -94,10 +98,34 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 
 def restrict_guest_amount_on_game_session(game_session_pk):
         game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 3:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({3})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 6:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({6})')
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
+
+def update_game_session_full_field(game_session_pk):
+    game_session = GameSession.objects.get(pk=game_session_pk)
+    guests = game_session.guest.all()
+    guests_count = guests.count()
+
+    if game_session.match_type == 'Singles':
+        if guests_count == 4:
+            set_full_to_true(game_session)
+        else:
+            set_full_to_false(game_session)
+    elif game_session.match_type == 'Doubles':
+        if guests_count == 7:
+            set_full_to_true(game_session)
+        else:
+            set_full_to_false(game_session)
+
+def set_full_to_true(game_session):
+    game_session.full = True
+    game_session.save()
+
+def set_full_to_false(game_session):
+    game_session.full = False
+    game_session.save()
 
 
 def update_game_session_confirmed_field(game_session_pk):
@@ -203,6 +231,7 @@ class GameSession(BaseModel):
     match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
     location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
     confirmed = models.BooleanField(default=False)
+    full = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
