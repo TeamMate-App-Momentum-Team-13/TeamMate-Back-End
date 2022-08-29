@@ -11,45 +11,44 @@ from django.db.models.signals import (
     pre_delete,
 )
 
-# Might need @task decorator here (and import via celery library)
-def do_guest_handler(created, instance):
-    clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
-    clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
-    update_game_session_full_field(instance.game_session.pk)
-    if created:
-        print(f"{instance.user.username} is pending for {instance.game_session}")
-        if instance.user != instance.game_session.host:
-            NotificationGameSession.objects.create(
-                sender=instance.user,
-                reciever=instance.game_session.host,
-                message=(f"Good news, {instance.user.first_name} would like to join your game on {clean_date} at {clean_time}. Please go to My Games to respond."),
-                game_session = instance.game_session,
-            )
-    else: 
-        print("Guest has been updated")
-        update_game_session_confirmed_field(instance.game_session.pk)
-        update_game_session_full_field(instance.game_session.pk)
-        if instance.status == "Accepted":
-            response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the My Games page."
-        elif instance.status == "Rejected":
-            response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {clean_date} anymore, but you can sign up for a different game on the Open Games page."
-        else:
-            response = f"Your guest request status has changed to {instance.status}"
+# # Might need @task decorator here (and import via celery library)
+# @receiver(post_save, sender='api.Guest')
+# def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+#     clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
+#     clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
+#     update_game_session_full_field(instance.game_session.pk)
+#     if created:
+#         print(f"{instance.user.username} is pending for {instance.game_session}")
+#         if instance.user != instance.game_session.host:
+#             NotificationGameSession.objects.create(
+#                 sender=instance.user,
+#                 reciever=instance.game_session.host,
+#                 message=(f"Good news, {instance.user.first_name} would like to join your game on {clean_date} at {clean_time}. Please go to My Games to respond."),
+#                 game_session = instance.game_session,
+#             )
+#     else: 
+#         print("Guest has been updated")
+#         update_game_session_confirmed_field(instance.game_session.pk)
+#         update_game_session_full_field(instance.game_session.pk)
+#         if instance.status == "Accepted":
+#             response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the My Games page."
+#         elif instance.status == "Rejected":
+#             response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {clean_date} anymore, but you can sign up for a different game on the Open Games page."
+#         else:
+#             response = f"Your guest request status has changed to {instance.status}"
 
-        NotificationGameSession.objects.create(
-            sender=instance.game_session.host,
-            reciever=instance.user,
-            message=response,
-            game_session = instance.game_session,
-        )
+#         NotificationGameSession.objects.create(
+#             sender=instance.game_session.host,
+#             reciever=instance.user,
+#             message=response,
+#             game_session = instance.game_session,
+#         )
 
-@receiver(post_save, sender='api.Guest')
-def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
-    transaction.on_commit(lambda: do_guest_handler(created, instance))
-    # may need to add a delay method, in this fashion:
-    # transaction.on_commit(lambda: do_guest_handler.delay())
-
-post_save.connect(notification_created_or_updated_guest_handler, sender='api.Guest')
+# @receiver(post_save, sender='api.Guest')
+# def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+#     transaction.on_commit(lambda: do_guest_handler(created, instance))
+#     # may need to add a delay method, in this fashion:
+#     # transaction.on_commit(lambda: do_guest_handler.delay())
 
 @receiver(post_save, sender='api.User')
 def user_created_profile_handler(sender, instance, created, *args, **kwargs):
@@ -348,3 +347,35 @@ class SurveyResponse(BaseModel):
 
     # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
+
+@receiver(post_save, sender=Guest)
+def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+    clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
+    clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
+    update_game_session_full_field(instance.game_session.pk)
+    if created:
+        print(f"{instance.user.username} is pending for {instance.game_session}")
+        if instance.user != instance.game_session.host:
+            NotificationGameSession.objects.create(
+                sender=instance.user,
+                reciever=instance.game_session.host,
+                message=(f"Good news, {instance.user.first_name} would like to join your game on {clean_date} at {clean_time}. Please go to My Games to respond."),
+                game_session = instance.game_session,
+            )
+    else: 
+        print("Guest has been updated")
+        update_game_session_confirmed_field(instance.game_session.pk)
+        update_game_session_full_field(instance.game_session.pk)
+        if instance.status == "Accepted":
+            response = f"Yay! {instance.game_session.host.first_name} has confirmed your game on {clean_date} at {clean_time}. You can see all of your confirmed games on the My Games page."
+        elif instance.status == "Rejected":
+            response = f"Darn, {instance.game_session.host.first_name} isn't available to play on {clean_date} anymore, but you can sign up for a different game on the Open Games page."
+        else:
+            response = f"Your guest request status has changed to {instance.status}"
+
+        NotificationGameSession.objects.create(
+            sender=instance.game_session.host,
+            reciever=instance.user,
+            message=response,
+            game_session = instance.game_session,
+        )
