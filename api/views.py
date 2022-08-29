@@ -47,7 +47,7 @@ from .models import (
     restrict_guest_amount_on_game_session,
     update_game_session_confirmed_field,
     update_game_session_full_field,
-    update_wins_field,
+    update_wins_losses_field,
 )
 
 
@@ -173,7 +173,7 @@ class ListCreateUpdateProfile(APIView):
 
     # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        update_wins_field(self)
+        update_wins_losses_field(self)
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
