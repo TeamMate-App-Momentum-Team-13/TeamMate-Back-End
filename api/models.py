@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta 
@@ -11,9 +11,8 @@ from django.db.models.signals import (
     pre_delete,
 )
 
-#This is the post_save django signal
-@receiver(post_save, sender='api.Guest')
-def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+# Might need @task decorator here (and import via celery library)
+def do_guest_handler(created, instance):
     clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
     clean_time = (instance.game_session.datetime).strftime("%I:%M %p")
     update_game_session_full_field(instance.game_session.pk)
@@ -43,6 +42,12 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
             message=response,
             game_session = instance.game_session,
         )
+
+@receiver(post_save, sender='api.Guest')
+def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
+    transaction.on_commit(lambda: do_guest_handler(created, instance))
+    # may need to add a delay method, in this fashion:
+    # transaction.on_commit(lambda: do_guest_handler.delay())
 
 @receiver(post_save, sender='api.User')
 def user_created_profile_handler(sender, instance, created, *args, **kwargs):
