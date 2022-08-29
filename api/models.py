@@ -1,9 +1,10 @@
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from datetime import timedelta 
+from datetime import timedelta, datetime
+import pytz
 
-#signals  imports
+# Django Signals
 from django.dispatch import receiver
 from django.db.models.signals import (
     post_save,
@@ -156,6 +157,7 @@ class Profile(BaseModel):
     profile_pic = models.TextField(blank=True, null=True)
     profile_image_file = models.ImageField(upload_to='profile_images', null=True, blank=True, max_length=600)
     ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
+    wins_losses = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user}"
@@ -339,3 +341,27 @@ def set_confirmed_to_true(game_session):
 def set_confirmed_to_false(game_session):
     game_session.confirmed = False
     game_session.save()
+
+
+def update_wins_losses_field(self):
+    games_won = GameSession.objects.filter(
+        datetime__lte=datetime.now(pytz.timezone('America/New_York')),
+        confirmed=True,
+        survey__respondent=self.request.user,
+        survey__survey_response__about_user=self.request.user,
+        survey__survey_response__response='Winner'
+    )
+    games_won_count = games_won.count()
+
+    games_played = GameSession.objects.filter(
+        datetime__lte=datetime.now(pytz.timezone('America/New_York')),
+        confirmed=True,
+        survey__respondent=self.request.user,
+    )
+    games_played_count = games_played.count()
+
+    games_lost_count = games_played_count - games_won_count
+
+    profile = Profile.objects.get(user=self.request.user.pk)
+    profile.wins_losses = f'{games_won_count} - {games_lost_count}'
+    profile.save()
