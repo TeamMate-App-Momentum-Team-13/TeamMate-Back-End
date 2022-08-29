@@ -187,7 +187,8 @@ class ListCreateUpdateProfile(APIView):
 
 class UserDetail(RetrieveUpdateAPIView):
     serializer_class = UserDetailSerializer
-    permission_classes = [permissions.IsAuthenticated, IsUserOwnerOrReadOnly]
+    # REMOVED IsUserOwnerOrReadOnly permissions for testing later
+    permission_classes = [permissions.IsAuthenticated, ]
     lookup_field = 'username'
 
     def get_queryset(self):
