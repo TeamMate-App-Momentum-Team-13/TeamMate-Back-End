@@ -108,6 +108,7 @@ class GameSessionSerializer(serializers.ModelSerializer):
         fields = [
             'game_session_id',
             'confirmed',
+            'full',
             'datetime',
             'endtime',
             'session_type',
