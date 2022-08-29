@@ -31,5 +31,4 @@ urlpatterns = [
     path('notification/check/', api_views.CheckNotificationGameSession.as_view(), name='notification-check'),
     path('notification/count/', api_views.CountNotificationGameSession.as_view(), name='notification-count'),
     path('notification/all/', api_views.AllNotificationGameSession.as_view(), name='notification-all'),
-    path('profile/wins/', api_views.ReturnWinCount.as_view(), name='wins'),
 ]
