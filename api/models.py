@@ -49,6 +49,8 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
     # may need to add a delay method, in this fashion:
     # transaction.on_commit(lambda: do_guest_handler.delay())
 
+post_save.connect(notification_created_or_updated_guest_handler, sender='api.Guest')
+
 @receiver(post_save, sender='api.User')
 def user_created_profile_handler(sender, instance, created, *args, **kwargs):
     if created:
