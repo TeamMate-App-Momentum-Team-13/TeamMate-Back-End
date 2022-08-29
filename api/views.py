@@ -405,3 +405,14 @@ class CreateSurveyResponse(CreateAPIView):
     def perform_create(self, serializer):
         survey = get_object_or_404(Survey, pk=self.kwargs.get('survey_pk'))
         serializer.save(survey=survey)
+
+class ReturnWinCount(ListAPIView):
+    serializer_class = GameSessionSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    
+    def get_queryset(self):
+        games_played = GameSession.objects.filter(
+            datetime__lte=datetime.now(pytz.timezone('America/New_York')),
+            confirmed=True,
+            guest__user=self.request.user)
+        return games_played
