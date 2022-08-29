@@ -156,6 +156,7 @@ class Profile(BaseModel):
     profile_pic = models.TextField(blank=True, null=True)
     profile_image_file = models.ImageField(upload_to='profile_images', null=True, blank=True, max_length=600)
     ntrp_rating = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
+    wins = models.CharField(max_length=30, null=True, blank=True)
 
     def __str__(self):
         return f"{self.user}"
