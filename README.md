@@ -199,6 +199,7 @@
     - **GuestAcceptedUnconfirmedDoubles** : doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
     - **MyPreviousGames** : List all users previous games as Host or Guest
 
+
 ## User Profiles
 
 ---
@@ -219,6 +220,7 @@
     	"user": 5,
     	"profile_pic": null,
     	"ntrp_rating": "3.5",
+    	"wins_losses": "1 - 1",
     	"profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
     }
     ```
@@ -237,16 +239,16 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
-    
-    ```json
-    {
-    	"id": 27,
-    	"user": 5,
-    	"profile_pic": null,
-    	"ntrp_rating": "4"
-      "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
-    }
-    ```
+- ```json
+{
+	"id": 27,
+	"user": 5,
+	"profile_pic": null,
+	"ntrp_rating": "4"
+	"wins_losses": "1 - 1",
+  "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
+}
+```
     
 
 ## Game Sessions
