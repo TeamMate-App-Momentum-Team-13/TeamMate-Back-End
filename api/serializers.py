@@ -27,7 +27,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
             'profile_pic',
             'ntrp_rating',
-            'wins',
+            'wins_losses',
             'profile_image_file',
         ]
 
