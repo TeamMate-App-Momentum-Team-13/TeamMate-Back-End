@@ -340,3 +340,12 @@ def set_confirmed_to_true(game_session):
 def set_confirmed_to_false(game_session):
     game_session.confirmed = False
     game_session.save()
+
+
+def update_wins_field(self):
+    games_won = SurveyResponse.objects.filter(
+        about_user=self.request.user, response='Winner').count()
+    games_won = games_won//2
+    profile = Profile.objects.get(user=self.request.user.pk)
+    profile.wins = games_won
+    profile.save()
