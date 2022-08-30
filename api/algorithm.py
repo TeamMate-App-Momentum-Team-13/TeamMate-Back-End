@@ -1,3 +1,37 @@
+from django.shortcuts import render, get_object_or_404
+import api.models
+
+
+#called in django created signal for profile and update method in views when data contains ntrp update
+def RankCalibration(ntrp_rating, user_id):
+    if ntrp_rating == '2.5':
+        teammate_ntrp = '2.5'
+        teammate_rank= 'Bronze'
+        score = 0
+    elif ntrp_rating == '3':
+        teammate_ntrp = '3'
+        teammate_rank= 'Bronze'
+        score = 75
+    elif ntrp_rating == '3.5':
+        teammate_ntrp = '3.5'
+        teammate_rank= 'Bronze'
+        score = 150
+    elif ntrp_rating == '4':
+        teammate_ntrp = '4'
+        teammate_rank= 'Bronze'
+        score = 225
+    elif ntrp_rating == '4.5':
+        teammate_ntrp = '4.5'
+        teammate_rank= 'Bronze'
+        score = 300
+    elif ntrp_rating == '5':
+        teammate_ntrp = '5'
+        teammate_rank= 'Bronze'
+        score = 375
+    
+    user_instance = get_object_or_404(api.models.User, id=user_id)
+    api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = score, user = user_instance)
+
 def RankCalculation(user_score, oponent_score, win_loss):
 
     if win_loss == "win":
