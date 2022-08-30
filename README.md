@@ -3,6 +3,32 @@
 [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
+| Type | URL | Methods | Description |
+| --- | --- | --- | --- |
+| Authentication | /auth/users/ | POST | Create User |
+| Authentication | /auth/token/login/ | POST | Login |
+| Authentication | /auth/token/logout/ | POST | Logout |
+| User Profile | /profile/ | GET, PATCH | List, Create (where None), Patch Profile |
+| User Details | /<str:username> | GET | List User Details |
+| User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
+| User’s Game Sessions | /<str:username>/confirmed-guest/ | GET | Confirmed Games (user = guest) |
+| User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
+| User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
+| User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
+| User’s Game Sessions | /<str:username>/games/?my-games= | GET | Several My Games List Returned |
+| Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
+| Game Sessions | /session/?search | Filter Game Sessions |  |
+| Game Sessions | /session/<int:pk> | GET, PATCH, DELETE | Get, Update, Destroy Game Session |
+| Game Sessions | /session/<int:pk>/guest/ | GET, POST, DELETE | List, Create Guest for Game session |
+| Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH | Change Guest Status, Delete Guest |
+| Survey | /session/<int:session_pk>/survey | GET, POST | List & Create Survey |
+| Survey Responses | /session/<int:session_pk>/survey/<int:survey_pk>/response | POST | Create Survey Response |
+| Court | /court/ | GET, POST | List & Create Court |
+| Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
+| Notification | notification/check/ | GET | View All New Notifications, Only called once |
+| Notification | notification/count/ | GET | List All New Notifications to count |
+| Notification | notification/all/ | GET | List All Past Notifications |
 
 ## Authentication
 
@@ -69,8 +95,8 @@
     {
     		"id": 5,
     		"username": "SillyJoe",
-    		"first_name": "",
-    		"last_name": "",
+    		"first_name": "Silly",
+    		"last_name": "Joe",
     		"profile": {
     			"id": 48,
     			"user": "SillyJoe",
@@ -78,54 +104,69 @@
     			"ntrp_rating": "5"
     		},
     		"game_session": [
+    	{
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
+    		"host_info": {
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
+    		},
+    		"guest": [
+    			6
+    		],
+    		"guest_info": [
     			{
-    				"id": 14,
-    				"host": "SillyJoe",
-    				"host_info": {
-    					"id": 5,
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
     					"username": "SillyJoe",
     					"first_name": "",
-    					"last_name": ""
-    				},
-    				"date": "2022-08-24",
-    				"time": "18:00:00",
-    				"session_type": "Casual",
-    				"match_type": "Singles",
-    				"location": 1,
-    				"location_info": {
-    					"id": 1,
-    					"park_name": "State Road Park",
-    					"court_count": 2,
-    					"court_surface": "Hard Court",
-    					"address": {
-    						"id": 1,
-    						"address1": "123 State Rd",
-    						"address2": null,
-    						"city": "Durham",
-    						"state": "NC",
-    						"zipcode": "27705",
-    						"court": 1
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
     					}
-    				},
-    				"guest": [],
-    				"guest_info": []
+    				}
     			}
     		],
-    		"guest": [
-    			{
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
     				"id": 1,
-    				"user": "SillyJoe",
-    				"game_session": 13,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 2,
-    				"user": "SillyJoe",
-    				"game_session": 12,
-    				"status": "Pending"
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
     			}
-    		]
-    	}
+    		}
+    	}...
+    ]
     ```
     
 
@@ -134,6 +175,15 @@
 - Method: GET
 - Data JSON:
     - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
+|  | user = host | user = guest | status = pending | status = accepted |
+| --- | --- | --- | --- | --- |
+| /<str:username> | X | X | X | X |
+| /<str:username>/confirmed/ | X | X |  | X |
+| /<str:username>/confirmed-host/ | X |  |  | X |
+| /<str:username>/confirmed-guest/ |  | X |  | X |
+| /<str:username>/open/ | X | X | X |  |
+| /<str:username>/open-host/ | X |  | X |  |
+| /<str:username>/open-guest/ |  | X | X |  |
 
 ### MORE User’s Game Sessions
 
@@ -147,6 +197,8 @@
     - **HostNoGuest** : games that I host that have no guests (pending or accepted, etc) so that I can delete this game session and no one needs to be notified. I could also edit this game
     - **HostNotPendingUnconfirmedDoubles :** doubles games that I host with other accepted guest but not confirmed yet and No pending guest
     - **GuestAcceptedUnconfirmedDoubles** : doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
+    - **MyPreviousGames** : List all users previous games as Host or Guest
+
 
 ## User Profiles
 
@@ -168,6 +220,7 @@
     	"user": 5,
     	"profile_pic": null,
     	"ntrp_rating": "3.5",
+    	"wins_losses": "1 - 1",
     	"profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
     }
     ```
@@ -186,16 +239,16 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
-    
-    ```json
-    {
-    	"id": 27,
-    	"user": 5,
-    	"profile_pic": null,
-    	"ntrp_rating": "4"
-      "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
-    }
-    ```
+- ```json
+{
+	"id": 27,
+	"user": 5,
+	"profile_pic": null,
+	"ntrp_rating": "4"
+	"wins_losses": "1 - 1",
+  "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
+}
+```
     
 
 ## Game Sessions
@@ -213,67 +266,67 @@
     ```json
     [
     	{
-    		"id": 4,
-    		"host": "John_Doe11",
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
     		"host_info": {
-    			"id": 2,
-    			"username": "John_Doe11",
-    			"first_name": "John",
-    			"last_name": "Doe"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
-    		"location": 1,
-    		"location_info": {
-    			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
     		},
     		"guest": [
-    			6,
-    			7
+    			6
     		],
     		"guest_info": [
     			{
-    				"id": 6,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 7,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
+    					"username": "SillyJoe",
+    					"first_name": "",
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
+    					}
+    				}
     			}
-    		]
-    	},
-    	{
-    		"id": 5,
-    		"host": "diego",
-    		"host_info": {
-    			"id": 2,
-    			"username": "diego",
-    			"first_name": "diego",
-    			"last_name": "diego"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
+    		],
     		"location": 1,
     		"location_info": {
     			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
-    		},
-    		"guest": [],
-    		"guest_info": []
-    	}
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
+    				"id": 1,
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
+    			}
+    		}
+    	}...
     ]
     ```
     
@@ -300,8 +353,7 @@
     
     ```json
     {
-        "date": "2022-08-18",
-        "time": "16:15:00",
+        "datetime": "2022-08-03T23:31:59Z",
         "session_type": "Competitive",
         "match_type": "Doubles",
         "location": 1
@@ -311,45 +363,70 @@
 - Response: Game Session list json object
 
 ```json
-{
-		"id": 4,
-		"host": "John_Doe11",
+[
+	{
+		"game_session_id": 6,
+		"confirmed": true,
+		"datetime": "2022-08-03T23:31:59Z",
+		"endtime": "2022-08-04T00:31:59Z",
+		"session_type": "Casual",
+		"match_type": "Singles",
+		"host": "SillyJoe",
 		"host_info": {
-			"id": 2,
-			"username": "John_Doe11",
-			"first_name": "John",
-			"last_name": "Doe"
-		},
-		"date": "2022-08-18",
-		"time": "16:15:00",
-		"session_type": "Competitive",
-		"match_type": "Doubles",
-		"location": 1,
-		"location_info": {
-			"id": 1,
-			"park_name": "Sanderford Park",
-			"court_count": 6,
-			"court_surface": "Hard Court"
+			"user_id": 2,
+			"username": "SillyJoe",
+			"first_name": "",
+			"last_name": "",
+			"profile": {
+				"profile_id": 2,
+				"user": "SillyJoe",
+				"profile_pic": null,
+				"ntrp_rating": "2.5",
+				"profile_image_file": null
+			}
 		},
 		"guest": [
-			6,
-			7
+			6
 		],
 		"guest_info": [
 			{
-				"id": 6,
-				"user": "admin",
-				"game_session": 4,
-				"status": "Pending"
-			},
-			{
-				"id": 7,
-				"user": "admin",
-				"game_session": 4,
-				"status": "Pending"
+				"guest_id": 6,
+				"status": "Host",
+				"game_session": 6,
+				"user": "SillyJoe",
+				"user_info": {
+					"user_id": 2,
+					"username": "SillyJoe",
+					"first_name": "",
+					"last_name": "",
+					"profile": {
+						"profile_id": 2,
+						"user": "SillyJoe",
+						"profile_pic": null,
+						"ntrp_rating": "2.5",
+						"profile_image_file": null
+					}
+				}
 			}
-		]
-	}
+		],
+		"location": 1,
+		"location_info": {
+			"id": 1,
+			"park_name": "Sandeford Park",
+			"court_count": 2,
+			"court_surface": "Hard Court",
+			"address": {
+				"id": 1,
+				"court": "Sandeford Park",
+				"address1": "Sanderford Rd",
+				"address2": null,
+				"city": "Raleigh",
+				"state": "North Carolina",
+				"zipcode": "27610"
+			}
+		}
+	}...
+]
 ```
 
 ### Delete Game Session
@@ -372,7 +449,7 @@
 
 ```json
 {
-    "time": "16:15:00",
+    "datetime": "2022-08-03T23:31:59Z",
 }
 ```
 
@@ -388,45 +465,70 @@
 - Response: 200_OK
     
     ```json
-    {
-    		"id": 4,
-    		"host": "John_Doe11",
+    [
+    	{
+    		"game_session_id": 6,
+    		"confirmed": true,
+    		"datetime": "2022-08-03T23:31:59Z",
+    		"endtime": "2022-08-04T00:31:59Z",
+    		"session_type": "Casual",
+    		"match_type": "Singles",
+    		"host": "SillyJoe",
     		"host_info": {
-    			"id": 2,
-    			"username": "John_Doe11",
-    			"first_name": "John",
-    			"last_name": "Doe"
-    		},
-    		"date": "2022-08-18",
-    		"time": "16:15:00",
-    		"session_type": "Competitive",
-    		"match_type": "Doubles",
-    		"location": 1,
-    		"location_info": {
-    			"id": 1,
-    			"park_name": "Sanderford Park",
-    			"court_count": 6,
-    			"court_surface": "Hard Court"
+    			"user_id": 2,
+    			"username": "SillyJoe",
+    			"first_name": "",
+    			"last_name": "",
+    			"profile": {
+    				"profile_id": 2,
+    				"user": "SillyJoe",
+    				"profile_pic": null,
+    				"ntrp_rating": "2.5",
+    				"profile_image_file": null
+    			}
     		},
     		"guest": [
-    			6,
-    			7
+    			6
     		],
     		"guest_info": [
     			{
-    				"id": 6,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
-    			},
-    			{
-    				"id": 7,
-    				"user": "admin",
-    				"game_session": 4,
-    				"status": "Pending"
+    				"guest_id": 6,
+    				"status": "Host",
+    				"game_session": 6,
+    				"user": "SillyJoe",
+    				"user_info": {
+    					"user_id": 2,
+    					"username": "SillyJoe",
+    					"first_name": "",
+    					"last_name": "",
+    					"profile": {
+    						"profile_id": 2,
+    						"user": "SillyJoe",
+    						"profile_pic": null,
+    						"ntrp_rating": "2.5",
+    						"profile_image_file": null
+    					}
+    				}
     			}
-    		]
-    	}
+    		],
+    		"location": 1,
+    		"location_info": {
+    			"id": 1,
+    			"park_name": "Sandeford Park",
+    			"court_count": 2,
+    			"court_surface": "Hard Court",
+    			"address": {
+    				"id": 1,
+    				"court": "Sandeford Park",
+    				"address1": "Sanderford Rd",
+    				"address2": null,
+    				"city": "Raleigh",
+    				"state": "North Carolina",
+    				"zipcode": "27610"
+    			}
+    		}
+    	}...
+    ]
     ```
     
     ### Create Guest for  a Game Session
@@ -450,16 +552,22 @@
         ```json
         [
         	{
-        		"id": 6,
-        		"user": "admin1",
-        		"game_session": 4,
-        		"status": "Pending"
-        	},
-        	{
-        		"id": 7,
-        		"user": "admin2",
-        		"game_session": 4,
-        		"status": "Pending"
+        		"guest_id": 6,
+        		"status": "Host",
+        		"game_session": 6,
+        		"user": "SillyJoe",
+        		"user_info": {
+        			"user_id": 2,
+        			"username": "SillyJoe",
+        			"first_name": "",
+        			"last_name": "",
+        			"profile": {
+        				"profile_id": 2,
+        				"user": "SillyJoe",
+        				"profile_pic": null,
+        				"ntrp_rating": "2.5",
+        				"profile_image_file": null
+        			}
         	}
         ]
         ```
@@ -484,7 +592,7 @@
         
         ### Delete Guest for a Game Session
         
-        > /session/<int:pk>/guest/<ing:guest_pk>
+        > /session/<int:pk>/guest/
         > 
         - Method: DELETE
             - Note: pk is the id of the game session instance and guest_pk is the id of guest instance
@@ -754,8 +862,22 @@
         - Method: GET
         - Permissions: Authenticated
         - Response: 200_OK
-
-
+        
+        ```json
+        [
+        	{
+        		"id": 12,
+        		"sender": 4,
+        		"reciever": 2,
+        		"message": "Sam Has backed out of the game",
+        		"game_session": 11,
+        		"read": true
+        	}
+        ]
+        ```
+        
+    
+    ..
 
 ### Create a local PostgreSQL database
 This project uses [PostgreSQL 14.4](https://www.postgresql.org/).

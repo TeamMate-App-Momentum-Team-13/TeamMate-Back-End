@@ -1,3 +1,4 @@
+import re
 from rest_framework import permissions
 
 
@@ -29,10 +30,10 @@ class GuestPermission(permissions.BasePermission):
             return request.user.is_authenticated
         elif view.action == 'create':
             return request.user.is_authenticated
-        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy']:
+        elif view.action in ['retrieve', 'update', 'partial_update', 'destroy', 'delete']:
             return True
         else:
-            return False
+            return True
                                                                                                 
     def has_object_permission(self, request, view, obj):
         # Deny actions on objects if the user is not authenticated
@@ -44,6 +45,9 @@ class GuestPermission(permissions.BasePermission):
         elif view.action in ['update', 'partial_update']:
             return obj.game_session.host == request.user or request.user.is_staff
         elif view.action == 'destroy':
-            return obj.user == request.user or request.user.is_staff
+            if obj.user == request.user:
+                return obj.user == request.user or request.user.is_staff
+            elif obj.game_session.host == request.user:
+                return obj.game_session.host == request.user or request.user.is_staff
         else:
             return False
