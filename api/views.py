@@ -296,6 +296,7 @@ class MyGamesList(ListAPIView):
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs['username'])
+        update_wins_losses_field(user)
         my_games = GameSession.objects.filter(
             datetime__gte=datetime.now(pytz.timezone('America/New_York')))
     
