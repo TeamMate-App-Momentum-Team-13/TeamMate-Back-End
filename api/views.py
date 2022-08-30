@@ -56,17 +56,21 @@ def welcome(request):
         'description': 'Welcome to our app 👋'
     })
 
+
+# ----- Game Sessions ------
 class ListCreateGameSession(ListCreateAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(
             datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=False, full=False)
+            confirmed=False, 
+            full=False
+        ).exclude(
+            host=self.request.user).exclude(
+            guest__user=self.request.user)
 
-        # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("location-id")
         if park_search is not None:
             queryset = queryset.filter(location__id__icontains=park_search)
@@ -80,8 +84,7 @@ class ListCreateGameSession(ListCreateAPIView):
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
 
-        return queryset.order_by("datetime").exclude(
-            host=self.request.user).exclude(guest__user=self.request.user)
+        return queryset.order_by("datetime")
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
