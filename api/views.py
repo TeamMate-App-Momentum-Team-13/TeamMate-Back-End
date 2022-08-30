@@ -173,7 +173,8 @@ class ListCreateUpdateProfile(APIView):
 
     # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
-        update_wins_losses_field(self)
+        user = self.request.user
+        update_wins_losses_field(user)
         profile = request.user.profile
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -194,7 +195,9 @@ class UserDetail(RetrieveUpdateAPIView):
     lookup_field = 'username'
 
     def get_queryset(self):
-        queryset = User.objects.filter(username=self.kwargs['username'])
+        user = get_object_or_404(User, username=self.kwargs['username'])
+        update_wins_losses_field(user)
+        queryset = User.objects.filter(username=user)
         return queryset
 
 # Returns confirmed upcoming games where user = host or guest
