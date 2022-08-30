@@ -99,6 +99,36 @@ class GuestSerializer(serializers.ModelSerializer):
             'user_info',
         ]
 
+# ----- Surveys -----
+class SurveyResponseSerializer(serializers.ModelSerializer):
+    survey = serializers.SlugRelatedField(slug_field="id", read_only=True)
+    about_user_username = serializers.PrimaryKeyRelatedField(source='about_user.username', read_only=True)
+    about_court_name = serializers.PrimaryKeyRelatedField(source='about_court.park_name', read_only=True)
+
+    class Meta:
+        model = SurveyResponse
+        fields = [
+            'id',
+            'survey',
+            'about_user',
+            'about_user_username',
+            'about_court',
+            'about_court_name',
+            'response',
+        ]
+
+class SurveySerializer(serializers.ModelSerializer):
+    respondent = serializers.SlugRelatedField(slug_field="username", read_only=True)
+    game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
+
+    class Meta:
+        model = Survey
+        fields = [
+            'id',
+            'respondent',
+            'game_session',
+        ]
+
 class GameSessionSerializer(serializers.ModelSerializer):
     host = serializers.SlugRelatedField(slug_field="username", read_only=True)
     guest = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -106,6 +136,8 @@ class GameSessionSerializer(serializers.ModelSerializer):
     location_info = CourtSerializer(source='location', read_only=True)
     guest_info = GuestSerializer(source='guest', many=True, read_only=True)
     game_session_id = serializers.ReadOnlyField(source='id')
+    survey = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    survey_info = SurveySerializer(source='survey', many=True, read_only=True)
 
     class Meta:
         model = GameSession
@@ -123,6 +155,8 @@ class GameSessionSerializer(serializers.ModelSerializer):
             'guest_info',
             'location',
             'location_info',
+            'survey',
+            'survey_info',
         ]
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -155,32 +189,3 @@ class NotificationGameSessionSerializers(serializers.ModelSerializer):
             'read',
         ]
 
-# ----- Surveys -----
-class SurveyResponseSerializer(serializers.ModelSerializer):
-    survey = serializers.SlugRelatedField(slug_field="id", read_only=True)
-    about_user_username = serializers.PrimaryKeyRelatedField(source='about_user.username', read_only=True)
-    about_court_name = serializers.PrimaryKeyRelatedField(source='about_court.park_name', read_only=True)
-
-    class Meta:
-        model = SurveyResponse
-        fields = [
-            'id',
-            'survey',
-            'about_user',
-            'about_user_username',
-            'about_court',
-            'about_court_name',
-            'response',
-        ]
-
-class SurveySerializer(serializers.ModelSerializer):
-    respondent = serializers.SlugRelatedField(slug_field="username", read_only=True)
-    game_session = serializers.SlugRelatedField(slug_field="id", read_only=True)
-
-    class Meta:
-        model = Survey
-        fields = [
-            'id',
-            'respondent',
-            'game_session',
-        ]

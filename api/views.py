@@ -287,7 +287,8 @@ class MyOpenGuestGameSessions(ListAPIView):
 
 class MyGamesList(ListAPIView):
     serializer_class = GameSessionSerializer
-    permission_classes = [permissions.IsAuthenticated,]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
+    lookup_field = 'username'
 
     def get_queryset(self):
         my_games = GameSession.objects.filter(
@@ -336,13 +337,15 @@ class MyGamesList(ListAPIView):
                     confirmed=False)
             # list of my previous games
             elif my_games_search == "MyPreviousGames":
-                my_games = GameSession.objects.filter(datetime__lte=datetime.now(pytz.timezone('America/New_York')))
+                username = get_object_or_404(User, username=self.kwargs['username'])
+                my_games = GameSession.objects.filter(
+                    datetime__lte=datetime.now(pytz.timezone('America/New_York')))
                 my_games = my_games.filter(confirmed=True, guest__isnull=False,)
-                previous_host_confirmed_games =  my_games.filter(host=self.request.user)
-                previous_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
-                my_games = previous_host_confirmed_games.union(previous_guest_confirmed_games, all=False)
-                for game in my_games:
-                    game.guest.set(game.guest.filter(status="Host"))
+                previous_host_confirmed_games =  my_games.filter(host=username)
+                previous_guest_confirmed_games = my_games.filter(
+                    guest__user=username, guest__status='Accepted')
+                my_games = previous_host_confirmed_games.union(
+                    previous_guest_confirmed_games, all=False)
                 return my_games.order_by("-datetime")
         return my_games.order_by("datetime")
 
