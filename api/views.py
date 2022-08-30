@@ -171,7 +171,6 @@ class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_classes = [JSONParser, FileUploadParser]
 
-    # This methods checks for a user profile, if one exists, it returns the profile, if one does not exist, it creates one (with default ntrp_rating of 2.5). This eliminates the need for a post method override.
     def get(self, request):
         user = self.request.user
         update_wins_losses_field(user)
