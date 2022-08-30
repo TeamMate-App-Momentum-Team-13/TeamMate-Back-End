@@ -1,8 +1,11 @@
+from pyexpat import model
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
 import pytz
+from .algorithm import RankCalibration
+from django.shortcuts import get_object_or_404
 
 # Django Signals
 from django.dispatch import receiver
@@ -153,13 +156,13 @@ class Profile(BaseModel):
         (SEVEN, '7'),
     ]
 
-    GOLD = 'Gold'
-    SILVER = 'Silver'
-    BRONZE = 'Bronze'
+    GOLD = '#daa520'
+    SILVER = '#a9a9a9'
+    BRONZE = '#904d00'
     RANK_CHOICES = [
-        (GOLD, 'Gold'),
-        (SILVER, 'Silver'),
-        (BRONZE, 'Bronze'),
+        (GOLD, '#daa520'),
+        (SILVER, '#a9a9a9'),
+        (BRONZE, '#904d00'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -220,6 +223,45 @@ class SurveyResponse(BaseModel):
     # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
 
+class RankUpdate(BaseModel):
+    TWOFIVE = '2.5'
+    THREE = '3'
+    THREEFIVE = '3.5'
+    FOUR = '4'
+    FOURFIVE = '4.5'
+    FIVE = '5'
+    FIVEFIVE = '5.5'
+    SIX = '6'
+    SIXFIVE = '6.5'
+    SEVEN = '7'
+    RATE_CHOICES = [
+        (TWOFIVE, '2.5'),
+        (THREE, '3'),
+        (THREEFIVE, '3.5'),
+        (FOUR, '4'),
+        (FOURFIVE, '4.5'),
+        (FIVE, '5'),
+        (FIVEFIVE, '5.5'),
+        (SIX, '6'),
+        (SIXFIVE, '6.5'),
+        (SEVEN, '7'),
+    ]
+
+    GOLD = '#daa520'
+    SILVER = '#a9a9a9'
+    BRONZE = '#904d00'
+    RANK_CHOICES = [
+        (GOLD, '#daa520'),
+        (SILVER, '#a9a9a9'),
+        (BRONZE, '#904d00'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rankupdate')
+    tm_score = models.SmallIntegerField()
+    tm_ntrp = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
+    tm_rank = models.CharField(max_length=10, choices=RANK_CHOICES, default=BRONZE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 @receiver(post_save, sender=Guest)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
     clean_date = (instance.game_session.datetime).strftime("%a, %b, %d")
@@ -256,6 +298,19 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 def user_created_profile_handler(sender, instance, created, *args, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=Profile)
+def user_created_profile_handler_update(sender, instance, created, *args, **kwargs):
+    if created:
+        RankCalibration(instance.ntrp_rating, instance.user.id)
+
+@receiver(post_save, sender=RankUpdate)
+def user_created_rank_update_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        profile = get_object_or_404(Profile, user=instance.user)
+        profile.teammate_ntrp=instance.tm_ntrp
+        profile.teammate_rank=instance.tm_rank
+        profile.save()
 
 @receiver(post_save, sender=GameSession)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
@@ -354,25 +409,23 @@ def set_confirmed_to_false(game_session):
     game_session.save()
 
 
-def update_wins_losses_field(self):
+def update_wins_losses_field(user):
     games_won = GameSession.objects.filter(
         datetime__lte=datetime.now(pytz.timezone('America/New_York')),
         confirmed=True,
-        survey__respondent=self.request.user,
-        survey__survey_response__about_user=self.request.user,
-        survey__survey_response__response='Winner'
-    )
+        survey__respondent=user,
+        survey__survey_response__about_user=user,
+        survey__survey_response__response='Winner')
     games_won_count = games_won.count()
 
     games_played = GameSession.objects.filter(
         datetime__lte=datetime.now(pytz.timezone('America/New_York')),
         confirmed=True,
-        survey__respondent=self.request.user,
-    )
+        survey__respondent=user)
     games_played_count = games_played.count()
 
     games_lost_count = games_played_count - games_won_count
 
-    profile = Profile.objects.get(user=self.request.user.pk)
+    profile = Profile.objects.get(user=user.pk)
     profile.wins_losses = f'{games_won_count} - {games_lost_count}'
     profile.save()
