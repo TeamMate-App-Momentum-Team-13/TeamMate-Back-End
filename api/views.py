@@ -94,6 +94,8 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
+
+# ----- Guests ------
 class GuestViewSet(viewsets.ModelViewSet):
     serializer_class = GuestSerializer
     permission_classes = (GuestPermission,)
@@ -115,25 +117,28 @@ class GuestViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        # Two lines added to override
+        # Added to override
         game_session_pk = instance.game_session.pk
         update_game_session_confirmed_field(game_session_pk)
         update_game_session_full_field(game_session_pk)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
-
         return Response(serializer.data)
-
 
     def delete(self, request, *args, **kwargs):
         instance = get_object_or_404(Guest, user=self.request.user, game_session=self.kwargs.get('pk'))
         game_session_pk = instance.game_session.pk
         self.perform_destroy(instance)
+
+        # Added to override
         update_game_session_confirmed_field(game_session_pk)
         update_game_session_full_field(game_session_pk)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# ----- Courts ------
 class ListCreateCourt(ListCreateAPIView):
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
