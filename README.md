@@ -336,7 +336,7 @@
 > /session/?searchterm
 > 
 - Method: GET
-- SearchTerms: park-name , date, match-type, session-type
+- SearchTerms: location-id , date, match-type, session-type
     - note you can chain search terms
     - Example /session/?match-type=Singles&session-type=Casual
 - Data json:
