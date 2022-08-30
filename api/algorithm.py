@@ -32,6 +32,19 @@ def RankCalibration(ntrp_rating, user_id):
     user_instance = get_object_or_404(api.models.User, id=user_id)
     api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = score, user = user_instance)
 
+def determine_game_type(instance):
+    match_type = instance.survey.game_session.match_type
+    winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
+    breakpoint()
+    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner", about_user=test).count()
+    if match_type == "Doubles":
+        if winner_session_count == 2:
+
+            pass
+    elif match_type == "Singles":
+        if winner_session_count == 1:
+            pass
+
 def RankCalculation(user_score, oponent_score, win_loss):
 
     if win_loss == "win":

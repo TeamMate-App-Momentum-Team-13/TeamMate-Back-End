@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
 import pytz
-from .algorithm import RankCalibration
+from .algorithm import RankCalibration, determine_game_type
 from django.shortcuts import get_object_or_404
 
 # Django Signals
@@ -311,6 +311,12 @@ def user_created_rank_update_handler(sender, instance, created, *args, **kwargs)
         profile.teammate_ntrp=instance.tm_ntrp
         profile.teammate_rank=instance.tm_rank
         profile.save()
+
+@receiver(post_save, sender=SurveyResponse)
+def user_created_profile_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        if instance.response == "Winner":
+            determine_game_type(instance)
 
 @receiver(post_save, sender=GameSession)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
