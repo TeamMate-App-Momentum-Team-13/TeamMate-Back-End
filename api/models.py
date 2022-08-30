@@ -156,13 +156,13 @@ class Profile(BaseModel):
         (SEVEN, '7'),
     ]
 
-    GOLD = 'Gold'
-    SILVER = 'Silver'
-    BRONZE = 'Bronze'
+    GOLD = '#daa520'
+    SILVER = '#a9a9a9'
+    BRONZE = '#904d00'
     RANK_CHOICES = [
-        (GOLD, 'Gold'),
-        (SILVER, 'Silver'),
-        (BRONZE, 'Bronze'),
+        (GOLD, '#daa520'),
+        (SILVER, '#a9a9a9'),
+        (BRONZE, '#904d00'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -248,12 +248,12 @@ class RankUpdate(BaseModel):
     ]
 
     GOLD = '#daa520'
-    SILVER = 'Silver'
-    BRONZE = 'Bronze'
+    SILVER = '#a9a9a9'
+    BRONZE = '#904d00'
     RANK_CHOICES = [
         (GOLD, '#daa520'),
-        (SILVER, 'Silver'),
-        (BRONZE, 'Bronze'),
+        (SILVER, '#a9a9a9'),
+        (BRONZE, '#904d00'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rankupdate')
