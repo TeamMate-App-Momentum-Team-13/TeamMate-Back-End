@@ -73,7 +73,7 @@ class ListCreateGameSession(ListCreateAPIView):
             queryset = queryset.filter(location__id__icontains=park_search)
         date_search = self.request.query_params.get("date")
         if date_search is not None:
-            queryset = queryset.filter(date__icontains=date_search)
+            queryset = queryset.filter(datetime__icontains=date_search)
         match_type_search = self.request.query_params.get("match-type")
         if match_type_search is not None:
             queryset = queryset.filter(match_type__icontains=match_type_search)
