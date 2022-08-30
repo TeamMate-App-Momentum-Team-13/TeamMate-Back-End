@@ -405,5 +405,5 @@ class CreateSurveyResponse(CreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        survey = get_object_or_404(Survey, pk=self.kwargs.get('survey_pk'))
+        survey = get_object_or_404(Survey, respondent=self.request.user, game_session=self.kwargs.get('session_pk'))
         serializer.save(survey=survey)
