@@ -6,27 +6,27 @@ import api.models
 def RankCalibration(ntrp_rating, user_id):
     if ntrp_rating == '2.5':
         teammate_ntrp = '2.5'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 0
     elif ntrp_rating == '3':
         teammate_ntrp = '3'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 75
     elif ntrp_rating == '3.5':
         teammate_ntrp = '3.5'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 150
     elif ntrp_rating == '4':
         teammate_ntrp = '4'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 225
     elif ntrp_rating == '4.5':
         teammate_ntrp = '4.5'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 300
     elif ntrp_rating == '5':
         teammate_ntrp = '5'
-        teammate_rank= 'Bronze'
+        teammate_rank= '#904d00'
         score = 375
     
     user_instance = get_object_or_404(api.models.User, id=user_id)
