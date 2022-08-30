@@ -27,8 +27,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             'user',
             'profile_pic',
             'ntrp_rating',
+            'teammate_ntrp',
+            'teammate_rank',
             'wins_losses',
-            'profile_image_file',
+            'profile_image_file'
         ]
 
     def update(self, instance, validated_data):
