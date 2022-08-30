@@ -10,7 +10,6 @@ from rest_framework.parsers import JSONParser, FileUploadParser
 from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission, IsUserOwnerOrReadOnly
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from .serializers import (
     CourtSerializer, 
     CourtAddressSerializer, 
