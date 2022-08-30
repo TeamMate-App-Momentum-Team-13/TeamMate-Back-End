@@ -247,11 +247,11 @@ class RankUpdate(BaseModel):
         (SEVEN, '7'),
     ]
 
-    GOLD = 'Gold'
+    GOLD = '#daa520'
     SILVER = 'Silver'
     BRONZE = 'Bronze'
     RANK_CHOICES = [
-        (GOLD, 'Gold'),
+        (GOLD, '#daa520'),
         (SILVER, 'Silver'),
         (BRONZE, 'Bronze'),
     ]
