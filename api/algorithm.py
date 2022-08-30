@@ -31,11 +31,6 @@ def RankCalibration(ntrp_rating, user_id):
     
     user_instance = get_object_or_404(api.models.User, id=user_id)
     api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = score, user = user_instance)
-    profile = get_object_or_404(api.models.Profile, user=user_instance)
-    profile.save()
-    profile.teammate_ntrp=teammate_ntrp
-    profile.teammate_rank=teammate_rank
-    profile.save()
 
 def RankCalculation(user_score, oponent_score, win_loss):
 

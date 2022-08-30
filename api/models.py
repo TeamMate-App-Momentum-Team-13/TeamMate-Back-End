@@ -304,16 +304,13 @@ def user_created_profile_handler_update(sender, instance, created, *args, **kwar
     if created:
         RankCalibration(instance.ntrp_rating, instance.user.id)
 
-# @receiver(post_save, sender=RankUpdate)
-# def user_created_rank_update_handler(sender, instance, created, *args, **kwargs):
-#     if created:
-#         breakpoint()
-#         profile = get_object_or_404(Profile, user=instance.user)
-#         profile.teammate_ntrp=instance.tm_ntrp
-#         profile.teammate_rank=instance.tm_rank
-#         profile.save()
-            
-
+@receiver(post_save, sender=RankUpdate)
+def user_created_rank_update_handler(sender, instance, created, *args, **kwargs):
+    if created:
+        profile = get_object_or_404(Profile, user=instance.user)
+        profile.teammate_ntrp=instance.tm_ntrp
+        profile.teammate_rank=instance.tm_rank
+        profile.save()
 
 @receiver(post_save, sender=GameSession)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):

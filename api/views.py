@@ -181,12 +181,12 @@ class ListCreateUpdateProfile(APIView):
 
     def patch (self, request, **kwargs):
         self.get(request)
-        if bool(request.data['ntrp_rating']) == True:
-            RankCalibration(request.data['ntrp_rating'], self.request.user.id)
         profile = request.user.profile
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            if bool(request.data['ntrp_rating']) == True:
+                RankCalibration(request.data['ntrp_rating'], self.request.user.id)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
