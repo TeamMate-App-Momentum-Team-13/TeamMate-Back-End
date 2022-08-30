@@ -69,11 +69,12 @@ class CourtAddressSerializer(serializers.ModelSerializer):
 
 class CourtSerializer(serializers.ModelSerializer):
     address = CourtAddressSerializer(read_only=True)
+    location_id = serializers.ReadOnlyField(source='id')
 
     class Meta:
         model = Court
         fields = [
-            'id',
+            'location_id',
             'park_name',
             'court_count',
             'court_surface',

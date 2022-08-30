@@ -68,9 +68,9 @@ class ListCreateGameSession(ListCreateAPIView):
             confirmed=False, full=False)
 
         # Allows users to add search params to query for specific results
-        park_search = self.request.query_params.get("park-name")
+        park_search = self.request.query_params.get("location-id")
         if park_search is not None:
-            queryset = queryset.filter(location__park_name__icontains=park_search)
+            queryset = queryset.filter(location__id__icontains=park_search)
         date_search = self.request.query_params.get("date")
         if date_search is not None:
             queryset = queryset.filter(date__icontains=date_search)
@@ -405,5 +405,5 @@ class CreateSurveyResponse(CreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        survey = get_object_or_404(Survey, pk=self.kwargs.get('survey_pk'))
+        survey = get_object_or_404(Survey, respondent=self.request.user, game_session=self.kwargs.get('session_pk'))
         serializer.save(survey=survey)
