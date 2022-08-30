@@ -360,15 +360,13 @@ def update_wins_losses_field(user):
         confirmed=True,
         survey__respondent=user,
         survey__survey_response__about_user=user,
-        survey__survey_response__response='Winner'
-    )
+        survey__survey_response__response='Winner')
     games_won_count = games_won.count()
 
     games_played = GameSession.objects.filter(
         datetime__lte=datetime.now(pytz.timezone('America/New_York')),
         confirmed=True,
-        survey__respondent=user,
-    )
+        survey__respondent=user)
     games_played_count = games_played.count()
 
     games_lost_count = games_played_count - games_won_count
