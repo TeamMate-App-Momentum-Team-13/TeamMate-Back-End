@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models, transaction
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
@@ -219,6 +220,45 @@ class SurveyResponse(BaseModel):
 
     # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
+
+class RankUpdate(BaseModel):
+    TWOFIVE = '2.5'
+    THREE = '3'
+    THREEFIVE = '3.5'
+    FOUR = '4'
+    FOURFIVE = '4.5'
+    FIVE = '5'
+    FIVEFIVE = '5.5'
+    SIX = '6'
+    SIXFIVE = '6.5'
+    SEVEN = '7'
+    RATE_CHOICES = [
+        (TWOFIVE, '2.5'),
+        (THREE, '3'),
+        (THREEFIVE, '3.5'),
+        (FOUR, '4'),
+        (FOURFIVE, '4.5'),
+        (FIVE, '5'),
+        (FIVEFIVE, '5.5'),
+        (SIX, '6'),
+        (SIXFIVE, '6.5'),
+        (SEVEN, '7'),
+    ]
+
+    GOLD = 'Gold'
+    SILVER = 'Silver'
+    BRONZE = 'Bronze'
+    RANK_CHOICES = [
+        (GOLD, 'Gold'),
+        (SILVER, 'Silver'),
+        (BRONZE, 'Bronze'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='rankupdate')
+    tm_score = models.SmallIntegerField()
+    tm_ntrp = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
+    tm_rank = models.CharField(max_length=10, choices=RANK_CHOICES, default=BRONZE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 @receiver(post_save, sender=Guest)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
