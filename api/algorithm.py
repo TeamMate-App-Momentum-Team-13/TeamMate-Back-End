@@ -1,53 +1,41 @@
 from django.shortcuts import render, get_object_or_404
-from .models import (
-    User, 
-    GameSession, 
-    Court, 
-    CourtAddress, 
-    UserAddress, 
-    Guest, 
-    Profile, 
-    AddressModelMixin,
-    NotificationGameSession,
-    Survey,
-    SurveyResponse,
-    RankUpdate,
-    restrict_guest_amount_on_game_session,
-    update_game_session_confirmed_field,
-    update_game_session_full_field,
-    update_wins_losses_field,
-)
+import api.models
+
 
 #called in django created signal for profile and update method in views when data contains ntrp update
 def RankCalibration(ntrp_rating, user_id):
-    if ntrp_rating == 2.5:
-        teammate_ntrp = 2.5
+    if ntrp_rating == '2.5':
+        teammate_ntrp = '2.5'
         teammate_rank= 'Bronze'
         score = 0
-    elif ntrp_rating == 3.0:
-        teammate_ntrp = 3.0
+    elif ntrp_rating == '3':
+        teammate_ntrp = '3'
         teammate_rank= 'Bronze'
         score = 75
-    elif ntrp_rating == 3.5:
-        teammate_ntrp = 3.5
+    elif ntrp_rating == '3.5':
+        teammate_ntrp = '3.5'
         teammate_rank= 'Bronze'
         score = 150
-    elif ntrp_rating == 4.0:
-        teammate_ntrp = 4.0
+    elif ntrp_rating == '4':
+        teammate_ntrp = '4'
         teammate_rank= 'Bronze'
         score = 225
-    elif ntrp_rating == 4.5:
-        teammate_ntrp = 4.5
+    elif ntrp_rating == '4.5':
+        teammate_ntrp = '4.5'
         teammate_rank= 'Bronze'
         score = 300
-    elif ntrp_rating == 5.0:
-        teammate_ntrp = 5.0
+    elif ntrp_rating == '5':
+        teammate_ntrp = '5'
         teammate_rank= 'Bronze'
         score = 375
     
-    user_instance = get_object_or_404(User, id=user_id)
-    RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, score = score, user = user_instance)
-
+    user_instance = get_object_or_404(api.models.User, id=user_id)
+    api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = score, user = user_instance)
+    profile = get_object_or_404(api.models.Profile, user=user_instance)
+    profile.save()
+    profile.teammate_ntrp=teammate_ntrp
+    profile.teammate_rank=teammate_rank
+    profile.save()
 
 def RankCalculation(user_score, oponent_score, win_loss):
 

@@ -11,6 +11,7 @@ from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission, IsUserOwnerOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .algorithm import RankCalibration
 from .serializers import (
     CourtSerializer, 
     CourtAddressSerializer, 
@@ -180,6 +181,8 @@ class ListCreateUpdateProfile(APIView):
 
     def patch (self, request, **kwargs):
         self.get(request)
+        if bool(request.data['ntrp_rating']) == True:
+            RankCalibration(request.data['ntrp_rating'], self.request.user.id)
         profile = request.user.profile
         serializer = ProfileSerializer(profile, data=request.data, partial=True)
         if serializer.is_valid():

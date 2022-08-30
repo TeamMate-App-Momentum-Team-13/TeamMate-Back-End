@@ -4,6 +4,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import timedelta, datetime
 import pytz
+from .algorithm import RankCalibration
+from django.shortcuts import get_object_or_404
 
 # Django Signals
 from django.dispatch import receiver
@@ -254,7 +256,7 @@ class RankUpdate(BaseModel):
         (BRONZE, 'Bronze'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='rankupdate')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='rankupdate')
     tm_score = models.SmallIntegerField()
     tm_ntrp = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
     tm_rank = models.CharField(max_length=10, choices=RANK_CHOICES, default=BRONZE)
@@ -296,6 +298,22 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 def user_created_profile_handler(sender, instance, created, *args, **kwargs):
     if created:
         Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=Profile)
+def user_created_profile_handler_update(sender, instance, created, *args, **kwargs):
+    if created:
+        RankCalibration(instance.ntrp_rating, instance.user.id)
+
+# @receiver(post_save, sender=RankUpdate)
+# def user_created_rank_update_handler(sender, instance, created, *args, **kwargs):
+#     if created:
+#         breakpoint()
+#         profile = get_object_or_404(Profile, user=instance.user)
+#         profile.teammate_ntrp=instance.tm_ntrp
+#         profile.teammate_rank=instance.tm_rank
+#         profile.save()
+            
+
 
 @receiver(post_save, sender=GameSession)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
