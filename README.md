@@ -239,16 +239,17 @@
     ```
     
 - Response: Profile JSON Object, 202_ACCEPTED:
-- ```json
-{
-	"id": 27,
-	"user": 5,
-	"profile_pic": null,
-	"ntrp_rating": "4"
-	"wins_losses": "1 - 1",
-  "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
-}
-```
+    
+    ```json
+    {
+    	"id": 27,
+    	"user": 5,
+    	"profile_pic": null,
+    	"ntrp_rating": "4"
+    	"wins_losses": "1 - 1",
+      "profile_image_file": "https://teammate-momentum-team-13.s3.amazonaws.com/static/profile_images/Diego_Profile.jpg"
+    }
+    ```
     
 
 ## Game Sessions
