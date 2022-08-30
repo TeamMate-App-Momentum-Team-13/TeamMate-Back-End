@@ -295,6 +295,7 @@ class MyGamesList(ListAPIView):
     lookup_field = 'username'
 
     def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs['username'])
         my_games = GameSession.objects.filter(
             datetime__gte=datetime.now(pytz.timezone('America/New_York')))
     
@@ -303,22 +304,22 @@ class MyGamesList(ListAPIView):
             #User's Confirmed Games as Guest and Host
             if my_games_search == "AllConfirmed":
                 my_games = my_games.filter(confirmed=True, guest__isnull=False,)
-                my_host_confirmed_games =  my_games.filter(host=self.request.user)
-                my_guest_confirmed_games = my_games.filter(guest__user=self.request.user, guest__status='Accepted')
+                my_host_confirmed_games = my_games.filter(host=user)
+                my_guest_confirmed_games = my_games.filter(guest__user=user, guest__status='Accepted')
                 my_games = my_host_confirmed_games.union(my_guest_confirmed_games, all=False)
             # unconfirmed games that I host that have a pending request
             elif my_games_search == "HostUnconfirmed":
-                my_games = my_games.filter(host=self.request.user, confirmed=False, guest__status='Pending').distinct()
+                my_games = my_games.filter(host=user, confirmed=False, guest__status='Pending').distinct()
             #games that I have requested to join and those requests haven't been accepted/rejected yet, aka pending sent requests
             elif my_games_search == "GuestPending":
                 my_games = my_games.filter(
-                    guest__user=self.request.user, 
+                    guest__user=user,
                     guest__status='Pending', 
                     confirmed=False)
             # games that I host that have no guests (pending or accepted, etc) so that I can delete this game session and no one needs to be notified. I could also edit this game       
             elif my_games_search == "HostNoGuest":
                 my_games = my_games.filter(
-                    host=self.request.user, 
+                    host=user,
                     confirmed=False)
                 my_games = my_games.filter(~Q(guest__status="Pending"))
                 my_games = my_games.filter(~Q(guest__status="Accepted"))
@@ -327,7 +328,7 @@ class MyGamesList(ListAPIView):
             # doubles games that I host with other accepted guest but not confirmed yet and No pending guest
             elif my_games_search == "HostNotPendingUnconfirmedDoubles":
                 my_games = my_games.filter(
-                    host=self.request.user,
+                    host=user,
                     match_type="Doubles", 
                     confirmed=False)
                 #this filters for guest_status that does not equal pending
@@ -335,19 +336,18 @@ class MyGamesList(ListAPIView):
             # Doubles games that I am an accepted guest (not the host), but aren't confirmed yet. So I could cancel my request to join this game after I'm accepted
             elif my_games_search == "GuestAcceptedUnconfirmedDoubles":
                 my_games = my_games.filter(
-                    guest__user=self.request.user,
+                    guest__user=user,
                     guest__status="Accepted",
                     match_type="Doubles", 
                     confirmed=False)
             # list of my previous games
             elif my_games_search == "MyPreviousGames":
-                username = get_object_or_404(User, username=self.kwargs['username'])
                 my_games = GameSession.objects.filter(
-                    datetime__lte=datetime.now(pytz.timezone('America/New_York')))
-                my_games = my_games.filter(confirmed=True, guest__isnull=False,)
-                previous_host_confirmed_games =  my_games.filter(host=username)
+                    datetime__lte=datetime.now(pytz.timezone('America/New_York')),
+                    confirmed=True)
+                previous_host_confirmed_games = my_games.filter(host=user)
                 previous_guest_confirmed_games = my_games.filter(
-                    guest__user=username, guest__status='Accepted')
+                    guest__user=user, guest__status='Accepted')
                 my_games = previous_host_confirmed_games.union(
                     previous_guest_confirmed_games, all=False)
                 return my_games.order_by("-datetime")
