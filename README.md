@@ -603,75 +603,106 @@
         - Response: 204 No Content
         
         # Surveys
-        
-        ---
-        
-        ### Create Surveys
-        
-        > /session/<int:session_pk>/survey
-        > 
-        - Method: POST
-        - Permissions: Authenticated or Read-Only
-        - Data:
-            - The game session PK is passed via the URL
-            - The “respondent” is the user making the request
-            - Thus, the body can remain empty
-        - Request:
-            
-            ```json
-            {
-            }
-            ```
-            
-        - Response: JSON Object, 201_CREATED
-            
-            ```json
-            {
-            	"id": 7,
-            	"respondent": "ChaseTheLegend",
-            	"game_session": 8
-            }
-            ```
-            
-        
-        ### Create SurveyResponses
-        
-        > /session/<int:session_pk>/survey/<int:survey_pk>/response
-        > 
-        - Method: POST
-        - Permissions: Authenticated or Read-Only
-        - Data:
-            - The game session PK is passed via the URL
-            - The survey PK is passed via the URL
-            - The request body must include:
-                - PK for a “about_user” or “about_court”
-                - “response” string
-                    - “about_user”: “No Show” | “Winner” | “Block User”
-                    - “about_court”: “High Quality” | “Average Quality” | “Poor Quality”
-        - Request:
-            
-            ```json
-            {
-            	"about_user": 8,
-            	"response": "Block User"
-            }
-            ```
-            
-        - Response: JSON Object, 201_CREATED
-            
-            ```json
-            {
-            	"id": 29,
-            	"survey": 7,
-            	"about_user": 8,
-            	"about_user_username": "Chad_the_GOAT",
-            	"about_court": null,
-            	"response": "Block User"
-            }
-            ```
-            
-        
-        # Courts
+
+---
+
+### Survey Steps:
+
+1. A POST request to /session/<int:session_pk>/survey/ must be made in order to initialize the survey. Ideally this will be done when you hit the “start survey” button
+2. For every affirmative response you make a POST request to /session/<int:session_pk>/survey/response/ otherwise you simply don’t make a post request. 
+    1. EXAMPLE 1: POST the Winner, the loser does not need a post request
+    
+    ```json
+    {
+    	"about_user": 8, <---- this is the user_id
+    	"response": "Winner"
+    }
+    ```
+    
+    - EXAMPLE 2: POST if you DO want to block a user, If you DON’T wan’t to block user do not make a POST request
+    
+    ```json
+    {
+    	"about_user": 8,<---- this is the user_id
+    	"response": "Block User"
+    }
+    ```
+    
+- EXAMPLE 3: POST location review
+
+```json
+{
+	"about_court": 2,<---- this is the location_id
+	"response": "High Quality"
+}
+```
+
+### Create Surveys
+
+> /session/<int:session_pk>/survey/
+> 
+- Method: POST
+- Permissions: Authenticated or Read-Only
+- Data:
+    - The game session PK is passed via the URL
+    - The “respondent” is the user making the request
+    - Thus, the body can remain empty
+- POST:
+    
+    ```json
+    No Body
+    ```
+    
+- Response: JSON Object, 201_CREATED
+    
+    ```json
+    {
+    	"id": 7,
+    	"respondent": "ChaseTheLegend",
+    	"game_session": 8
+    }
+    ```
+    
+
+### Create SurveyResponses
+
+> /session/<int:session_pk>/survey/response/
+> 
+- Method: POST
+    - NOTE: about_user is the user_id
+- Permissions: Authenticated or Read-Only
+- Data:
+    - The game session PK is passed via the URL
+    - The survey PK is passed via the URL
+    - The request body must include:
+        - PK for a “about_user” or “about_court”
+        - “response” string
+            - “about_user”: “No Show” | “Winner” | “Block User”
+            - “about_court”: “High Quality” | “Average Quality” | “Poor Quality”
+- Request:
+    
+    ```json
+    {
+    	"about_user": 8,
+    	"response": "Block User"
+    }
+    ```
+    
+- Response: JSON Object, 201_CREATED
+    
+    ```json
+    {
+    	"id": 29,
+    	"survey": 7,
+    	"about_user": 8,
+    	"about_user_username": "Chad_the_GOAT",
+    	"about_court": null,
+    	"response": "Block User"
+    }
+    ```
+    
+
+# Courts
         
         ---
         
