@@ -337,12 +337,15 @@ class MyGamesList(ListAPIView):
                     confirmed=False)
             # list of my previous games
             elif my_games_search == "MyPreviousGames":
-                username = self.kwargs['username']
-                my_games = GameSession.objects.filter(datetime__lte=datetime.now(pytz.timezone('America/New_York')))
+                username = get_object_or_404(User, username=self.kwargs['username'])
+                my_games = GameSession.objects.filter(
+                    datetime__lte=datetime.now(pytz.timezone('America/New_York')))
                 my_games = my_games.filter(confirmed=True, guest__isnull=False,)
                 previous_host_confirmed_games =  my_games.filter(host=username)
-                previous_guest_confirmed_games = my_games.filter(guest__user=username, guest__status='Accepted')
-                my_games = previous_host_confirmed_games.union(previous_guest_confirmed_games, all=False)
+                previous_guest_confirmed_games = my_games.filter(
+                    guest__user=username, guest__status='Accepted')
+                my_games = previous_host_confirmed_games.union(
+                    previous_guest_confirmed_games, all=False)
                 return my_games.order_by("-datetime")
         return my_games.order_by("datetime")
 
