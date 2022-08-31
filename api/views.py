@@ -1,56 +1,41 @@
 from datetime import datetime
-import pytz
-from functools import partial
-from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from rest_framework import permissions, status, views, viewsets
-from rest_framework.views import APIView
-from django.views.generic import TemplateView
-from rest_framework.parsers import JSONParser, FileUploadParser
-from rest_framework.decorators import permission_classes, api_view
-from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission, IsUserOwnerOrReadOnly
-from rest_framework.response import Response
-
-from .algorithm import RankCalibration
-
-from .serializers import (
-    CourtSerializer, 
-    CourtAddressSerializer, 
-    GameSessionSerializer, 
-    GuestSerializer, 
-    ProfileSerializer, 
-    UserDetailSerializer,
-    NotificationGameSessionSerializers,
-    SurveySerializer,
-    SurveyResponseSerializer,
-    )
-
+from django.shortcuts import get_object_or_404
+import pytz
+from rest_framework import permissions, status, viewsets
 from rest_framework.generics import (
     CreateAPIView, 
-    DestroyAPIView, 
     ListAPIView, 
     ListCreateAPIView, 
-    RetrieveUpdateDestroyAPIView, 
     RetrieveUpdateAPIView,
-)
-
+    RetrieveUpdateDestroyAPIView,)
+from rest_framework.parsers import JSONParser, FileUploadParser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .algorithm import RankCalibration
 from .models import (
-    User, 
-    GameSession, 
     Court, 
     CourtAddress, 
-    UserAddress, 
+    GameSession,
     Guest, 
-    Profile, 
-    AddressModelMixin,
     NotificationGameSession,
     Survey,
-    SurveyResponse,
+    User,
     restrict_guest_amount_on_game_session,
     update_game_session_confirmed_field,
     update_game_session_full_field,
-    update_wins_losses_field,
-)
+    update_wins_losses_field,)
+from .permissions import IsOwnerOrReadOnly, GuestPermission
+from .serializers import (
+    CourtSerializer,
+    CourtAddressSerializer,
+    GameSessionSerializer,
+    GuestSerializer,
+    ProfileSerializer,
+    UserDetailSerializer,
+    NotificationGameSessionSerializers,
+    SurveySerializer,
+    SurveyResponseSerializer,)
 
 
 def welcome(request):
