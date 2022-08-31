@@ -37,7 +37,7 @@ def determine_game_type(instance):
     winner_session= api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner")
     winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
     user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner",about_user=instance.survey.respondent).count()
-    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('tm_score')
+    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('created_at')
     user_score = user_latest_rank_update.tm_score
     if match_type == "Doubles":
         if winner_session_count >= 2:
