@@ -30,7 +30,11 @@ def RankCalibration(ntrp_rating, user_id):
         score = 375
     
     user_instance = get_object_or_404(api.models.User, id=user_id)
-    api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = score, user = user_instance)
+    api.models.RankUpdate.objects.create(
+        tm_ntrp = teammate_ntrp,
+        tm_rank = teammate_rank,
+        tm_score = score,
+        user = user_instance)
 
 def determine_game_type(instance):
     match_type = instance.survey.game_session.match_type
@@ -187,4 +191,8 @@ def ScoreToRankConverter(user_score, instance):
         teammate_ntrp = '5'
         teammate_rank= '#daa520'
     
-    api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = user_score, user = instance.survey.respondent)
+    api.models.RankUpdate.objects.create(
+        tm_ntrp = teammate_ntrp,
+        tm_rank = teammate_rank,
+        tm_score = user_score,
+        user = instance.survey.respondent)
