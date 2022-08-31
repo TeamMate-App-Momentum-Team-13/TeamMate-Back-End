@@ -287,20 +287,6 @@ class MyOpenHostGameSessions(ListAPIView):
             host=self.request.user)
         return open_games_as_host.order_by("datetime")
 
-# Returns open upcoming games where user = guest
-class MyOpenGuestGameSessions(ListAPIView):
-    serializer_class = GameSessionSerializer
-    permission_classes = [permissions.IsAuthenticated,]
-
-    def get_queryset(self):
-        upcoming_open_games = GameSession.objects.filter(
-            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=False)
-        open_games_as_guest = upcoming_open_games.filter(
-            guest__user=self.request.user,
-            guest__status='Accepted')
-        return open_games_as_guest.order_by("datetime")
-
 class MyGamesList(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
