@@ -142,14 +142,6 @@ class GameSession(BaseModel):
     def __str__(self):
         return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
 
-
-def restrict_guest_amount_on_game_session(game_session_pk):
-        game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
-
 class Guest(BaseModel):
     
     PENDING = 'Pending'
@@ -166,7 +158,7 @@ class Guest(BaseModel):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest')
     status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
 
     class Meta:
