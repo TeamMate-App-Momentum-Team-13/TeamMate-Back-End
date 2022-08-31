@@ -3,6 +3,7 @@
 [https://teammate-app.herokuapp.com/](https://teammate-app.herokuapp.com/)
 
 # Endpoints
+
 | Type | URL | Methods | Description |
 | --- | --- | --- | --- |
 | Authentication | /auth/users/ | POST | Create User |
@@ -10,12 +11,6 @@
 | Authentication | /auth/token/logout/ | POST | Logout |
 | User Profile | /profile/ | GET, PATCH | List, Create (where None), Patch Profile |
 | User Details | /<str:username> | GET | List User Details |
-| User’s Game Sessions | /<str:username>/confirmed/ | GET | Confirmed Games (user = host | guest) |
-| User’s Game Sessions | /<str:username>/confirmed-host/ | GET | Confirmed Games (user = host) |
-| User’s Game Sessions | /<str:username>/confirmed-guest/ | GET | Confirmed Games (user = guest) |
-| User’s Game Sessions | /<str:username>/open/ | GET | Open Games (user = host | guest) |
-| User’s Game Sessions | /<str:username>/open-host/ | GET | Open Games (user = host) |
-| User’s Game Sessions | /<str:username>/open-guest/ | GET | Open Games (user = guest) |
 | User’s Game Sessions | /<str:username>/games/?my-games= | GET | Several My Games List Returned |
 | Game Sessions | /session/ | GET, POST,  | List All & Create Game Session |
 | Game Sessions | /session/?search | Filter Game Sessions |  |
@@ -23,7 +18,7 @@
 | Game Sessions | /session/<int:pk>/guest/ | GET, POST, DELETE | List, Create Guest for Game session |
 | Game Sessions | /session/<int:pk>/guest/<int:guest_pk>/ | GET, PATCH | Change Guest Status, Delete Guest |
 | Survey | /session/<int:session_pk>/survey | GET, POST | List & Create Survey |
-| Survey Responses | /session/<int:session_pk>/survey/<int:survey_pk>/response | POST | Create Survey Response |
+| Survey Responses | /session/<int:session_pk>/survey/response/ | POST | Create Survey Response |
 | Court | /court/ | GET, POST | List & Create Court |
 | Court Address | /court/<int:pk>/address/ | GET, POST, PATCH | List & Create Court Address |
 | Notification | notification/check/ | GET | View All New Notifications, Only called once |
@@ -171,21 +166,6 @@
     
 
 ### User’s Game Sessions
-
-- Method: GET
-- Data JSON:
-    - As of 8/20/22, doubles games will return in both the confirmed or open endpoints so long as one guest’s status meets the criteria
-|  | user = host | user = guest | status = pending | status = accepted |
-| --- | --- | --- | --- | --- |
-| /<str:username> | X | X | X | X |
-| /<str:username>/confirmed/ | X | X |  | X |
-| /<str:username>/confirmed-host/ | X |  |  | X |
-| /<str:username>/confirmed-guest/ |  | X |  | X |
-| /<str:username>/open/ | X | X | X |  |
-| /<str:username>/open-host/ | X |  | X |  |
-| /<str:username>/open-guest/ |  | X | X |  |
-
-### MORE User’s Game Sessions
 
 > /<str:username>/games/?my-games=
 > 
