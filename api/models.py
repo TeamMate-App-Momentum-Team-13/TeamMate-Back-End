@@ -18,6 +18,7 @@ class User(AbstractUser):
     def __repr__(self):
         return f'<User username={self.username} pk={self.pk}>'
 
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(db_index=True, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,97 +26,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-class Court(BaseModel):
-    HARD_COURT = 'Hard Court'
-    GRASS_COURT = 'Grass Court'
-    CLAY_COURT = 'Clay Court'
-    COURT_CHOICES = [
-        (HARD_COURT, 'Hard Court'),
-        (GRASS_COURT, 'Grass Court'),
-        (CLAY_COURT, 'Clay Court'),
-    ]
-    park_name = models.CharField(max_length=250)
-    court_count = models.PositiveSmallIntegerField(null=True, blank=True)
-    court_surface = models.CharField(max_length=250, choices=COURT_CHOICES, default=HARD_COURT)
-
-    def __str__(self):
-        return f"{self.park_name}"
-
-class AddressModelMixin(BaseModel):
-    address1 = models.CharField(max_length=250, blank=True, null=True)
-    address2 = models.CharField(max_length=250, blank=True, null=True)
-    city = models.CharField(max_length=250)
-    state = models.CharField(max_length=250)
-    zipcode = models.CharField(max_length=5)
-
-    def __str__(self):
-        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
-
-class UserAddress(AddressModelMixin):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
-
-    def __str__(self):
-        return f"{self.user}"
-
-class CourtAddress(AddressModelMixin):
-    court = models.OneToOneField(Court, on_delete=models.CASCADE, related_name='address')
-    
-    def __str__(self):
-        return f"{self.court}"
-
-class GameSession(BaseModel):
-    CASUAL = 'Casual'
-    COMPETITIVE = 'Competitive'
-    SESSION_CHOICES = [
-        (CASUAL, 'Casual'),
-        (COMPETITIVE, 'Competitive'),
-    ]
-
-    SINGLES = 'Singles'
-    DOUBLES = 'Doubles'
-    MATCH_CHOICES = [
-        (SINGLES, 'Singles'),
-        (DOUBLES, 'Doubles'),
-    ]
-
-    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
-    datetime = models.DateTimeField(auto_now_add=False)
-    endtime = models.DateTimeField(auto_now_add=False, blank=True, null=True)
-    session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
-    match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
-    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
-    confirmed = models.BooleanField(default=False)
-    full = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
-
-class Guest(BaseModel):
-    
-    PENDING = 'Pending'
-    WAITLISTED = 'Wait Listed'
-    ACCEPTED = 'Accepted'
-    REJECTED = 'Rejected'
-    HOST = 'Host'
-    STATUS_CHOICES = [
-        (PENDING, 'Pending'),
-        (WAITLISTED, 'Wait Listed'),
-        (ACCEPTED, 'Accepted'),
-        (REJECTED, 'Rejected'),
-        (HOST, 'Host'),
-    ]
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
-    status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
-
-    class Meta:
-        constraints = [
-			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
-		]
-
-    def __str__(self):
-        return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
 
 class Profile(BaseModel):
     TWOFIVE = '2.5'
@@ -161,6 +71,105 @@ class Profile(BaseModel):
     def __str__(self):
         return f"{self.user}"
 
+
+class Court(BaseModel):
+    HARD_COURT = 'Hard Court'
+    GRASS_COURT = 'Grass Court'
+    CLAY_COURT = 'Clay Court'
+    COURT_CHOICES = [
+        (HARD_COURT, 'Hard Court'),
+        (GRASS_COURT, 'Grass Court'),
+        (CLAY_COURT, 'Clay Court'),
+    ]
+    park_name = models.CharField(max_length=250)
+    court_count = models.PositiveSmallIntegerField(null=True, blank=True)
+    court_surface = models.CharField(max_length=250, choices=COURT_CHOICES, default=HARD_COURT)
+
+    def __str__(self):
+        return f"{self.park_name}"
+
+
+class AddressModelMixin(BaseModel):
+    address1 = models.CharField(max_length=250, blank=True, null=True)
+    address2 = models.CharField(max_length=250, blank=True, null=True)
+    city = models.CharField(max_length=250)
+    state = models.CharField(max_length=250)
+    zipcode = models.CharField(max_length=5)
+
+    def __str__(self):
+        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
+
+
+class UserAddress(AddressModelMixin):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
+
+    def __str__(self):
+        return f"{self.user}"
+
+
+class CourtAddress(AddressModelMixin):
+    court = models.OneToOneField(Court, on_delete=models.CASCADE, related_name='address')
+    
+    def __str__(self):
+        return f"{self.court}"
+
+
+class GameSession(BaseModel):
+    CASUAL = 'Casual'
+    COMPETITIVE = 'Competitive'
+    SESSION_CHOICES = [
+        (CASUAL, 'Casual'),
+        (COMPETITIVE, 'Competitive'),
+    ]
+
+    SINGLES = 'Singles'
+    DOUBLES = 'Doubles'
+    MATCH_CHOICES = [
+        (SINGLES, 'Singles'),
+        (DOUBLES, 'Doubles'),
+    ]
+
+    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
+    datetime = models.DateTimeField(auto_now_add=False)
+    endtime = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
+    match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
+    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    confirmed = models.BooleanField(default=False)
+    full = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
+
+
+class Guest(BaseModel):
+    
+    PENDING = 'Pending'
+    WAITLISTED = 'Wait Listed'
+    ACCEPTED = 'Accepted'
+    REJECTED = 'Rejected'
+    HOST = 'Host'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (WAITLISTED, 'Wait Listed'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+        (HOST, 'Host'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
+    status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
+
+    class Meta:
+        constraints = [
+			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
+		]
+
+    def __str__(self):
+        return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
+
+
 class NotificationGameSession(BaseModel):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
@@ -168,10 +177,12 @@ class NotificationGameSession(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
     read = models.BooleanField(default=False)
 
+
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE,
         related_name='survey')
     respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey')
+
 
 class SurveyResponse(BaseModel):
     # RE: Q1 - no-show(s)
@@ -203,6 +214,7 @@ class SurveyResponse(BaseModel):
         related_name='about_court')
 
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
+
 
 class RankUpdate(BaseModel):
     TWOFIVE = '2.5'
@@ -242,6 +254,7 @@ class RankUpdate(BaseModel):
     tm_ntrp = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
     tm_rank = models.CharField(max_length=10, choices=RANK_CHOICES, default=BRONZE)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 @receiver(post_save, sender=Guest)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
