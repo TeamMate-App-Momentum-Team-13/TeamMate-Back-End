@@ -143,6 +143,13 @@ class GameSession(BaseModel):
         return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
 
 
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
+
 class Guest(BaseModel):
     
     PENDING = 'Pending'
@@ -308,14 +315,6 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     update_game_session_confirmed_field(instance.game_session.pk)
     update_game_session_full_field(instance.game_session.pk)
-
-
-def restrict_guest_amount_on_game_session(game_session_pk):
-        game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
 
 
 def update_game_session_full_field(game_session_pk):
