@@ -1,27 +1,14 @@
-from pyexpat import model
-from django.db import models, transaction
+from datetime import timedelta, datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from datetime import timedelta, datetime
+from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 import pytz
 from .algorithm import RankCalibration, determine_game_type
 from .notifications import created_guest_notification, updated_guest_notification
-from django.shortcuts import get_object_or_404
 
-# Django Signals
-from django.dispatch import receiver
-from django.db.models.signals import (
-    post_save,
-    post_delete,
-    pre_delete,
-)
-
-def restrict_guest_amount_on_game_session(game_session_pk):
-        game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
 
 class User(AbstractUser):
 
@@ -32,6 +19,7 @@ class User(AbstractUser):
     def __repr__(self):
         return f'<User username={self.username} pk={self.pk}>'
 
+
 class BaseModel(models.Model):
     created_at = models.DateTimeField(db_index=True, auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,99 +27,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-class Court(BaseModel):
-    HARD_COURT = 'Hard Court'
-    GRASS_COURT = 'Grass Court'
-    CLAY_COURT = 'Clay Court'
-    COURT_CHOICES = [
-        (HARD_COURT, 'Hard Court'),
-        (GRASS_COURT, 'Grass Court'),
-        (CLAY_COURT, 'Clay Court'),
-    ]
-    park_name = models.CharField(max_length=250)
-    court_count = models.PositiveSmallIntegerField(null=True, blank=True)
-    court_surface = models.CharField(max_length=250, choices=COURT_CHOICES, default=HARD_COURT)
-
-    def __str__(self):
-        return f"{self.park_name}"
-
-class AddressModelMixin(BaseModel):
-    address1 = models.CharField(max_length=250, blank=True, null=True)
-    address2 = models.CharField(max_length=250, blank=True, null=True)
-    city = models.CharField(max_length=250)
-    state = models.CharField(max_length=250)
-    zipcode = models.CharField(max_length=5)
-
-    def __str__(self):
-        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
-
-class UserAddress(AddressModelMixin):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
-
-    def __str__(self):
-        return f"{self.user}"
-
-class CourtAddress(AddressModelMixin):
-    court = models.OneToOneField(Court, on_delete=models.CASCADE, related_name='address')
-    
-    def __str__(self):
-        return f"{self.court}"
-
-class GameSession(BaseModel):
-    CASUAL = 'Casual'
-    COMPETITIVE = 'Competitive'
-    SESSION_CHOICES = [
-        (CASUAL, 'Casual'),
-        (COMPETITIVE, 'Competitive'),
-    ]
-
-    SINGLES = 'Singles'
-    DOUBLES = 'Doubles'
-    MATCH_CHOICES = [
-        (SINGLES, 'Singles'),
-        (DOUBLES, 'Doubles'),
-    ]
-
-    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
-    # datetime fields require a default value for some reason. Even if its false.
-    # You can only patch datetime fields if they have auto_now_add = False
-    datetime = models.DateTimeField(auto_now_add=False)
-    endtime = models.DateTimeField(auto_now_add=False, blank=True, null=True)
-    session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
-    match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
-    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
-    confirmed = models.BooleanField(default=False)
-    full = models.BooleanField(default=False)
-
-    def __str__(self):
-        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
-
-class Guest(BaseModel):
-    
-    PENDING = 'Pending'
-    WAITLISTED = 'Wait Listed'
-    ACCEPTED = 'Accepted'
-    REJECTED = 'Rejected'
-    HOST = 'Host'
-    STATUS_CHOICES = [
-        (PENDING, 'Pending'),
-        (WAITLISTED, 'Wait Listed'),
-        (ACCEPTED, 'Accepted'),
-        (REJECTED, 'Rejected'),
-        (HOST, 'Host'),
-    ]
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
-    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
-    status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
-
-    class Meta:
-        constraints = [
-			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
-		]
-
-    def __str__(self):
-        return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
 
 class Profile(BaseModel):
     TWOFIVE = '2.5'
@@ -177,7 +72,112 @@ class Profile(BaseModel):
     def __str__(self):
         return f"{self.user}"
 
-#related name clased when all of them were set to "notificationgamesession"
+
+class Court(BaseModel):
+    HARD_COURT = 'Hard Court'
+    GRASS_COURT = 'Grass Court'
+    CLAY_COURT = 'Clay Court'
+    COURT_CHOICES = [
+        (HARD_COURT, 'Hard Court'),
+        (GRASS_COURT, 'Grass Court'),
+        (CLAY_COURT, 'Clay Court'),
+    ]
+    park_name = models.CharField(max_length=250)
+    court_count = models.PositiveSmallIntegerField(null=True, blank=True)
+    court_surface = models.CharField(max_length=250, choices=COURT_CHOICES, default=HARD_COURT)
+
+    def __str__(self):
+        return f"{self.park_name}"
+
+
+class AddressModelMixin(BaseModel):
+    address1 = models.CharField(max_length=250, blank=True, null=True)
+    address2 = models.CharField(max_length=250, blank=True, null=True)
+    city = models.CharField(max_length=250)
+    state = models.CharField(max_length=250)
+    zipcode = models.CharField(max_length=5)
+
+    def __str__(self):
+        return f"{self.address1}, {self.city}, {self.state}, {self.zipcode}"
+
+
+class UserAddress(AddressModelMixin):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
+
+    def __str__(self):
+        return f"{self.user}"
+
+
+class CourtAddress(AddressModelMixin):
+    court = models.OneToOneField(Court, on_delete=models.CASCADE, related_name='address')
+    
+    def __str__(self):
+        return f"{self.court}"
+
+
+class GameSession(BaseModel):
+    CASUAL = 'Casual'
+    COMPETITIVE = 'Competitive'
+    SESSION_CHOICES = [
+        (CASUAL, 'Casual'),
+        (COMPETITIVE, 'Competitive'),
+    ]
+
+    SINGLES = 'Singles'
+    DOUBLES = 'Doubles'
+    MATCH_CHOICES = [
+        (SINGLES, 'Singles'),
+        (DOUBLES, 'Doubles'),
+    ]
+
+    host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
+    datetime = models.DateTimeField(auto_now_add=False)
+    endtime = models.DateTimeField(auto_now_add=False, blank=True, null=True)
+    session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
+    match_type = models.CharField(max_length=250, choices=MATCH_CHOICES, default=SINGLES)
+    location = models.ForeignKey(Court, on_delete=models.CASCADE, related_name='game_session')
+    confirmed = models.BooleanField(default=False)
+    full = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Game Session:{self.pk}, Hosted by:{self.host}, {self.match_type}, {self.session_type}"
+
+
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
+
+class Guest(BaseModel):
+    
+    PENDING = 'Pending'
+    WAITLISTED = 'Wait Listed'
+    ACCEPTED = 'Accepted'
+    REJECTED = 'Rejected'
+    HOST = 'Host'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (WAITLISTED, 'Wait Listed'),
+        (ACCEPTED, 'Accepted'),
+        (REJECTED, 'Rejected'),
+        (HOST, 'Host'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='guest')
+    game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='guest', validators=(restrict_guest_amount_on_game_session, ))
+    status = models.CharField(max_length=250, choices=STATUS_CHOICES, default=PENDING)
+
+    class Meta:
+        constraints = [
+			models.UniqueConstraint(fields=['user', 'game_session'], name='unique_game_sessoin_follow')
+		]
+
+    def __str__(self):
+        return f"{self.user},Game Session: {self.game_session},Status: {self.status}"
+
+
 class NotificationGameSession(BaseModel):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
@@ -185,11 +185,12 @@ class NotificationGameSession(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
     read = models.BooleanField(default=False)
 
-# ----- Surveys -----
+
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE,
         related_name='survey')
     respondent = models.ForeignKey(User, on_delete=models.CASCADE, related_name='survey')
+
 
 class SurveyResponse(BaseModel):
     # RE: Q1 - no-show(s)
@@ -212,7 +213,6 @@ class SurveyResponse(BaseModel):
         (POOR_QUALITY, 'Poor Quality'),
     ]
 
-    # Generated from the URL
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey_response')
 
     # Every instance would have one of these two FK fields populated and the other left Null
@@ -221,8 +221,8 @@ class SurveyResponse(BaseModel):
     about_court = models.ForeignKey(Court, on_delete=models.CASCADE, null=True, blank=True,
         related_name='about_court')
 
-    # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
+
 
 class RankUpdate(BaseModel):
     TWOFIVE = '2.5'
@@ -262,6 +262,7 @@ class RankUpdate(BaseModel):
     tm_ntrp = models.CharField(max_length=10, choices=RATE_CHOICES, default=TWOFIVE)
     tm_rank = models.CharField(max_length=10, choices=RANK_CHOICES, default=BRONZE)
     created_at = models.DateTimeField(auto_now_add=True)
+
 
 @receiver(post_save, sender=Guest)
 def notification_created_or_updated_guest_handler(sender, instance, created, *args, **kwargs):
@@ -314,32 +315,7 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     update_game_session_confirmed_field(instance.game_session.pk)
     update_game_session_full_field(instance.game_session.pk)
-    # if instance.status == "Accepted" or instance.status == "Pending":
-    #     print("Accepted guest is deleted")
-    #     breakpoint()
-    #     try: 
-    #         NotificationGameSession.objects.create(
-    #             sender=instance.user,
-    #             reciever=instance.game_session.host,
-    #             message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
-    #             game_session = instance.game_session,
-    #         )
-    #     except:
-    #         pass
-    # else:
-    #     print("Other guest object was deleted")
 
-# @receiver(pre_delete, sender='api.GameSession')
-# def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
-#     print("Game Session deleted")
-#     if instance.guest.count() > 0:
-#         for guest_instance in instance.guest.all():
-#             NotificationGameSession.objects.create(
-#                 sender=instance.host,
-#                 reciever=guest_instance.user,
-#                 message=(f"Oh no, Host canceled game")
-#                 # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
-#             )
 
 def update_game_session_full_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
