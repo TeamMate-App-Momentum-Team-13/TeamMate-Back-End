@@ -82,7 +82,7 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
 
-# ----- Guests ------
+# ----- Guests -------
 class GuestViewSet(viewsets.ModelViewSet):
     serializer_class = GuestSerializer
     permission_classes = (GuestPermission,)
