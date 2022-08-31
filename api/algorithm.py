@@ -38,23 +38,16 @@ def RankCalibration(ntrp_rating, user_id):
 
 def determine_game_type(instance):
     match_type = instance.survey.game_session.match_type
-<<<<<<< HEAD
     winner_session = api.models.SurveyResponse.objects.filter(
         survey__id=instance.survey.id, response="Winner")
     winner_session_count = api.models.SurveyResponse.objects.filter(
         survey__id=instance.survey.id, response="Winner").count()
     user_win_count = api.models.SurveyResponse.objects.filter(
-        survey__id=instance.survey.id,
+        survey__id=instance.survey.id, 
         response="Winner",
         about_user=instance.survey.respondent).count()
     user_latest_rank_update = api.models.RankUpdate.objects.filter(
-        user=instance.survey.respondent).latest('tm_score')
-=======
-    winner_session= api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner")
-    winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
-    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner",about_user=instance.survey.respondent).count()
-    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('created_at')
->>>>>>> 1185bdd474cdd9b4e6e4fbeda04f538625aeeb2f
+        user=instance.survey.respondent).latest('created_at')
     user_score = user_latest_rank_update.tm_score
 
     if match_type == "Doubles":
@@ -68,17 +61,21 @@ def determine_game_type(instance):
                 game_session_guest = game_session_guest.exclude(status="Pending")
                 game_session_guest = game_session_guest.exclude(status="Wait Listed")
                 game_session_guest = game_session_guest.exclude(status="Rejected")
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('created_at')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=game_session_guest[0].user).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[1].user).latest('created_at')
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=game_session_guest[1].user).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
                 RankCalculation(user_score, player_avg_score, "win", instance)
             else:
-                #lose
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('created_at')
+                # Loss
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=winner_session[0].survey.respondent).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[1].survey.respondent).latest('created_at')
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=winner_session[1].survey.respondent).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
                 RankCalculation(user_score, player_avg_score, "loss", instance)
@@ -86,43 +83,46 @@ def determine_game_type(instance):
         if winner_session_count == 1:
             if user_win_count > 0:
                 game_session_guest = (instance.survey.game_session.guest).all()
-                game_session_guest = game_session_guest.exclude(user=winner_session[0].survey.respondent)
+                game_session_guest = game_session_guest.exclude(
+                    user=winner_session[0].survey.respondent)
                 game_session_guest = game_session_guest.exclude(status="Pending")
                 game_session_guest = game_session_guest.exclude(status="Wait Listed")
                 game_session_guest = game_session_guest.exclude(status="Rejected")
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('created_at')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=game_session_guest[0].user).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
                 RankCalculation(user_score, player1_score, "win", instance)
                 pass
             else:
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('created_at')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(
+                    user=winner_session[0].survey.respondent).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
                 RankCalculation(user_score, player1_score, "loss", instance)
 
 
-def RankCalculation(user_score, oponent_score, win_loss, instance):
+def RankCalculation(user_score, opponent_score, win_loss, instance):
 
     if win_loss == "win":
-        if abs(user_score - oponent_score) <= 25:
+        if abs(user_score - opponent_score) <= 25:
             user_score += 8
-        elif user_score - oponent_score >= 25 and user_score - oponent_score <= 125:
+        elif user_score - opponent_score >= 25 and user_score - opponent_score <= 125:
             user_score += 6
-        elif oponent_score - user_score >= 25 and oponent_score - user_score <= 125:
+        elif opponent_score - user_score >= 25 and opponent_score - user_score <= 125:
             user_score += 10
-        elif user_score - oponent_score > 125:
+        elif user_score - opponent_score > 125:
             user_score += 4
-        elif oponent_score - user_score > 125:
+        elif opponent_score - user_score > 125:
             user_score += 13
     elif win_loss == "loss":
-        if abs(user_score - oponent_score) <= 25:
+        if abs(user_score - opponent_score) <= 25:
             user_score -= 8
-        elif user_score - oponent_score >= 25 and user_score - oponent_score <= 125:
+        elif user_score - opponent_score >= 25 and user_score - opponent_score <= 125:
             user_score -= 10
-        elif oponent_score - user_score >= 25 and oponent_score - user_score <= 125:
+        elif opponent_score - user_score >= 25 and opponent_score - user_score <= 125:
             user_score -= 6
-        elif user_score - oponent_score > 125:
+        elif user_score - opponent_score > 125:
             user_score -= 13
-        elif oponent_score - user_score > 125:
+        elif opponent_score - user_score > 125:
             user_score -= 4
     
     if user_score > 450:
