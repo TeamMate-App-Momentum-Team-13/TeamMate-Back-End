@@ -1,19 +1,13 @@
-from pyexpat import model
-from django.db import models, transaction
+from datetime import timedelta, datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from datetime import timedelta, datetime
+from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 import pytz
 from .algorithm import RankCalibration, determine_game_type
-from django.shortcuts import get_object_or_404
 
-# Django Signals
-from django.dispatch import receiver
-from django.db.models.signals import (
-    post_save,
-    post_delete,
-    pre_delete,
-)
 
 def restrict_guest_amount_on_game_session(game_session_pk):
         game_session = GameSession.objects.get(id=game_session_pk)
