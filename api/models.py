@@ -1,20 +1,14 @@
-from pyexpat import model
-from django.db import models, transaction
+from datetime import timedelta, datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
-from datetime import timedelta, datetime
+from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.shortcuts import get_object_or_404
 import pytz
 from .algorithm import RankCalibration, determine_game_type
 from .notifications import created_guest_notification, updated_guest_notification
-from django.shortcuts import get_object_or_404
 
-# Django Signals
-from django.dispatch import receiver
-from django.db.models.signals import (
-    post_save,
-    post_delete,
-    pre_delete,
-)
 
 class User(AbstractUser):
 
@@ -322,6 +316,7 @@ def restrict_guest_amount_on_game_session(game_session_pk):
             raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
         elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
             raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
+
 
 def update_game_session_full_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
