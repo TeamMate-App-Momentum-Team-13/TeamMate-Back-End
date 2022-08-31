@@ -38,17 +38,26 @@ def RankCalibration(ntrp_rating, user_id):
 
 def determine_game_type(instance):
     match_type = instance.survey.game_session.match_type
-    winner_session= api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner")
-    winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
-    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner",about_user=instance.survey.respondent).count()
-    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('tm_score')
+    winner_session = api.models.SurveyResponse.objects.filter(
+        survey__id=instance.survey.id, response="Winner")
+    winner_session_count = api.models.SurveyResponse.objects.filter(
+        survey__id=instance.survey.id, response="Winner").count()
+    user_win_count = api.models.SurveyResponse.objects.filter(
+        survey__id=instance.survey.id,
+        response="Winner",
+        about_user=instance.survey.respondent).count()
+    user_latest_rank_update = api.models.RankUpdate.objects.filter(
+        user=instance.survey.respondent).latest('tm_score')
     user_score = user_latest_rank_update.tm_score
+
     if match_type == "Doubles":
         if winner_session_count >= 2:
             if user_win_count > 0:
                 game_session_guest = (instance.survey.game_session.guest).all()
-                game_session_guest = game_session_guest.exclude(user=winner_session[0].survey.respondent)
-                game_session_guest = game_session_guest.exclude(user=winner_session[1].survey.respondent)
+                game_session_guest = game_session_guest.exclude(
+                    user=winner_session[0].survey.respondent)
+                game_session_guest = game_session_guest.exclude(
+                    user=winner_session[1].survey.respondent)
                 game_session_guest = game_session_guest.exclude(status="Pending")
                 game_session_guest = game_session_guest.exclude(status="Wait Listed")
                 game_session_guest = game_session_guest.exclude(status="Rejected")
