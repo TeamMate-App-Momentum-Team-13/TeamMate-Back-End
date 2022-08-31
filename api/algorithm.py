@@ -52,17 +52,17 @@ def determine_game_type(instance):
                 game_session_guest = game_session_guest.exclude(status="Pending")
                 game_session_guest = game_session_guest.exclude(status="Wait Listed")
                 game_session_guest = game_session_guest.exclude(status="Rejected")
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('tm_score')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[1].user).latest('tm_score')
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[1].user).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
                 RankCalculation(user_score, player_avg_score, "win", instance)
             else:
                 #lose
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[1].survey.respondent).latest('tm_score')
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[1].survey.respondent).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
                 RankCalculation(user_score, player_avg_score, "loss", instance)
@@ -74,12 +74,12 @@ def determine_game_type(instance):
                 game_session_guest = game_session_guest.exclude(status="Pending")
                 game_session_guest = game_session_guest.exclude(status="Wait Listed")
                 game_session_guest = game_session_guest.exclude(status="Rejected")
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('tm_score')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
                 RankCalculation(user_score, player1_score, "win", instance)
                 pass
             else:
-                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
                 RankCalculation(user_score, player1_score, "loss", instance)
 
