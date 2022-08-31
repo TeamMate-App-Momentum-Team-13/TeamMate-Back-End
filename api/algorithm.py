@@ -130,9 +130,9 @@ def RankCalculation(user_score, opponent_score, win_loss, instance):
     if user_score < 0:
         user_score = 0
     
-    ScoreToRankConverter(user_score, instance)
+    scrore_to_rank_converter(user_score, instance)
 
-def ScoreToRankConverter(user_score, instance):
+def scrore_to_rank_converter(user_score, instance):
     
     if user_score <= 25:
         #rank = "TwoFiveBronze"
