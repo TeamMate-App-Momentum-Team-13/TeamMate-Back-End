@@ -14,7 +14,6 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('<str:username>', api_views.UserDetail.as_view(), name='user-details'),
-    path('<str:username>/confirmed/', api_views.MyConfirmedGameSessions.as_view(), name='comfirmed-all'),
     path('<str:username>/games/', api_views.MyGamesList.as_view(), name='my-games'),
     path('profile/', api_views.ListCreateUpdateProfile.as_view(), name='profile'),
     path('session/', api_views.ListCreateGameSession.as_view(), name='game-session-list'),

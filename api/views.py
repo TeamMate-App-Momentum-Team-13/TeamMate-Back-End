@@ -213,24 +213,6 @@ class UserDetail(RetrieveUpdateAPIView):
         queryset = User.objects.filter(username=user)
         return queryset
 
-# Returns confirmed upcoming games where user = host or guest
-class MyConfirmedGameSessions(ListAPIView):
-    serializer_class = GameSessionSerializer
-    permission_classes = [permissions.IsAuthenticated,]
-
-    def get_queryset(self):
-        upcoming_confirmed_games = GameSession.objects.filter(
-            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=True)
-        confirmed_games_as_host = upcoming_confirmed_games.filter(
-            host=self.request.user)
-        confirmed_games_as_guest = upcoming_confirmed_games.filter(
-            guest__user=self.request.user,
-            guest__status='Accepted') 
-        all_confirmed_games = confirmed_games_as_host.union(confirmed_games_as_guest, all=False)
-        return all_confirmed_games.order_by("datetime")
-
-
 class MyGamesList(ListAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,]
