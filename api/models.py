@@ -9,13 +9,6 @@ import pytz
 from .algorithm import RankCalibration, determine_game_type
 
 
-def restrict_guest_amount_on_game_session(game_session_pk):
-        game_session = GameSession.objects.get(id=game_session_pk)
-        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
-            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
-        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
-            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
-
 class User(AbstractUser):
 
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -358,6 +351,14 @@ def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
 #                 message=(f"Oh no, Host canceled game")
 #                 # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
 #             )
+
+
+def restrict_guest_amount_on_game_session(game_session_pk):
+        game_session = GameSession.objects.get(id=game_session_pk)
+        if game_session.match_type == 'Singles'and game_session.guest.count() >= 4:
+            raise ValidationError(f'Game Session already has maximal amount of Guest({4})')
+        elif game_session.match_type == 'Doubles' and game_session.guest.count() >= 7:
+            raise ValidationError(f'Game Session already has maximal amount of Guest ({7})')
 
 def update_game_session_full_field(game_session_pk):
     game_session = GameSession.objects.get(pk=game_session_pk)
