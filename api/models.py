@@ -79,8 +79,6 @@ class GameSession(BaseModel):
     ]
 
     host = models.ForeignKey(User, on_delete=models.CASCADE, related_name='game_session')
-    # datetime fields require a default value for some reason. Even if its false.
-    # You can only patch datetime fields if they have auto_now_add = False
     datetime = models.DateTimeField(auto_now_add=False)
     endtime = models.DateTimeField(auto_now_add=False, blank=True, null=True)
     session_type = models.CharField(max_length=250, choices=SESSION_CHOICES)
@@ -163,7 +161,6 @@ class Profile(BaseModel):
     def __str__(self):
         return f"{self.user}"
 
-#related name clased when all of them were set to "notificationgamesession"
 class NotificationGameSession(BaseModel):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     reciever = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reciever')
@@ -171,7 +168,6 @@ class NotificationGameSession(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE, related_name='game_session', blank=True, null=True)
     read = models.BooleanField(default=False)
 
-# ----- Surveys -----
 class Survey(BaseModel):
     game_session = models.ForeignKey(GameSession, on_delete=models.CASCADE,
         related_name='survey')
