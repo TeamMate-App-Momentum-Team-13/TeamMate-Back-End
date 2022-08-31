@@ -10,8 +10,9 @@ from rest_framework.parsers import JSONParser, FileUploadParser
 from rest_framework.decorators import permission_classes, api_view
 from .permissions import IsOwnerOrReadOnly, IsOwner, GuestPermission, IsUserOwnerOrReadOnly
 from rest_framework.response import Response
-from rest_framework.views import APIView
+
 from .algorithm import RankCalibration
+
 from .serializers import (
     CourtSerializer, 
     CourtAddressSerializer, 
@@ -58,17 +59,21 @@ def welcome(request):
         'description': 'Welcome to our app 👋'
     })
 
+
+# ----- Game Sessions ------
 class ListCreateGameSession(ListCreateAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_queryset(self):
-        # filter all games session objects to show only future games
         queryset = GameSession.objects.filter(
             datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=False, full=False)
+            confirmed=False, 
+            full=False
+        ).exclude(
+            host=self.request.user).exclude(
+            guest__user=self.request.user)
 
-        # Allows users to add search params to query for specific results
         park_search = self.request.query_params.get("location-id")
         if park_search is not None:
             queryset = queryset.filter(location__id__icontains=park_search)
@@ -82,8 +87,7 @@ class ListCreateGameSession(ListCreateAPIView):
         if session_type_search is not None:
             queryset = queryset.filter(session_type__icontains=session_type_search)
 
-        return queryset.order_by("datetime").exclude(
-            host=self.request.user).exclude(guest__user=self.request.user)
+        return queryset.order_by("datetime")
 
     def perform_create(self, serializer):
         serializer.save(host=self.request.user)
@@ -93,6 +97,8 @@ class RetrieveUpdateDestroyGameSession(RetrieveUpdateDestroyAPIView):
     serializer_class = GameSessionSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly)
 
+
+# ----- Guests ------
 class GuestViewSet(viewsets.ModelViewSet):
     serializer_class = GuestSerializer
     permission_classes = (GuestPermission,)
@@ -114,25 +120,27 @@ class GuestViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
 
-        # Two lines added to override
         game_session_pk = instance.game_session.pk
         update_game_session_confirmed_field(game_session_pk)
         update_game_session_full_field(game_session_pk)
 
         if getattr(instance, '_prefetched_objects_cache', None):
             instance._prefetched_objects_cache = {}
-
         return Response(serializer.data)
 
-
     def delete(self, request, *args, **kwargs):
-        instance = get_object_or_404(Guest, user=self.request.user, game_session=self.kwargs.get('pk'))
+        instance = get_object_or_404(Guest, user=self.request.user,
+            game_session=self.kwargs.get('pk'))
         game_session_pk = instance.game_session.pk
         self.perform_destroy(instance)
+
         update_game_session_confirmed_field(game_session_pk)
         update_game_session_full_field(game_session_pk)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# ----- Courts ------
 class ListCreateCourt(ListCreateAPIView):
     queryset = Court.objects.all()
     serializer_class = CourtSerializer
@@ -168,6 +176,8 @@ class ListCreateCourtAddress(APIView):
         serializer = CourtAddressSerializer(court_address)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
 
+
+# ------ Profiles ------
 class ListCreateUpdateProfile(APIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     parser_classes = [JSONParser, FileUploadParser]
@@ -190,6 +200,8 @@ class ListCreateUpdateProfile(APIView):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+# ----- Users -----
 class UserDetail(RetrieveUpdateAPIView):
     serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, ]
@@ -354,6 +366,8 @@ class MyGamesList(ListAPIView):
                 return my_games.order_by("-datetime")
         return my_games.order_by("datetime")
 
+
+# ----- Notifications -----
 # Returns list of notifications that called once
 class CheckNotificationGameSession(ListAPIView):
     serializer_class = NotificationGameSessionSerializers
@@ -362,13 +376,11 @@ class CheckNotificationGameSession(ListAPIView):
     def get_queryset(self):
         queryset = NotificationGameSession.objects.filter(
             reciever=self.request.user,
-            read=False
-            )
-        #Change read status to True so get can only be called once on the notification
+            read=False)
+        # Change read status to True so get can only be called once on the notification
         for query in queryset:
             query.read = True
             query.save()
-
         return queryset
 
 # Returns list of notifications
@@ -379,9 +391,7 @@ class CountNotificationGameSession(ListAPIView):
     def get_queryset(self):
         queryset = NotificationGameSession.objects.filter(
             reciever=self.request.user,
-            read=False
-            )
-
+            read=False)
         return queryset
 
 # Returns list of all notifications
@@ -391,8 +401,8 @@ class AllNotificationGameSession(ListAPIView):
 
     def get_queryset(self):
         queryset = NotificationGameSession.objects.filter(reciever=self.request.user)
-
         return queryset
+
 
 # ----- Surveys -----
 class ListCreateSurvey(ListCreateAPIView):
@@ -413,5 +423,7 @@ class CreateSurveyResponse(CreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def perform_create(self, serializer):
-        survey = get_object_or_404(Survey, respondent=self.request.user, game_session=self.kwargs.get('session_pk'))
+        survey = get_object_or_404(Survey,
+            respondent=self.request.user,
+            game_session=self.kwargs.get('session_pk'))
         serializer.save(survey=survey)
