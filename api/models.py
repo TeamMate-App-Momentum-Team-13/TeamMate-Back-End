@@ -325,32 +325,6 @@ def notification_created_or_updated_guest_handler(sender, instance, created, *ar
 def notification_for_deleted_guest_handler(sender, instance, *args, **kwargs):
     update_game_session_confirmed_field(instance.game_session.pk)
     update_game_session_full_field(instance.game_session.pk)
-    # if instance.status == "Accepted" or instance.status == "Pending":
-    #     print("Accepted guest is deleted")
-    #     breakpoint()
-    #     try: 
-    #         NotificationGameSession.objects.create(
-    #             sender=instance.user,
-    #             reciever=instance.game_session.host,
-    #             message=(f"Oh no! {instance.user} can't make it to your game on {instance.game_session.date} at {instance.game_session.time}. We'll add this game to the list of open games so other users can sign up."),
-    #             game_session = instance.game_session,
-    #         )
-    #     except:
-    #         pass
-    # else:
-    #     print("Other guest object was deleted")
-
-# @receiver(pre_delete, sender='api.GameSession')
-# def notification_for_deleted_game_session_handler(sender, instance, *args, **kwargs):
-#     print("Game Session deleted")
-#     if instance.guest.count() > 0:
-#         for guest_instance in instance.guest.all():
-#             NotificationGameSession.objects.create(
-#                 sender=instance.host,
-#                 reciever=guest_instance.user,
-#                 message=(f"Oh no, Host canceled game")
-#                 # message=(f"Oh no! {instance.host} has cancelled your game on {instance.date} at {instance.time}. You can sign up for a different game on the Open Games page."),
-#             )
 
 
 def restrict_guest_amount_on_game_session(game_session_pk):
