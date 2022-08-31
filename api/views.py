@@ -230,19 +230,6 @@ class MyConfirmedGameSessions(ListAPIView):
         all_confirmed_games = confirmed_games_as_host.union(confirmed_games_as_guest, all=False)
         return all_confirmed_games.order_by("datetime")
 
-# Returns confirmed upcoming games where user = host
-class MyConfirmedHostGameSessions(ListAPIView):
-    serializer_class = GameSessionSerializer
-    permission_classes = [permissions.IsAuthenticated,]
-
-    def get_queryset(self):
-        upcoming_confirmed_games = GameSession.objects.filter(
-            datetime__gte=datetime.now(pytz.timezone('America/New_York')),
-            confirmed=True)
-        confirmed_games_as_host = upcoming_confirmed_games.filter(
-            host=self.request.user)
-        return confirmed_games_as_host.order_by("datetime")
-
 
 class MyGamesList(ListAPIView):
     serializer_class = GameSessionSerializer
