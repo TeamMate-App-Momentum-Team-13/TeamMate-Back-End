@@ -3,7 +3,7 @@ import api.models
 
 
 #called in django created signal for profile and update method in views when data contains ntrp update
-def RankCalibration(ntrp_rating, user_id):
+def rank_calibration(ntrp_rating, user_id):
     if ntrp_rating == '2.5':
         teammate_ntrp = '2.5'
         teammate_rank= '#904d00'

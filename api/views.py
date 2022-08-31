@@ -12,7 +12,7 @@ from rest_framework.generics import (
 from rest_framework.parsers import JSONParser, FileUploadParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .algorithm import RankCalibration
+from .algorithm import rank_calibration
 from .models import (
     Court, 
     CourtAddress, 
@@ -181,7 +181,7 @@ class ListCreateUpdateProfile(APIView):
         if serializer.is_valid():
             serializer.save()
             if bool(request.data['ntrp_rating']) == True:
-                RankCalibration(request.data['ntrp_rating'], self.request.user.id)
+                rank_calibration(request.data['ntrp_rating'], self.request.user.id)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

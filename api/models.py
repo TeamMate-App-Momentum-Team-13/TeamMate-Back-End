@@ -6,7 +6,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 import pytz
-from .algorithm import RankCalibration, determine_game_type
+from .algorithm import rank_calibration, determine_game_type
 from .notifications import created_guest_notification, updated_guest_notification
 
 
@@ -279,7 +279,7 @@ def user_created_profile_handler(sender, instance, created, *args, **kwargs):
 @receiver(post_save, sender=Profile)
 def user_created_profile_handler_update(sender, instance, created, *args, **kwargs):
     if created:
-        RankCalibration(instance.ntrp_rating, instance.user.id)
+        rank_calibration(instance.ntrp_rating, instance.user.id)
 
 @receiver(post_save, sender=RankUpdate)
 def user_created_rank_update_handler(sender, instance, created, *args, **kwargs):
