@@ -68,7 +68,7 @@ def determine_game_type(instance):
                     user=game_session_guest[1].user).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
-                RankCalculation(user_score, player_avg_score, "win", instance)
+                rank_calculation(user_score, player_avg_score, "win", instance)
             else:
                 # Loss
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(
@@ -78,7 +78,7 @@ def determine_game_type(instance):
                     user=winner_session[1].survey.respondent).latest('created_at')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
-                RankCalculation(user_score, player_avg_score, "loss", instance)
+                rank_calculation(user_score, player_avg_score, "loss", instance)
     elif match_type == "Singles":
         if winner_session_count == 1:
             if user_win_count > 0:
@@ -91,16 +91,16 @@ def determine_game_type(instance):
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(
                     user=game_session_guest[0].user).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                RankCalculation(user_score, player1_score, "win", instance)
+                rank_calculation(user_score, player1_score, "win", instance)
                 pass
             else:
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(
                     user=winner_session[0].survey.respondent).latest('created_at')
                 player1_score = player1_latest_rank_update.tm_score
-                RankCalculation(user_score, player1_score, "loss", instance)
+                rank_calculation(user_score, player1_score, "loss", instance)
 
 
-def RankCalculation(user_score, opponent_score, win_loss, instance):
+def rank_calculation(user_score, opponent_score, win_loss, instance):
 
     if win_loss == "win":
         if abs(user_score - opponent_score) <= 25:
