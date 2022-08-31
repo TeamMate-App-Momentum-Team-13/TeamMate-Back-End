@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='guest',
             name='game_session',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guest', to='api.gamesession', validators=[api.models.restrict_guest_amount_on_game_session]),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='guest', to='api.gamesession'),
         ),
     ]
