@@ -53,7 +53,7 @@ def determine_game_type(instance):
                 player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[1].user).latest('tm_score')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
-                RankCalculation(user_score, player_avg_score, "win")
+                RankCalculation(user_score, player_avg_score, "win", instance)
             else:
                 #lose
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
@@ -61,7 +61,7 @@ def determine_game_type(instance):
                 player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[1].survey.respondent).latest('tm_score')
                 player2_score = player2_latest_rank_update.tm_score
                 player_avg_score = (player2_score + player1_score)/2
-                RankCalculation(user_score, player_avg_score, "loss")
+                RankCalculation(user_score, player_avg_score, "loss", instance)
     elif match_type == "Singles":
         if winner_session_count == 1:
             if user_win_count > 0:
@@ -72,15 +72,15 @@ def determine_game_type(instance):
                 game_session_guest = game_session_guest.exclude(status="Rejected")
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('tm_score')
                 player1_score = player1_latest_rank_update.tm_score
-                RankCalculation(user_score, player1_score, "win")
+                RankCalculation(user_score, player1_score, "win", instance)
                 pass
             else:
                 player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
                 player1_score = player1_latest_rank_update.tm_score
-                RankCalculation(user_score, player1_score, "loss")
+                RankCalculation(user_score, player1_score, "loss", instance)
 
 
-def RankCalculation(user_score, oponent_score, win_loss):
+def RankCalculation(user_score, oponent_score, win_loss, instance):
 
     if win_loss == "win":
         if abs(user_score - oponent_score) <= 25:
@@ -110,47 +110,81 @@ def RankCalculation(user_score, oponent_score, win_loss):
     if user_score < 0:
         user_score = 0
     
-    print(user_score)
-    return user_score
+    ScoreToRankConverter(user_score, instance)
 
-def ScoreToRankConverter(user_score):
+def ScoreToRankConverter(user_score, instance):
     
     if user_score <= 25:
-        rank = "TwoFiveBronze"
+        #rank = "TwoFiveBronze"
+        teammate_ntrp = '2.5'
+        teammate_rank= '#904d00'
     elif user_score <= 50:
-        rank = "TwoFiveSilver"
+        #rank = "TwoFiveSilver"
+        teammate_ntrp = '2.5'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 75:
-        rank = "TwoFiveGold"
+        #rank = "TwoFiveGold"
+        teammate_ntrp = '5'
+        teammate_rank= '#daa520'
     elif user_score <= 100:
-        rank = "ThreeBronze"
+        #rank = "ThreeBronze"
+        teammate_ntrp = '3'
+        teammate_rank= '#904d00'
     elif user_score <= 125:
-        rank = "ThreeSilver"
+        #rank = "ThreeSilver"
+        teammate_ntrp = '3'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 150:
-        rank = "ThreeGold"
+        #rank = "ThreeGold"
+        teammate_ntrp = '5'
+        teammate_rank= '#daa520'
     elif user_score <= 175:
-        rank = "ThreeFiveBronze"
+        #rank = "ThreeFiveBronze"
+        teammate_ntrp = '3.5'
+        teammate_rank= '#904d00'
     elif user_score <= 200:
         rank = "ThreeFiveSilver"
+        teammate_ntrp = '3.5'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 225:
-        rank = "ThreeFiveGold"
+        #rank = "ThreeFiveGold"
+        teammate_ntrp = '5'
+        teammate_rank= '#daa520'
     elif user_score <= 250:
-        rank = "FourBronze"
+        #rank = "FourBronze"
+        teammate_ntrp = '4'
+        teammate_rank= '#904d00'
     elif user_score <= 275:
-        rank = "FourSilver"
+        #rank = "FourSilver"
+        teammate_ntrp = '4'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 300:
-        rank = "FourGold"
+        #rank = "FourGold"
+        teammate_ntrp = '4'
+        teammate_rank= '#daa520'
     elif user_score <= 325:
-        rank = "FourFiveBronze"
+        #rank = "FourFiveBronze"
+        teammate_ntrp = '4.5'
+        teammate_rank= '#904d00'
     elif user_score <= 350:
-        rank = "FourFiveSilver"
+        #rank = "FourFiveSilver"
+        teammate_ntrp = '4.5'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 375:
-        rank = "FourFiveGold"
+        #rank = "FourFiveGold"
+        teammate_ntrp = '4.5'
+        teammate_rank= '#daa520'
     elif user_score <= 400:
-        rank = "FiveBronze"
+        #rank = "FiveBronze"
+        teammate_ntrp = '5'
+        teammate_rank= '#904d00'
     elif user_score <= 425:
-        rank = "FiveSilver"
+        #rank = "FiveSilver"
+        teammate_ntrp = '5'
+        teammate_rank= '#a9a9a9'
     elif user_score <= 450:
-        rank = "FiveGold"
+        #rank = "FiveGold"
+        teammate_ntrp = '5'
+        teammate_rank= '#daa520'
     
-    print(rank)
-    return rank
+    api.models.RankUpdate.objects.create(tm_ntrp = teammate_ntrp, tm_rank = teammate_rank, tm_score = user_score, user = instance.survey.respondent)
