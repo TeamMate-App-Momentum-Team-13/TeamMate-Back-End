@@ -33,12 +33,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             file = self.initial_data.get("file")
             instance.profile_image_file.save(file.name, file, save=True)
             return instance
-      # this call to super is to make sure that update still works for other fields
+      # This call to super is to make sure that update still works for other fields
       return super().update(instance, validated_data)
 
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(read_only=True)
     user_id = serializers.ReadOnlyField(source='id')
+
     class Meta:
         model = User
         fields = [
@@ -51,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class CourtAddressSerializer(serializers.ModelSerializer):
     court = serializers.SlugRelatedField(slug_field="park_name", read_only=True)
-    
+
     class Meta:
         model = CourtAddress
         fields = [
@@ -94,7 +95,6 @@ class GuestSerializer(serializers.ModelSerializer):
             'user_info',
         ]
 
-# ----- Surveys -----
 class SurveyResponseSerializer(serializers.ModelSerializer):
     survey = serializers.SlugRelatedField(slug_field="id", read_only=True)
     about_user_username = serializers.PrimaryKeyRelatedField(source='about_user.username', read_only=True)
@@ -183,4 +183,3 @@ class NotificationGameSessionSerializers(serializers.ModelSerializer):
             'game_session',
             'read',
         ]
-
