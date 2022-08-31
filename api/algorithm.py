@@ -38,6 +38,7 @@ def RankCalibration(ntrp_rating, user_id):
 
 def determine_game_type(instance):
     match_type = instance.survey.game_session.match_type
+<<<<<<< HEAD
     winner_session = api.models.SurveyResponse.objects.filter(
         survey__id=instance.survey.id, response="Winner")
     winner_session_count = api.models.SurveyResponse.objects.filter(
@@ -48,6 +49,12 @@ def determine_game_type(instance):
         about_user=instance.survey.respondent).count()
     user_latest_rank_update = api.models.RankUpdate.objects.filter(
         user=instance.survey.respondent).latest('tm_score')
+=======
+    winner_session= api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner")
+    winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
+    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner",about_user=instance.survey.respondent).count()
+    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('created_at')
+>>>>>>> 1185bdd474cdd9b4e6e4fbeda04f538625aeeb2f
     user_score = user_latest_rank_update.tm_score
 
     if match_type == "Doubles":
