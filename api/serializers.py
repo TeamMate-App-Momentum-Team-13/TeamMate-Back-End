@@ -1,19 +1,14 @@
-import profile
-from pyexpat import model
 from rest_framework import serializers
 from .models import (
-    User, 
-    GameSession, 
     Court, 
     CourtAddress, 
-    UserAddress, 
+    GameSession,
     Guest, 
-    Profile, 
-    AddressModelMixin, 
     NotificationGameSession,
+    Profile,
     Survey,
     SurveyResponse,
-)
+    User,)
 
 
 class ProfileSerializer(serializers.ModelSerializer):
