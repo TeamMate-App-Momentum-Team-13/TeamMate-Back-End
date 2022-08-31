@@ -34,16 +34,51 @@ def RankCalibration(ntrp_rating, user_id):
 
 def determine_game_type(instance):
     match_type = instance.survey.game_session.match_type
+    winner_session= api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner")
     winner_session_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner").count()
-    breakpoint()
-    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner", about_user=test).count()
+    user_win_count = api.models.SurveyResponse.objects.filter(survey__id=instance.survey.id, response="Winner",about_user=instance.survey.respondent).count()
+    user_latest_rank_update = api.models.RankUpdate.objects.filter(user = instance.survey.respondent).latest('tm_score')
+    user_score = user_latest_rank_update.tm_score
     if match_type == "Doubles":
-        if winner_session_count == 2:
-
-            pass
+        if winner_session_count >= 2:
+            if user_win_count > 0:
+                game_session_guest = (instance.survey.game_session.guest).all()
+                game_session_guest = game_session_guest.exclude(user=winner_session[0].survey.respondent)
+                game_session_guest = game_session_guest.exclude(user=winner_session[1].survey.respondent)
+                game_session_guest = game_session_guest.exclude(status="Pending")
+                game_session_guest = game_session_guest.exclude(status="Wait Listed")
+                game_session_guest = game_session_guest.exclude(status="Rejected")
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('tm_score')
+                player1_score = player1_latest_rank_update.tm_score
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[1].user).latest('tm_score')
+                player2_score = player2_latest_rank_update.tm_score
+                player_avg_score = (player2_score + player1_score)/2
+                RankCalculation(user_score, player_avg_score, "win")
+            else:
+                #lose
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
+                player1_score = player1_latest_rank_update.tm_score
+                player2_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[1].survey.respondent).latest('tm_score')
+                player2_score = player2_latest_rank_update.tm_score
+                player_avg_score = (player2_score + player1_score)/2
+                RankCalculation(user_score, player_avg_score, "loss")
     elif match_type == "Singles":
         if winner_session_count == 1:
-            pass
+            if user_win_count > 0:
+                game_session_guest = (instance.survey.game_session.guest).all()
+                game_session_guest = game_session_guest.exclude(user=winner_session[0].survey.respondent)
+                game_session_guest = game_session_guest.exclude(status="Pending")
+                game_session_guest = game_session_guest.exclude(status="Wait Listed")
+                game_session_guest = game_session_guest.exclude(status="Rejected")
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = game_session_guest[0].user).latest('tm_score')
+                player1_score = player1_latest_rank_update.tm_score
+                RankCalculation(user_score, player1_score, "win")
+                pass
+            else:
+                player1_latest_rank_update = api.models.RankUpdate.objects.filter(user = winner_session[0].survey.respondent).latest('tm_score')
+                player1_score = player1_latest_rank_update.tm_score
+                RankCalculation(user_score, player1_score, "loss")
+
 
 def RankCalculation(user_score, oponent_score, win_loss):
 
