@@ -198,7 +198,6 @@ class SurveyResponse(BaseModel):
         (POOR_QUALITY, 'Poor Quality'),
     ]
 
-    # Generated from the URL
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='survey_response')
 
     # Every instance would have one of these two FK fields populated and the other left Null
@@ -207,7 +206,6 @@ class SurveyResponse(BaseModel):
     about_court = models.ForeignKey(Court, on_delete=models.CASCADE, null=True, blank=True,
         related_name='about_court')
 
-    # Every instance must have a response
     response = models.CharField(max_length=25, choices=RESPONSE_CHOICES)
 
 class RankUpdate(BaseModel):
